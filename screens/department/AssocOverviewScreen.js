@@ -23,9 +23,6 @@ const AssocOverviewScreen = props => {
   ];
 
   const assocOptions = [
-   
-    { id: Math.random().toString(), slider: true },
-    { id: Math.random().toString(), none: true },
     { id: Math.random().toString(), title: 'Offices' },
     { id: Math.random().toString(), title: 'Events Table' },
     { id: Math.random().toString(), title: 'Hall of Fame' },
@@ -34,7 +31,7 @@ const AssocOverviewScreen = props => {
     { id: Math.random().toString(), title: 'Souvenir and Uniforms' },
   ];
 
- 
+
 
   const selectOptionHandler = (optionData) => {
     console.log(optionData.title);
@@ -52,7 +49,7 @@ const AssocOverviewScreen = props => {
     // onLayout={onLayoutImageSlide}
     >
       <ScrollView style={styles.scrollView}
-      showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
       >
         <View style={styles.imageSlide} >
           <SliderBox
@@ -86,35 +83,39 @@ const AssocOverviewScreen = props => {
 
         <View style={styles.row}>
           <SelectOption
-            data={assocOptions[2]}
-            color={'#d5e5ff'} onSelect={selectOptionHandler} />
+            data={assocOptions[0]} icon='person'
+            color={'#f58915'} onSelect={selectOptionHandler} />
           <SelectOption
-            data={assocOptions[3]}
-            color={'#d5e5ff'} onSelect={selectOptionHandler} />
+            data={assocOptions[1]} icon='calendar'
+            color={'#55a5ff'} onSelect={selectOptionHandler} />
         </View>
         <View style={styles.row}>
           <SelectOption
-            data={assocOptions[4]}
-            color={'#d5e5ff'} onSelect={selectOptionHandler} />
+            data={assocOptions[2]} icon='medal'
+            color={'#aa88ee'} onSelect={selectOptionHandler} />
           <SelectOption
-            data={assocOptions[5]}
-            color={'#d5e5ff'} onSelect={selectOptionHandler} />
+            data={assocOptions[3]} icon='finger-print'
+            color={'#ff55dd'} onSelect={selectOptionHandler} />
+        </View>
+        <View style={styles.row}>
+
+          <SelectOption
+            data={assocOptions[4]} icon='cash'
+            color={'#9eff46'} onSelect={selectOptionHandler} />
+          <SelectOption
+            data={assocOptions[5]} icon='shirt'
+            color={'#ef2464'} onSelect={selectOptionHandler} />
+          {/* <SelectOption
+            data={assocOptions[4]} icon='cash'
+            color={'#f5a492'} onSelect={selectOptionHandler} /> */}
         </View>
         <View style={styles.row}>
           <SelectOption
-            data={assocOptions[6]}
-            color={'#d5e5ff'} onSelect={selectOptionHandler} />
+            data={assocOptions[2]} icon='analytics'
+            color={'#ff11b0'} onSelect={selectOptionHandler} />
           <SelectOption
-            data={assocOptions[7]}
-            color={'#d5e5ff'} onSelect={selectOptionHandler} />
-        </View>
-        <View style={styles.row}>
-          <SelectOption
-            data={assocOptions[2]}
-            color={'#d5e5ff'} onSelect={selectOptionHandler} />
-          <SelectOption
-            data={assocOptions[4]}
-            color={'#d5e5ff'} onSelect={selectOptionHandler} />
+            data={assocOptions[4]} icon='analytics'
+            color={'#44ffb0'} onSelect={selectOptionHandler} />
         </View>
         {/* <Text>{WIDTH}</Text>
         <Text>{ HEIGHT}</Text> */}
@@ -171,46 +172,31 @@ export const screenOptions = (navProps) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
 
   scrollView: {
     //width: '100%',
     flex: 1,
-    backgroundColor: '#e0e0ff',
+    backgroundColor: '#efefef',//'#e0e0ff',
   },
 
   imageSlide: {
     //padding: 25,
-    backgroundColor: '#f7f7ff',
+    backgroundColor: '#f5f5f5',//'#efefef',//'#f7faff',
     height: 250,
-    marginTop: 20,
+    marginTop: 10,
   },
 
   row: {
     flex: 1,
-    //marginVertical: 20,
-    //backgroundColor: 'red',
     paddingHorizontal: '3%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderTopColor: '#fff',
-    borderBottomColor: '#f0f0ff',
-    borderTopWidth: 2,
-    borderBottomWidth: 2,
-    backgroundColor: '#f7f7ff',
+    backgroundColor: '#f5f5f5',//'#efefef',//'#f7faff',
     paddingVertical: 10,
-
-  },
-  rowLabel: {
-    marginLeft: 25,
-    fontFamily: 'OpenSansBold',
-    fontSize: 17,
-
   },
 
-  
+
 });
 
 export default AssocOverviewScreen;

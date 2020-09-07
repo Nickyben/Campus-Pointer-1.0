@@ -12,7 +12,21 @@ import HeaderBtn from '../../components/UI/HeaderBtn';
 import TouchCard from '../../components/UI/TouchCard';
 import Colors from '../../constants/Colors';
 
-
+const content = (type) => {
+  const contentArr = [];
+  if (type === 'userCourses') {
+    for (let s = 1; s <= 10; s++) {
+      contentArr.push(
+        {
+          id: Math.random().toString(),
+          courseTitle: `Robotics`,
+          courseCode: `CSE${400 + s}`,
+        }
+      );
+    }
+  }
+  return contentArr;
+}
 const StudentProfileScreen = props => {
   let TouchableCmp = TouchableOpacity;
 
@@ -35,21 +49,7 @@ const StudentProfileScreen = props => {
     <Item content={item} onSelect={() => { }} />
   );
 
-  const content = (type) => {
-    const contentArr = [];
-    if (type === 'userCourses') {
-      for (let s = 1; s <= 10; s++) {
-        contentArr.push(
-          {
-            id: Math.random().toString(),
-            courseTitle: `Robotics`,
-            courseCode: `CSE${400 + s}`,
-          }
-        );
-      }
-    }
-    return contentArr;
-  }
+
 
   const resultOptions = [
     { id: Math.random().toString(), title: 'Results' },
@@ -91,7 +91,7 @@ const StudentProfileScreen = props => {
           />
         </View>
         <View style={styles.row}>
-          <Text style={styles.rowLabel}>My Applications</Text>
+          <Text style={styles.rowLabel}>Applications</Text>
           <View style={styles.courseActions}>
             <View style={styles.courseActionContainer}>
               <TouchCard
@@ -190,23 +190,23 @@ const StudentProfileScreen = props => {
           <View style={styles.courseActions}>
             <SelectOption
               style={styles.selectOption}
-              data={resultOptions[0]}
-              color={'#e5ffd5'} onSelect={selectOptionHandler} />
+              data={resultOptions[0]} icon='analytics'
+              color={'#ffdd15'} onSelect={selectOptionHandler} />
             <SelectOption
               style={styles.selectOption}
-              data={resultOptions[1]}
-              color={'#e5ffd5'} onSelect={selectOptionHandler} />
+              data={resultOptions[1]} icon='stats'
+              color={'#44ffb0'} onSelect={selectOptionHandler} />
           </View>
 
           <View style={styles.courseActions}>
             <SelectOption
               style={styles.selectOption}
-              data={resultOptions[2]}
-              color={'#e5ffd5'} onSelect={selectOptionHandler} />
+              data={resultOptions[2]} icon='pie'
+              color={'#ff55dd'} onSelect={selectOptionHandler} />
             <SelectOption
               style={styles.selectOption}
-              data={resultOptions[3]}
-              color={'#e5ffd5'} onSelect={selectOptionHandler} />
+              data={resultOptions[3]} icon='calculator'
+              color={'#55a5ff'} onSelect={selectOptionHandler} />
           </View>
         </View>
       </ScrollView>
@@ -261,7 +261,7 @@ export const screenOptions = (navProps) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#ffffee',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -272,33 +272,33 @@ const styles = StyleSheet.create({
   imageRow: {
     flex: 1,
     height: 250,
-    borderTopColor: '#fff',
-    borderBottomColor: '#f0f0ff',
+    // borderTopColor: '#fff',
+    borderBottomColor: '#e7e7e7',
     // borderTopWidth: 3,
     // borderBottomWidth: 3,
-    backgroundColor: '#f7f7ff',
+    backgroundColor: '#efefef',
     paddingVertical: 10,
 
   },
   row: {
     flex: 1,
     //maxHeight: 350,
-    borderTopColor: '#fff',
-    borderBottomColor: '#f0f0ff',
+    borderTopColor: '#fdfdfd',
+    borderBottomColor: '#ededed',
     borderTopWidth: 2,
     borderBottomWidth: 2,
-    backgroundColor: '#f7f7ff',
+    backgroundColor: '#f5f5f5',
     //backgroundColor: 'blue',
     alignItems: 'center',
     paddingVertical: 10,
-    
+
   },
   rowLabel: {
     marginLeft: 25,
     fontFamily: 'OpenSansBold',
     fontSize: 17,
     alignSelf: 'flex-start',
-    color: "#555",
+    color: "#222",
   },
   profileImageContainer: {
     flex: 1,
@@ -309,7 +309,9 @@ const styles = StyleSheet.create({
   profileImage: {
     width: 200,
     height: 200,
-    borderRadius: 1000,
+    borderRadius: 100,
+    borderColor: 'white',
+    borderWidth: 2,
   },
   listContainer: {
     paddingVertical: 15,
@@ -342,9 +344,10 @@ const styles = StyleSheet.create({
   courseCode: {
     fontFamily: 'OpenSansBold',
     fontSize: 17,
-    color: '#777',
+    color: '#444',
   },
   courseActions: {
+    flex: 1,
     marginTop: 20,
     width: '100%',
     flexDirection: 'row',
@@ -356,7 +359,7 @@ const styles = StyleSheet.create({
 
   },
   courseActionContainer: {
-    alignItems: 'center',
+    //alignItems: 'center',
     //backgroundColor: 'blue',
     width: '25%',
     maxWidth: 200,
@@ -376,7 +379,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontFamily: 'OpenSansBold',
     fontSize: 15,
-    color: '#777',
+    color: '#444',
   },
   selectOption: {
     //width: '%',

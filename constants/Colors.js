@@ -6,8 +6,8 @@ let Colors, primary,switchPrimary, switchWhite, accent, switchAccent, white, bla
   grey_3, grey_4, grey_5, grey_6, greyOutline, searchBg,
   success, error, warning, divider;
 
-primary = '#00bbcc'; 
-accent = '#994400';
+primary = '#6f2abf';//'#00afdf'; 
+accent = '#df0aaf';
 white = '#fff';
 black = '#000';
 grey0 = '#888899';
@@ -31,7 +31,7 @@ error = '#ffddcc';
 warning = '#ffddaa'
 divider = '#ddd';
 
-if (Platform.OS == 'android') {
+if (Platform.OS == 'ios') {
   switchPrimary = primary;
   switchAccent = accent;
   switchWhite = white;

@@ -24,8 +24,6 @@ const SchoolOverviewScreen = props => {
   ];
 
   const academicOptions = [
-    { id: Math.random().toString(), slider: true },
-    { id: Math.random().toString(), none: true },
     { id: Math.random().toString(), title: 'Courses' },
     { id: Math.random().toString(), title: 'Calender and Events' },
     { id: Math.random().toString(), title: 'Timetable' },
@@ -87,35 +85,35 @@ const SchoolOverviewScreen = props => {
 
         <View style={styles.row}>
           <SelectOption
-            data={academicOptions[2]}
-            color={'#d5d5ff'} onSelect={selectOptionHandler} />
+            data={academicOptions[0]} icon='list-box'
+            color={'#9eff46'} onSelect={selectOptionHandler} />
           <SelectOption
-            data={academicOptions[3]}
-            color={'#d5d5ff'} onSelect={selectOptionHandler} />
+            data={academicOptions[1]} icon='calendar'
+            color={'#ef2464'} onSelect={selectOptionHandler} />
         </View>
         <View style={styles.row}>
           <SelectOption
-            data={academicOptions[4]}
-            color={'#d5d5ff'} onSelect={selectOptionHandler} />
+            data={academicOptions[2]} icon='today'
+            color={'#55a5ff'} onSelect={selectOptionHandler} />
           <SelectOption
-            data={academicOptions[5]}
-            color={'#d5d5ff'} onSelect={selectOptionHandler} />
+            data={academicOptions[3]} icon='card'
+            color={'#ffdd25'} onSelect={selectOptionHandler} />
+        </View>
+        <View style={styles.row}>
+           <SelectOption
+            data={academicOptions[4]} icon='filing'
+            color={'#f58915'} onSelect={selectOptionHandler} />
+            <SelectOption
+            data={academicOptions[5]} icon='flask'
+            color={'#44ffb0'} onSelect={selectOptionHandler} />
         </View>
         <View style={styles.row}>
           <SelectOption
-            data={academicOptions[6]}
-            color={'#d5d5ff'} onSelect={selectOptionHandler} />
+            data={academicOptions[2]} icon='analytics'
+            color={'#ff55dd'} onSelect={selectOptionHandler} />
           <SelectOption
-            data={academicOptions[7]}
-            color={'#d5d5ff'} onSelect={selectOptionHandler} />
-        </View>
-        <View style={styles.row}>
-          <SelectOption
-            data={academicOptions[2]}
-            color={'#d5d5ff'} onSelect={selectOptionHandler} />
-          <SelectOption
-            data={academicOptions[4]}
-            color={'#d5d5ff'} onSelect={selectOptionHandler} />
+            data={academicOptions[4]} icon='analytics'
+            color={'#ee3e11'} onSelect={selectOptionHandler} />
         </View>
         {/* <Text>{WIDTH}</Text>
         <Text>{ HEIGHT}</Text> */}
@@ -169,46 +167,30 @@ export const screenOptions = (navProps) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
 
   scrollView: {
     //width: '100%',
     flex: 1,
-    backgroundColor: '#e0e0ff',
+    backgroundColor: '#efefef',//'#e0e0ff',
   },
 
   imageSlide: {
     //padding: 25,
-    backgroundColor: '#f7f7ff',
+    backgroundColor: '#efefef',
     height: 250,
-    marginTop: 20,
+    marginTop: 10,
   },
 
   row: {
     flex: 1,
-    //marginVertical: 20,
-    //backgroundColor: 'red',
     paddingHorizontal: '3%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-
-
-    borderTopColor: '#fff',
-    borderBottomColor: '#f0f0ff',
-    borderTopWidth: 2,
-    borderBottomWidth: 2,
-    backgroundColor: '#f7f7ff',
+    backgroundColor: '#efefef',
     paddingVertical: 10,
-
   },
-  rowLabel: {
-    marginLeft: 25,
-    fontFamily: 'OpenSansBold',
-    fontSize: 17,
-
-  },
+  
 
   
 });
