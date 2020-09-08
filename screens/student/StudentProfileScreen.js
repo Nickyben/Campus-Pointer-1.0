@@ -363,6 +363,8 @@ const styles = StyleSheet.create({
     //backgroundColor: 'blue',
     width: '25%',
     maxWidth: 200,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   touchCard: {
     borderRadius: 30,

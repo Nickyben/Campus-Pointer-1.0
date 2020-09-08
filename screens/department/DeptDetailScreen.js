@@ -12,28 +12,43 @@ import TouchCard from '../../components/UI/TouchCard';
 import Colors from '../../constants/Colors';
 
 const DeptDetailScreen = ({ route }) => {
-  const { id, image, name , designation, office, level,capacity} = route.params.item;
+  const { id, image, name, designation, office, level, capacity } = route.params.item;
   return (
     <View style={styles.screen}>
       <ScrollView
-       //contentContainerStyle={styles.scroll}
-       style={styles.scroll}
-       >
-       <View style={styles.row}>
-         <View style={{ ...styles.detailImageContainer }}>
-          <Image style={{...styles.detailImage,  width: !!capacity ?  '100%' : 250}}  source={image} />
-        </View> 
-       </View>
-        
-        <View style={styles.row}>
-          <View style={{padding: 20, height: 250}}>
-            {name && <Text style={styles.title}>Name: {name}</Text>}
-            {designation && <Text style={styles.title}>Designation: {designation}</Text>}
-            {office && <Text style={styles.title}>Office: {office}</Text>}
-            {level && <Text style={styles.title}>level: {level}</Text>}
-            {capacity && <Text style={styles.title}>Capacity: {capacity}</Text>}
+        //contentContainerStyle={styles.scroll}
+        style={styles.scroll}
+      >
+        <View style={styles.container}>
+          <View style={styles.row}>
+            <View style={{ ...styles.detailImageContainer }}>
+              <Image
+                style={{
+                  ...styles.detailImage,
+                  borderWidth: !capacity ? 2 : 0,
+                  borderColor: !capacity? 'white': 'transparent',
+                  width: !!capacity ? '100%' : 250,
+                  borderRadius: !!capacity? 15: 250/2,
+                }}
+                source={image}
+
+              />
+            </View>
+          </View>
+          <View style={styles.dataContainer}>
+            <View style={styles.row}>
+              <View style={{ padding: 20, height: 250 }}>
+                {name && <Text style={styles.title}>Name: {name}</Text>}
+                {designation && <Text style={styles.title}>Designation: {designation}</Text>}
+                {office && <Text style={styles.title}>Office: {office}</Text>}
+                {level && <Text style={styles.title}>level: {level}</Text>}
+                {capacity && <Text style={styles.title}>Capacity: {capacity}</Text>}
+              </View>
+            </View>
           </View>
         </View>
+
+
       </ScrollView>
     </View>
   );
@@ -72,34 +87,46 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     //justifyContent: 'center',
-   // alignItems: 'center',
+    // alignItems: 'center',
   },
   scroll: {
     width: '100%',
-    //backgroundColor: 'blue',
+
   },
-  row:{
-    //height: 250,
-    // borderTopColor: '#fff',
+  container: {
+    flex: 1,
+    backgroundColor: Colors.primary,//'black'//,
+  },
+  dataContainer: {
+    flex: 1,
+    marginTop: 20,
+    //paddingTop: 20,
+    //backgroundColor: '#fff',
+    borderTopStartRadius: 70,//please set this wrt screen dimensions
+    //borderTopRadius: 50,
+    overflow: 'hidden',
+  },
+  row: {
+
     borderBottomColor: '#e7e7e7',
-    // borderTopWidth: 3,
-    // borderBottomWidth: 3,
+
     backgroundColor: '#f5f5f5',
-    //paddingVertical: 10,
+
   },
-  detailImageContainer:{
+  detailImageContainer: {
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: Colors.primary,//'black'//,
     paddingVertical: 10,
+    paddingBottom: 20,
     paddingHorizontal: 10,
-    
+
   },
   detailImage: {
     //width: 250,
     height: 250,
-    borderRadius: 5,
+    //borderRadius: 250/2,
   },
 });
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import {
   StyleSheet, Text, View, TouchableOpacity,
-  TouchableNativeFeedback, FlatList, Image,Platform } from 'react-native';
+  TouchableNativeFeedback, FlatList, Image, Platform
+} from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 import HeaderBtn from '../../components/UI/HeaderBtn';
@@ -9,31 +10,33 @@ import { Announcement, News } from '../../models/homeWall';
 import Student from '../../models/student';
 import Colors from '../../constants/Colors';
 
+
+const content = (type) => {
+  const contentArr = [];
+  if (type === 'homeWall') {
+    for (let s = 1; s <= 15; s++) {
+      contentArr.push(
+        new Announcement(
+          Math.random().toString(),
+          'Departmental Announcement ' + s,
+          'General',
+          new Date().toLocaleDateString(),
+          { name: 'Nicholas Ikechukwu', level: 400, office: 'President' },
+          { name: 'Nicholas Ikechukwu', level: 400, office: 'Secretary General' },
+          { image: null, text: 'There will be a Congress meeting on 20th September, 2020' }
+        )
+      );
+    }
+  }
+  return contentArr;
+}
 const HomeScreen = props => {
   let TouchableCmp = TouchableOpacity;
 
   if (Platform.OS === 'android' && Platform.Version >= 21) {
     TouchableCmp = TouchableNativeFeedback;
   }
-  const content = (type) => {
-    const contentArr = [];
-    if (type === 'homeWall') {
-      for (let s = 1; s <= 15; s++) {
-        contentArr.push(
-          new Announcement(
-            Math.random().toString(),
-            'Departmental Announcement ' + s,
-            'General',
-            new Date().toLocaleDateString(),
-            { name: 'Nicholas Ikechukwu', level: 400, office: 'President' },
-            { name: 'Nicholas Ikechukwu', level: 400, office: 'Secretary General' },
-            { image: null, text: 'There will be a Congress meeting on 20th September, 2020' }
-          )
-        );
-      }
-    }
-    return contentArr;
-  }
+
   const Item = ({ content: { title, type, author: { name, office }, text }, onSelect }) => (
     <View style={styles.row}>
       <View style={styles.postContainer}>
@@ -176,33 +179,33 @@ const styles = StyleSheet.create({
   postContainer: {
     backgroundColor: '#fff',
     borderRadius: 10,
-    padding:10,
+    padding: 10,
     overflow: 'hidden',
   },
-  authorContent:{
+  authorContent: {
     //backgroundColor:'#ffd',
     flexDirection: 'row',
-   
+
   },
-  
-  authorImageContainer:{
+
+  authorImageContainer: {
     backgroundColor: '#efefef',
     width: 50,
     height: 50,
     borderRadius: 25,
   },
-  authorImage:{
+  authorImage: {
     width: 50, height: 50,
     borderRadius: 25,
     borderColor: '#f7f7f7',
     borderWidth: 2,
   },
-  authorDetails:{
+  authorDetails: {
     marginLeft: 20,
   },
-  infoContent:{},
-  infoImage:{},
-  infoText:{},
+  infoContent: {},
+  infoImage: {},
+  infoText: {},
 
 });
 

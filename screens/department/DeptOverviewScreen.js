@@ -10,6 +10,7 @@ import Card from '../../components/UI/Card';
 import { FlatList } from 'react-native-gesture-handler';
 import TouchCard from '../../components/UI/TouchCard';
 import Colors from '../../constants/Colors';
+import Btn from '../../components/UI/Btn';
 
 const content = (type) => {
   const contentArr = [];
@@ -72,6 +73,7 @@ const DeptOverviewScreen = ({ navigation }) => {
 
   const Item = ({ content: { id, name, image, designation, office, level, capacity }, onSelect }) => (
     <TouchCard
+      useIos
       onTouch={onSelect}
       style={{ ...styles.itemCard, maxWidth: styles.itemCard.maxWidth + !!capacity * 100 }}>
       <View style={styles.itemContainer}>
@@ -85,12 +87,15 @@ const DeptOverviewScreen = ({ navigation }) => {
         </View>
         <View style={styles.infoContainer}>
           <View style={styles.titleContainer}>
-            {name && <Text style={styles.title}>{name}</Text>}
+            {name && <Text style={styles.title} numberOfLines={2}>{name}</Text>}
           </View>
 
-          <View style={styles.btn}>
-            <Button title='View' color={Colors.primary} />
-          </View>
+          <Btn
+            style={styles.btn}
+            bgColor={'transparent'}
+            borderColor={Colors.primary}
+            onPress={onSelect}
+            textColor={Colors.primary}>View</Btn>
           {/* {designation && <Text style={styles.title}>{designation}</Text>}
           {office && <Text style={styles.title}>{office}</Text>}
           {level && <Text style={styles.title}>Level: {level}</Text>}
@@ -304,6 +309,8 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     paddingBottom: 0,
+    // backgroundColor: 'red',
+
 
   },
   listImage: {
@@ -315,16 +322,12 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flex: 1,
-    //backgroundColor: 'red', //'#fdaf0a22',//'#0aafdf11',
-    //paddingHorizontal: 10,
+    marginTop: 10,
     paddingBottom: 10,
-    //justifyContent: 'space-between',
     alignItems: 'center',
   },
   btn: {
-    borderRadius: 15,
-    overflow: 'hidden',
-    width: '40%',
+    width: '50%',
     marginTop: 10,
   },
   listContainer: {
@@ -335,14 +338,18 @@ const styles = StyleSheet.create({
   titleContainer: {
     width: '100%',
     alignItems: 'center',
-    backgroundColor: Colors.primary+'11',
-    padding: 15 
+    //alignSelf: 'flex-end',
+    //borderTopStartRadius: 25,
+    //backgroundColor: Colors.primary + '10',
+    //backgroundColor: '#f5f5f5',
+    padding: 5,
   },
 
   title: {
     fontFamily: 'OpenSansBold',
-    fontSize: 12,
-    color: '#222',
+    fontSize: 13,
+    //color: Colors.primary//,
+    color: '#444',
   }
 });
 

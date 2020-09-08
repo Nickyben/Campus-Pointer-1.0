@@ -11,11 +11,7 @@ import HeaderBtn from '../../components/UI/HeaderBtn';
 import Colors from '../../constants/Colors';
 import SelectOption from '../../components/pointerComponents/SelectOption';
 
-
-const SchoolOverviewScreen = props => {
-  const WIDTH = useWindowDimensions().width;
-  const HEIGHT = useWindowDimensions().height;
-  const sliderImages = [
+const sliderImages = [
     require('../../assets/images/slide1.jpg'),
     require('../../assets/images/slide2.jpg'),
     require('../../assets/images/slide3.jpg'),
@@ -25,21 +21,26 @@ const SchoolOverviewScreen = props => {
 
   const academicOptions = [
     { id: Math.random().toString(), title: 'Courses' },
-    { id: Math.random().toString(), title: 'Calender and Events' },
+    { id: Math.random().toString(), title: 'Calendar and Events' },
     { id: Math.random().toString(), title: 'Timetable' },
     { id: Math.random().toString(), title: 'Fees' },
     { id: Math.random().toString(), title: 'Library' },
-    { id: Math.random().toString(), title: 'Labs and research' },
+    { id: Math.random().toString(), title: 'Labs and Research' },
 
   ];
 
+
+
+
+const SchoolOverviewScreen = ({navigation,route}) => {
+  const WIDTH = useWindowDimensions().width;
+  const HEIGHT = useWindowDimensions().height;
   
 
   const selectOptionHandler = (optionData) => {
     console.log(optionData.title);
+    navigation.navigate('SchoolOptions', {item: optionData})
   };
-
-
 
 
   const renderItem = ({ item }) => (//auto gets data in obj form , I deStructured it in params
@@ -82,39 +83,41 @@ const SchoolOverviewScreen = props => {
 
           />
         </View>
-
-        <View style={styles.row}>
-          <SelectOption
-            data={academicOptions[0]} icon='list-box'
-            color={'#9eff46'} onSelect={selectOptionHandler} />
-          <SelectOption
-            data={academicOptions[1]} icon='calendar'
-            color={'#ef2464'} onSelect={selectOptionHandler} />
-        </View>
-        <View style={styles.row}>
-          <SelectOption
-            data={academicOptions[2]} icon='today'
-            color={'#55a5ff'} onSelect={selectOptionHandler} />
-          <SelectOption
-            data={academicOptions[3]} icon='card'
-            color={'#ffdd25'} onSelect={selectOptionHandler} />
-        </View>
-        <View style={styles.row}>
-           <SelectOption
-            data={academicOptions[4]} icon='filing'
-            color={'#f58915'} onSelect={selectOptionHandler} />
+        <View style={styles.optionsContainer}>
+          <View style={styles.row}>
             <SelectOption
-            data={academicOptions[5]} icon='flask'
-            color={'#44ffb0'} onSelect={selectOptionHandler} />
+              data={academicOptions[0]} icon='list-box'
+              color={'#9eff46'} onSelect={selectOptionHandler} />
+            <SelectOption
+              data={academicOptions[1]} icon='calendar'
+              color={'#ef2464'} onSelect={selectOptionHandler} />
+          </View>
+          <View style={styles.row}>
+            <SelectOption
+              data={academicOptions[2]} icon='today'
+              color={'#55a5ff'} onSelect={selectOptionHandler} />
+            <SelectOption
+              data={academicOptions[3]} icon='card'
+              color={'#ffdd25'} onSelect={selectOptionHandler} />
+          </View>
+          <View style={styles.row}>
+            <SelectOption
+              data={academicOptions[4]} icon='filing'
+              color={'#f58915'} onSelect={selectOptionHandler} />
+            <SelectOption
+              data={academicOptions[5]} icon='flask'
+              color={'#44ffb0'} onSelect={selectOptionHandler} />
+          </View>
+          <View style={styles.row}>
+            <SelectOption
+              data={academicOptions[2]} icon='analytics'
+              color={'#ff55dd'} onSelect={selectOptionHandler} />
+            <SelectOption
+              data={academicOptions[4]} icon='analytics'
+              color={'#ee3e11'} onSelect={selectOptionHandler} />
+          </View>
         </View>
-        <View style={styles.row}>
-          <SelectOption
-            data={academicOptions[2]} icon='analytics'
-            color={'#ff55dd'} onSelect={selectOptionHandler} />
-          <SelectOption
-            data={academicOptions[4]} icon='analytics'
-            color={'#ee3e11'} onSelect={selectOptionHandler} />
-        </View>
+
         {/* <Text>{WIDTH}</Text>
         <Text>{ HEIGHT}</Text> */}
       </ScrollView>
@@ -172,27 +175,36 @@ const styles = StyleSheet.create({
   scrollView: {
     //width: '100%',
     flex: 1,
-    backgroundColor: '#efefef',//'#e0e0ff',
+    backgroundColor: '#fff',//'#e0e0ff',
   },
 
   imageSlide: {
     //padding: 25,
-    backgroundColor: '#efefef',
+    backgroundColor: '#fff',
     height: 250,
     marginTop: 10,
   },
 
+optionsContainer:{
+  marginTop: 20,
+  paddingTop: 20,
+  backgroundColor: '#f5f5f5',
+  borderRadius: 50,
+  overflow: 'hidden',
+  
+},
   row: {
     flex: 1,
     paddingHorizontal: '3%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#efefef',
+    backgroundColor: '#f5f5f5',
     paddingVertical: 10,
-  },
-  
 
-  
+  },
+
+
+
 });
 
 export default SchoolOverviewScreen;

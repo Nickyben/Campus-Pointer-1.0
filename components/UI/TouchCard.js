@@ -10,13 +10,14 @@ import Card from './Card';
 const TouchCard = props => {
   let TouchableCmp = TouchableOpacity;
 
-  if (Platform.OS === 'android' && Platform.Version >= 21) {
+  if ((Platform.OS === 'android' && Platform.Version >= 21) && !!props.useIos !== true ){
     TouchableCmp = TouchableNativeFeedback;
   }
 
   return (
     <Card style={{ ...styles.touchCard, ...props.style }}>
       <TouchableCmp
+      activeOpacity={0.6}
         style={styles.touchable}
         onPress={props.onTouch}
       >

@@ -30,6 +30,10 @@ import FacultyOverviewScreen, {
 import SchoolOverviewScreen, {
   screenOptions as schScreenOpts
 } from '../screens/department/SchoolOverviewScreen';
+import SchoolOptionsScreen, {
+  screenOptions as schOptsScreenOpts
+} from '../screens/department/SchoolOptionsScreen';
+
 import HomeScreen, {
   screenOptions as homeScreenOpts
 } from '../screens/pointerApp/HomeScreen';
@@ -46,6 +50,7 @@ import SettingsScreen, {
 
 import Colors from '../constants/Colors';
 import { FacultyTabNavigator, facultyTabNavScreenOptions } from './MaterialTopTabNav';
+
 
 let TouchableCmp = TouchableOpacity;
 
@@ -172,11 +177,12 @@ const SchoolStackNavigator = () => {
         component={SchoolOverviewScreen}
         options={schScreenOpts}
       />
-      {/* <SchoolStackNav.Screen
-        name='ProductDetail'
-        component={ProductDetailScreen}
-        options={prodDetailScreenOptions}
+      <SchoolStackNav.Screen
+        name='SchoolOptions'
+        component={SchoolOptionsScreen}
+        options={schOptsScreenOpts}
       />
+      {/*
       <SchoolStackNav.Screen
         name='Cart'
         component={CartScreen}
@@ -459,9 +465,9 @@ export const PointerDrawerNavigator = () => {
       drawerContentOptions={
         {
 
-          activeBackgroundColor: '#f0f0f0',
+          activeBackgroundColor: Colors.primary, //'#f0f0f0',
           inactiveBackgroundColor: '#fcfcfc',
-          activeTintColor: Colors.primary,//'#006f8f',
+          activeTintColor: '#fff', //Colors.primary,//'#006f8f',
           inactiveTintColor: '#444',
           labelStyle: {
             fontFamily: 'OpenSansBold',

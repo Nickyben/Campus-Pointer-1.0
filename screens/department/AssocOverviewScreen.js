@@ -81,42 +81,44 @@ const AssocOverviewScreen = props => {
           />
         </View>
 
-        <View style={styles.row}>
-          <SelectOption
-            data={assocOptions[0]} icon='person'
-            color={'#f58915'} onSelect={selectOptionHandler} />
-          <SelectOption
-            data={assocOptions[1]} icon='calendar'
-            color={'#55a5ff'} onSelect={selectOptionHandler} />
-        </View>
-        <View style={styles.row}>
-          <SelectOption
-            data={assocOptions[2]} icon='medal'
-            color={'#aa88ee'} onSelect={selectOptionHandler} />
-          <SelectOption
-            data={assocOptions[3]} icon='finger-print'
-            color={'#ff55dd'} onSelect={selectOptionHandler} />
-        </View>
-        <View style={styles.row}>
+       <View style={styles.optionsContainer}>
+          <View style={styles.row}>
+            <SelectOption
+              data={assocOptions[0]} icon='person'
+              color={'#f58915'} onSelect={selectOptionHandler} />
+            <SelectOption
+              data={assocOptions[1]} icon='calendar'
+              color={'#55a5ff'} onSelect={selectOptionHandler} />
+          </View>
+          <View style={styles.row}>
+            <SelectOption
+              data={assocOptions[2]} icon='medal'
+              color={'#aa88ee'} onSelect={selectOptionHandler} />
+            <SelectOption
+              data={assocOptions[3]} icon='finger-print'
+              color={'#ff55dd'} onSelect={selectOptionHandler} />
+          </View>
+          <View style={styles.row}>
 
-          <SelectOption
-            data={assocOptions[4]} icon='cash'
-            color={'#9eff46'} onSelect={selectOptionHandler} />
-          <SelectOption
-            data={assocOptions[5]} icon='shirt'
-            color={'#ef2464'} onSelect={selectOptionHandler} />
-          {/* <SelectOption
+            <SelectOption
+              data={assocOptions[4]} icon='cash'
+              color={'#9eff46'} onSelect={selectOptionHandler} />
+            <SelectOption
+              data={assocOptions[5]} icon='shirt'
+              color={'#ef2464'} onSelect={selectOptionHandler} />
+            {/* <SelectOption
             data={assocOptions[4]} icon='cash'
             color={'#f5a492'} onSelect={selectOptionHandler} /> */}
-        </View>
-        <View style={styles.row}>
-          <SelectOption
-            data={assocOptions[2]} icon='analytics'
-            color={'#ff11b0'} onSelect={selectOptionHandler} />
-          <SelectOption
-            data={assocOptions[4]} icon='analytics'
-            color={'#44ffb0'} onSelect={selectOptionHandler} />
-        </View>
+          </View>
+          <View style={styles.row}>
+            <SelectOption
+              data={assocOptions[2]} icon='analytics'
+              color={'#ff11b0'} onSelect={selectOptionHandler} />
+            <SelectOption
+              data={assocOptions[4]} icon='analytics'
+              color={'#44ffb0'} onSelect={selectOptionHandler} />
+          </View>
+       </View>
         {/* <Text>{WIDTH}</Text>
         <Text>{ HEIGHT}</Text> */}
       </ScrollView>
@@ -177,16 +179,22 @@ const styles = StyleSheet.create({
   scrollView: {
     //width: '100%',
     flex: 1,
-    backgroundColor: '#efefef',//'#e0e0ff',
+    backgroundColor: '#fff',//'#efefef',//
   },
 
   imageSlide: {
     //padding: 25,
-    backgroundColor: '#f5f5f5',//'#efefef',//'#f7faff',
+    backgroundColor: '#fff',//'#efefef',//'#f7faff',
     height: 250,
     marginTop: 10,
   },
-
+  optionsContainer: {
+    marginTop: 20,
+    paddingTop: 20,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 50,
+    overflow: 'hidden',
+  },
   row: {
     flex: 1,
     paddingHorizontal: '3%',

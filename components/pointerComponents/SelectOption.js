@@ -28,7 +28,9 @@ const SelectOption = ({ onSelect, icon, data, color, style }) => {
           />
         </View>
         <View style={{...styles.actionLabelContainer,}}>
-          <Text style={{...styles.actionLabel, color: Colors.primary}}> {data.title}</Text>
+
+          {/* color: 'Colors.primary' */}
+          <Text style={{ ...styles.actionLabel, color: '#048' }}> {data.title}</Text>
         </View>
         
       </View>
@@ -45,16 +47,12 @@ const styles = StyleSheet.create(
       width: '47.5%',//please do this with respect to the device dimensions
       //margin: '5%',
       //height: '100%', //please do this with respect to the device dimensions
-      borderRadius: 10,
+      borderRadius: 15,
       padding: 0,
       //backgroundColor: 'red',
     },
     container: {
-     // flex: 1,
-      //justifyContent: 'flex-end',
-      //alignItems: 'flex-end',
-      //padding: 25,
-      //backgroundColor: 'blue',
+    
       height: '100%',
     },
     title: {
