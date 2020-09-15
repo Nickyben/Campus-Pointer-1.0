@@ -12,8 +12,7 @@ import TouchCard from '../../components/UI/TouchCard';
 import Colors from '../../constants/Colors';
 import CoursesScreen from './CoursesScreen';
 
-const SchoolOptionsScreen = ({ route:{params:{item}} }) => {
-  const { id, title, } = item;
+const SchoolOptionsScreen = ({ navigation, route: { params: { title, }} }) => {
   let Screen;
   switch (title) {
     case 'Courses':
@@ -35,22 +34,22 @@ const SchoolOptionsScreen = ({ route:{params:{item}} }) => {
       Screen = View;
       break;
     default:
-      //you selected no option; 
+      Screen = View; 
 
   }
   return (
     <View style={styles.screen}>
-      <Screen item={item}/>
+      <Screen navig={navigation}/>
     </View>
   );
 };
 export const screenOptions = ({ navigation, route: { params } }) => {
   const notificationIcon = Platform.OS == 'android' ? 'md-notifications' : 'ios-notifications';
   const menuIcon = Platform.OS == 'android' ? 'md-menu' : 'ios-menu';
-  const title = params.item.title;
+  const title = params.title;
   return (
     {
-      headerTitle: title,
+      headerTitle: title? title: 'SchoolOptions',
       headerRight: (props) => (
         <HeaderButtons HeaderButtonComponent={HeaderBtn}>
           <Item

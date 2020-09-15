@@ -33,7 +33,9 @@ import SchoolOverviewScreen, {
 import SchoolOptionsScreen, {
   screenOptions as schOptsScreenOpts
 } from '../screens/department/SchoolOptionsScreen';
-
+import CourseDetailsScreen, {
+  screenOptions as courseDetailsScreenOpts
+} from '../screens/department/CourseDetailsScreen';
 import HomeScreen, {
   screenOptions as homeScreenOpts
 } from '../screens/pointerApp/HomeScreen';
@@ -43,6 +45,9 @@ import AssocOverviewScreen, {
 import StudentProfileScreen, {
   screenOptions as stdProfScreenOpts
 } from '../screens/student/StudentProfileScreen';
+import CourseAppScreen, {
+  screenOptions as courseAppScreenOpts
+} from '../screens/student/CourseAppScreen';
 
 import SettingsScreen, {
   screenOptions as settingsScreenOpts
@@ -182,12 +187,19 @@ const SchoolStackNavigator = () => {
         component={SchoolOptionsScreen}
         options={schOptsScreenOpts}
       />
-      {/*
+
       <SchoolStackNav.Screen
-        name='Cart'
-        component={CartScreen}
-        options={cartScreenOptions}
-      /> */}
+        name='CourseDetails'
+        component={CourseDetailsScreen}
+        options={courseDetailsScreenOpts}
+      />
+
+      <SchoolStackNav.Screen
+        name='DeptDetail'
+        component={DeptDetailScreen}
+        options={deptDetailScreenOpts}
+      />
+
     </SchoolStackNav.Navigator>
   );
 };
@@ -251,16 +263,24 @@ const StdProfStackNavigator = () => {
         component={StudentProfileScreen}
         options={stdProfScreenOpts}
       />
-      {/* <StdProfStackNav.Screen
-        name='ProductDetail'
-        component={ProductDetailScreen}
-        options={prodDetailScreenOptions}
+       <StdProfStackNav.Screen
+         name='CourseDetails'
+        component={CourseDetailsScreen}
+        options={courseDetailsScreenOpts}
       />
+
       <StdProfStackNav.Screen
-        name='Cart'
-        component={CartScreen}
-        options={cartScreenOptions}
-      /> */}
+        name='CourseApplications'
+        component={CourseAppScreen}
+        options={courseAppScreenOpts}
+      />
+
+      <StdProfStackNav.Screen
+        name='DeptDetail'
+        component={DeptDetailScreen}
+        options={deptDetailScreenOpts}
+      />
+
     </StdProfStackNav.Navigator>
   );
 };

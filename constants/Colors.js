@@ -6,10 +6,10 @@ let Colors, primary, primary2, switchPrimary, switchPrimary2, switchWhite, accen
   grey_3, grey_4, grey_5, grey_6, greyOutline, searchBg,
   success, error, warning, divider;
 
-primary = '#00afdf';
-primary2 = '#df00af'; //'00cfbf#6f2abf';//
+primary2 = '#00afdf';
+primary = '#00a7e7'; //'#e700a7';//'#a700e7';//
 accent = '#2a8fff';
-accent2 = '#ff8f2a';
+accent2 = '#ff7f0a';
 
 white = '#fff';
 black = '#000';

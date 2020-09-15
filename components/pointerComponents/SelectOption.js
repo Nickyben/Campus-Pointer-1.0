@@ -23,16 +23,16 @@ const SelectOption = ({ onSelect, icon, data, color, style }) => {
         <View style={styles.actionIconContainer}>
           <Ionicons
             name={Platform.OS === 'android' ? `md-${icon}` : `ios-${icon}`}
-            size={100}
+            size={80}
             color={color}
           />
         </View>
-        <View style={{...styles.actionLabelContainer,}}>
+        <View style={{ ...styles.actionLabelContainer, }}>
 
           {/* color: 'Colors.primary' */}
-          <Text style={{ ...styles.actionLabel, color: '#048' }}> {data.title}</Text>
+          <Text style={{ ...styles.actionLabel, color: '#000' }}> {data.title}</Text>
         </View>
-        
+
       </View>
     </TouchCard>
 
@@ -47,12 +47,12 @@ const styles = StyleSheet.create(
       width: '47.5%',//please do this with respect to the device dimensions
       //margin: '5%',
       //height: '100%', //please do this with respect to the device dimensions
-      borderRadius: 15,
-      padding: 0,
+      borderRadius: 10,
+
       //backgroundColor: 'red',
     },
     container: {
-    
+      padding: 10,
       height: '100%',
     },
     title: {
@@ -69,7 +69,7 @@ const styles = StyleSheet.create(
       justifyContent: 'center',
       //backgroundColor: Colors.primary,
     },
-    actionLabelContainer:{
+    actionLabelContainer: {
       flex: 1,
       //backgroundColor: '#fff',
       alignItems: 'center',
@@ -79,7 +79,7 @@ const styles = StyleSheet.create(
     },
     actionLabel: {
       //backgroundColor: 'red',
-      
+
       fontFamily: 'OpenSansBold',
       fontSize: 18,
       //color: 'black',//'#444',

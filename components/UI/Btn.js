@@ -34,13 +34,14 @@ const Btn = ({ type, onPress, style, children, bgColor, textColor, borderColor, 
 
   return (
     <View style={{
-      ...styles.touchable, backgroundColor: bgColor ? bgColor : btnColor,
-      borderColor: bgColor === 'white'
-        ? Colors.primary
-        : borderColor
-          ? borderColor
-          : 'transparent',
-      borderWidth: borderColor || bgColor === 'white' ? 1 : 0, ...style,
+      ...styles.touchable,
+      backgroundColor: bgColor ? bgColor : btnColor,
+      borderColor: bgColor === 'white' ?
+        Colors.primary :
+        borderColor ? borderColor :
+          'transparent',
+      borderWidth: (borderColor || bgColor === 'white') ? 1 : 0,
+      ...style,
     }}>
       <BtnComponent onPress={onPress}
         activeOpacity={0.7}>
@@ -50,7 +51,14 @@ const Btn = ({ type, onPress, style, children, bgColor, textColor, borderColor, 
 
         }} >
           <Text
-            style={{ ...styles.btnText, color: textColor ? textColor : styles.btnText.color }}>
+            style={{
+              ...styles.btnText,
+              color: textColor ?
+                textColor :
+                (bgColor === 'white' || bgColor == '#fff') ?
+                  Colors.primary :
+                  styles.btnText.color
+            }}>
             {children}
           </Text>
 
@@ -65,14 +73,14 @@ const Btn = ({ type, onPress, style, children, bgColor, textColor, borderColor, 
 const styles = StyleSheet.create({
   touchable: {
     borderRadius: 25,
-    overflow: 'hidden', 
+    overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   button: {
     // maxWidth: 150,
-    width:'100%',
+    width: '100%',
     minWidth: 80,
     paddingVertical: 5,
     paddingHorizontal: 10,

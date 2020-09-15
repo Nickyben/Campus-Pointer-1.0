@@ -12,7 +12,14 @@ import TouchCard from '../../components/UI/TouchCard';
 import Colors from '../../constants/Colors';
 
 const DeptDetailScreen = ({ route }) => {
-  const { id, image, name, designation, office, level, capacity } = route.params.item;
+  //remember to change this and get only the id from the params/rout(ie don't pass an obj through where you are navigating from)
+  //you can then search the obj in your data (eg from db) array with array.find()
+  const {
+    id, image, fullName, designation, department, post,
+    staffNumber, regNumber, phoneNumber, office, gender, level, capacity
+  } = route.params.item;
+
+
   return (
     <View style={styles.screen}>
       <ScrollView
@@ -26,29 +33,33 @@ const DeptDetailScreen = ({ route }) => {
                 style={{
                   ...styles.detailImage,
                   borderWidth: !capacity ? 2 : 0,
-                  borderColor: !capacity? 'white': 'transparent',
+                  borderColor: !capacity ? 'white' : 'transparent',
                   width: !!capacity ? '100%' : 250,
-                  borderRadius: !!capacity? 15: 250/2,
+                  borderRadius: !!capacity ? 15 : 15,//250 / 2,
                 }}
                 source={image}
-
               />
             </View>
           </View>
           <View style={styles.dataContainer}>
             <View style={styles.row}>
               <View style={{ padding: 20, height: 250 }}>
-                {name && <Text style={styles.title}>Name: {name}</Text>}
+                {fullName && <Text style={styles.title} numberOfLines={2}>Name: {
+                  fullName} </Text>}
                 {designation && <Text style={styles.title}>Designation: {designation}</Text>}
                 {office && <Text style={styles.title}>Office: {office}</Text>}
+                {department && <Text style={styles.title}>Department: {department}</Text>}
+                {staffNumber && <Text style={styles.title}>Staff Number: {staffNumber}</Text>}
+                {regNumber && <Text style={styles.title}>Reg Number: {regNumber}</Text>}
+                {gender && <Text style={styles.title}>Gender: {gender}</Text>}
+                {post && <Text style={styles.title}>Post: {post}</Text>}
+                {phoneNumber && <Text style={styles.title}>Phone Number: {phoneNumber}</Text>}
                 {level && <Text style={styles.title}>level: {level}</Text>}
                 {capacity && <Text style={styles.title}>Capacity: {capacity}</Text>}
               </View>
             </View>
           </View>
         </View>
-
-
       </ScrollView>
     </View>
   );
@@ -56,24 +67,17 @@ const DeptDetailScreen = ({ route }) => {
 export const screenOptions = ({ navigation, route: { params } }) => {
   const notificationIcon = Platform.OS == 'android' ? 'md-notifications' : 'ios-notifications';
   const menuIcon = Platform.OS == 'android' ? 'md-menu' : 'ios-menu';
-  const title = params.item.name;
+  const title = params.item;
   return (
     {
-      headerTitle: title,
+      headerTitle: title.fullName,
       headerRight: (props) => (
         <HeaderButtons HeaderButtonComponent={HeaderBtn}>
           <Item
             tile='Notifications'
             iconName={notificationIcon}
             onPress={() => {
-              // navProps.navigation.navigate(
-              //   {
-              //     name: 'Cart',
-              //     params: {
-
-              //     }
-              //   }
-              // );
+             
             }}
           />
         </HeaderButtons>
@@ -95,7 +99,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: Colors.primary,//'black'//,
+    backgroundColor: 'white',//,Colors.primary,
   },
   dataContainer: {
     flex: 1,
@@ -103,7 +107,9 @@ const styles = StyleSheet.create({
     //paddingTop: 20,
     //backgroundColor: '#fff',
     borderTopStartRadius: 70,//please set this wrt screen dimensions
-    //borderTopRadius: 50,
+    borderColor: Colors.primary,
+    borderTopWidth: 1,
+    borderStartWidth: 1,
     overflow: 'hidden',
   },
   row: {
@@ -117,13 +123,14 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.primary,//'black'//,
+    backgroundColor: 'white',//,Colors.primary,//
     paddingVertical: 10,
     paddingBottom: 20,
     paddingHorizontal: 10,
 
   },
   detailImage: {
+    backgroundColor: 'white',
     //width: 250,
     height: 250,
     //borderRadius: 250/2,

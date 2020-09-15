@@ -120,22 +120,7 @@ export const screenOptions = (navProps) => {
               // );
             }}
           />
-          <Item
-            tile='Notifications'
-            iconName={notificationIcon}
-            onPress={() => {
-              // navProps.navigation.navigate(
-              //   {
-              //     name: 'Cart',
-              //     params: {
-
-              //     }
-              //   }
-
-              // );
-
-            }}
-          />
+          
         </HeaderButtons>
       ),
       headerLeft: (props) => (

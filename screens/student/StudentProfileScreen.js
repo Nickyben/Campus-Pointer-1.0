@@ -11,23 +11,14 @@ import SelectOption from '../../components/pointerComponents/SelectOption';
 import HeaderBtn from '../../components/UI/HeaderBtn';
 import TouchCard from '../../components/UI/TouchCard';
 import Colors from '../../constants/Colors';
+import courses from '../../data/courses';
 
-const content = (type) => {
-  const contentArr = [];
-  if (type === 'userCourses') {
-    for (let s = 1; s <= 10; s++) {
-      contentArr.push(
-        {
-          id: Math.random().toString(),
-          courseTitle: `Robotics`,
-          courseCode: `CSE${400 + s}`,
-        }
-      );
-    }
-  }
-  return contentArr;
-}
-const StudentProfileScreen = props => {
+//this should be courses for the present level and courses failed in past (check Student MODEL) ie Student.present
+//and this should be collected at the register/courseApp screen(s)
+const userCourses = courses.filter(c => c.courseLevel === 400);
+
+
+const StudentProfileScreen = ({ navigation }) => {
   let TouchableCmp = TouchableOpacity;
 
   if (Platform.OS === 'android' && Platform.Version >= 21) {
@@ -46,7 +37,16 @@ const StudentProfileScreen = props => {
     </TouchCard>
   );
   const renderItem = ({ item }) => (//auto gets data in obj form , I deStructured it in params
-    <Item content={item} onSelect={() => { }} />
+    <Item
+      content={item}
+      onSelect={() => {
+        navigation.navigate(
+           'CourseDetails',
+           {
+              courseId: item.id
+            }
+        )
+      }} />
   );
 
 
@@ -61,7 +61,7 @@ const StudentProfileScreen = props => {
 
 
   const selectOptionHandler = (optionData) => {
-    console.log(optionData.title);
+    //console.log(optionData.title);
   };
   return (
     <View style={styles.screen}>
@@ -84,18 +84,25 @@ const StudentProfileScreen = props => {
             showsHorizontalScrollIndicator={false}
             //initialNumToRender, refreshing
             keyExtractor={(item, index) => item.id}
-            data={content('userCourses')}
+            data={userCourses}
             renderItem={renderItem}
             horizontal={true}
             contentContainerStyle={styles.listContainer}
           />
         </View>
         <View style={styles.row}>
-          <Text style={styles.rowLabel}>Applications</Text>
+          <Text style={styles.rowLabel}>Course Applications</Text>
           <View style={styles.courseActions}>
             <View style={styles.courseActionContainer}>
               <TouchCard
-                onTouch={() => { }}
+                onTouch={() => {
+                  navigation.navigate(
+                    'CourseApplications',
+                    {
+                      title: 'Register', studentId: '...'
+                    }
+                  )
+                }}
                 style={styles.touchCard}>
                 <View style={styles.actionIconContainer}>
                   <Ionicons
@@ -123,7 +130,14 @@ const StudentProfileScreen = props => {
             </View>
             <View style={styles.courseActionContainer}>
               <TouchCard
-                onTouch={() => { }}
+                onTouch={() => {
+                  navigation.navigate(
+                    'CourseApplications',
+                    {
+                      title: 'Registered', studentId: '...'
+                    }
+                  )
+                }}
                 style={styles.touchCard}>
                 <View style={styles.actionIconContainer}>
                   <Ionicons
@@ -247,8 +261,6 @@ export const screenOptions = (navProps) => {
             tile='Menu'
             iconName={menuIcon}
             onPress={() => {
-              //console.log(navProps);
-              // console.log(props);
               navProps.navigation.toggleDrawer();
             }}
           />
@@ -331,20 +343,28 @@ const styles = StyleSheet.create({
   courseInfoContainer: {
     flex: 1,
     padding: 20,
+    //paddingVertical: 5,
     //justifyContent: 'flex-start',
     //alignItems: 'flex-start',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+
     alignItems: 'center',
+    // backgroundColor: 'red',
   },
   courseTitle: {
     fontFamily: 'OpenSansBold',
     fontSize: 20,
     color: Colors.primary,
+    textAlign: 'center',
+    //marginBottom: 10,
+    //backgroundColor: 'blue',
   },
   courseCode: {
     fontFamily: 'OpenSansBold',
     fontSize: 17,
     color: '#444',
+    textAlign: 'center',
+    //backgroundColor: 'blue',
   },
   courseActions: {
     flex: 1,

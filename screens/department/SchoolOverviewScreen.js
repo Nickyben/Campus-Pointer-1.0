@@ -37,9 +37,8 @@ const SchoolOverviewScreen = ({navigation,route}) => {
   const HEIGHT = useWindowDimensions().height;
   
 
-  const selectOptionHandler = (optionData) => {
-    console.log(optionData.title);
-    navigation.navigate('SchoolOptions', {item: optionData})
+  const selectOptionHandler = ({title}) => {
+    navigation.navigate('SchoolOptions', {title: title});
   };
 
 
@@ -155,8 +154,7 @@ export const screenOptions = (navProps) => {
             tile='Menu'
             iconName={menuIcon}
             onPress={() => {
-              //console.log(navProps);
-              // console.log(props);
+              
               navProps.navigation.toggleDrawer();
             }}
           />

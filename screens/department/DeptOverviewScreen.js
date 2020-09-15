@@ -11,41 +11,21 @@ import { FlatList } from 'react-native-gesture-handler';
 import TouchCard from '../../components/UI/TouchCard';
 import Colors from '../../constants/Colors';
 import Btn from '../../components/UI/Btn';
+import staff from '../../data/staff';
+import students from '../../data/students';
+
+const deptStaff = staff().filter(s => s.department === 'Computer Engineering');
+const deptCourseReps = students().filter(s => s.department  === 'Computer Engineering' && s.post)
 
 const content = (type) => {
   const contentArr = [];
-  if (type === 'staff') {
-    for (let s = 1; s <= 10; s++) {
-      contentArr.push(
-        {
-          id: Math.random().toString(),
-          image: require('../../assets/images/staff.png'),
-          name: 'Nicholas Ikechukwu',
-          designation: 'Software Engineer',
-          office: 'HOD'
-        }
-      );
-    }
-  }
-  else if (type === 'courseReps') {
-    for (let s = 1; s <= 5; s++) {
-      contentArr.push(
-        {
-          id: Math.random().toString(),
-          image: require('../../assets/images/user.png'),
-          name: 'Nicholas Ikechukwu',
-          level: (s * 100).toString(),
-        }
-      );
-    }
-  }
-  else if (type === 'halls') {
+  if (type === 'halls') {
     for (let s = 1; s <= 5; s++) {
       contentArr.push(
         {
           id: Math.random().toString(),
           image: require('../../assets/images/hall2.jpg'),
-          name: 'Hall ' + (s).toString(),
+          fullName: 'Hall ' + (s).toString(),
           capacity: (s * 75),
         }
       );
@@ -55,6 +35,8 @@ const content = (type) => {
 
   return contentArr;
 };
+
+
 
 const DeptOverviewScreen = ({ navigation }) => {
   const WIDTH = useWindowDimensions().width;
@@ -71,7 +53,7 @@ const DeptOverviewScreen = ({ navigation }) => {
   //anyways, this is just a temporary use
 
 
-  const Item = ({ content: { id, name, image, designation, office, level, capacity }, onSelect }) => (
+  const Item = ({ content: { id, fullName, image, designation, office, level, capacity }, onSelect }) => (
     <TouchCard
       useIos
       onTouch={onSelect}
@@ -87,7 +69,8 @@ const DeptOverviewScreen = ({ navigation }) => {
         </View>
         <View style={styles.infoContainer}>
           <View style={styles.titleContainer}>
-            {name && <Text style={styles.title} numberOfLines={2}>{name}</Text>}
+            {fullName && <Text style={styles.title} numberOfLines={2}>{
+              fullName} </Text>}
           </View>
 
           <Btn
@@ -108,16 +91,12 @@ const DeptOverviewScreen = ({ navigation }) => {
   );
   const renderItem = ({ item }) => (//auto gets data in obj form , I deStructured it in params
     <Item content={item} onSelect={() => {
+      //remember to change this and pass only the id to the params/rout(ie don't pass an obj)
       navigation.navigate('DeptDetail', { item: item })
     }} />
   );
 
-  // const DATA = [
-  //   { id: Math.random().toString(), title: 'Department Staff', data: content('staff') },
-  //   { id: Math.random().toString(), title: 'Class Reps', data: content('courseReps') },
-  //   { id: Math.random().toString(), title: 'Halls and Labs', data: content('halls') }
-  // ];
-  // console.log(content('staff'));
+
   return (
 
     <View style={styles.screen}>
@@ -159,7 +138,7 @@ const DeptOverviewScreen = ({ navigation }) => {
             showsHorizontalScrollIndicator={false}
             //initialNumToRender, refreshing
             keyExtractor={(item, index) => item.id}
-            data={content('staff')}
+            data={deptStaff}
             renderItem={renderItem}
             horizontal={true}
             contentContainerStyle={styles.listContainer}
@@ -171,7 +150,7 @@ const DeptOverviewScreen = ({ navigation }) => {
             showsHorizontalScrollIndicator={false}
             //initialNumToRender, refreshing
             keyExtractor={(item, index) => item.id}
-            data={content('courseReps')}
+            data={deptCourseReps}
             renderItem={renderItem}
             horizontal={true}
             contentContainerStyle={styles.listContainer}

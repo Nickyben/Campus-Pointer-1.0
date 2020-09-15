@@ -13,7 +13,7 @@ import { AppLoading } from 'expo';
 //import {composeWithDevTools}from 'redux-dev...(close the ...)tools-extension';//use when you want to monitor your redux state,actions,reducers etc on the RN debugger
 //to use it, run: npm install --save-dev redux-dev...(close the ...)tools-extension, pass composeWithDevTools as 2nd arg to createStore
 import AppNavigator from './navigation/AppNavigator';
-
+import courseAppReducer from './store/reducers/courseAppReducer';
 
 enableScreens(); //useScreens(); is for lower versions of expo and react-native
 
@@ -22,9 +22,9 @@ const rootReducer = combineReducers({
   studentRed: () => {
     return null;
   },
-  //   cartRed: cartReducer,
-  //   ordersRed: ordersReducer,
-  //   authRed: authReducer
+    courseAppReducer: courseAppReducer,
+    // ordersRed: ordersReducer,
+    // authRed: authReducer
 });
 
 //creates the store with the rootReducer as arg
