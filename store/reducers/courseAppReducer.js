@@ -6,47 +6,78 @@ const initialState = {
   addedCourses: [],
   droppedCourses: [],
   excessCreditCourses: [],
-  markedCourses: []
+  markedCourses: [],
 };
 
 export default (state = initialState, action) => {
+
   switch (action.type) {
-    case REGISTER_COURSES:
-      //console.log(action.submittedCourses);
+    
+    case REGISTER_COURSES:      const sorted = action.submittedCourses.sort((a, b) =>( a.courseCode < b.courseCode && a.courseCode - b.courseCode)
+        || (a.courseCode > b.courseCode && b.courseCode - a.courseCode));
+
+      console.log(sorted.map(c=> c.courseCode));
       return (
         {
           ...state,
-          registeredCourses: action.submittedCourses,//do you want to replace or add??
+          registeredCourses: sorted,//do you want to replace or add??
           markedCourses: [],
         }
       );
     case MARK_COURSE:
-      // console.log(state.markedCourses);
+      if (action.mark) {
+        return ({
 
-      return ({
-        ...state,
-        markedCourses: state.markedCourses.includes(action.markedCourse) ?
-          [...state.markedCourses].filter(course => course !== action.markedCourse) :
-          [...state.markedCourses].concat(action.markedCourse),
-      });
-    case MARK_ALL_COURSES:
-     
-
-      const notMarked = action.markedCourses.filter(course =>
-        !state.markedCourses.includes(course)
-      );
-      //console.warn('returning state with: ' + notMarked)
-      //console.warn('state: ' + state.markedCourses)
-
-      return (
-        {
           ...state,
-          markedCourses: action.markedCourses.every(course =>
-            state.markedCourses.includes(course)
-          ) ?
-            [...state.markedCourses].filter(course => !action.markedCourses.includes(course)):
-            [...state.markedCourses].concat(notMarked),
+          markedCourses: !state.markedCourses.includes(action.markedCourse) ?
+            [...state.markedCourses].concat(action.markedCourse) :
+            state.markedCourses,
         });
+      } else {
+        return ({
+          ...state,
+          markedCourses: state.markedCourses.includes(action.markedCourse) ?
+            [...state.markedCourses].filter(course => course !== action.markedCourse) :
+            state.markedCourses,
+        });
+
+      }
+
+
+    case MARK_ALL_COURSES:
+
+
+      const withoutThoseInSection = state.markedCourses.filter(course => !action.markedCourses.includes(course));
+      if (action.mark) {
+
+        return ({
+          ...state,
+          markedCourses: !action.markedCourses.every(course =>
+            state.markedCourses.includes(course)) ?
+            withoutThoseInSection.concat(action.markedCourses) :
+            state.markedCourses,
+        });
+      } else {
+        return (
+          {
+            ...state,
+            markedCourses: action.markedCourses.every(course =>
+              state.markedCourses.includes(course)) ?
+              state.markedCourses.filter(course => !action.markedCourses.includes(course)) :
+              state.markedCourses,
+              
+          });
+      }
+
+
+      // return (
+      //   {
+      //     ...state,
+      //     markedAllCourses: action.markedAllCourses.every(course =>
+      //       state.markedAllCourses.includes(course)) ?
+      //       state.markedAllCourses.filter(course => !action.markedAllCourses.includes(course)) :
+      //       withoutThoseInSection.concat(action.markedAllCourses),
+      //   });
 
   }
   return state;

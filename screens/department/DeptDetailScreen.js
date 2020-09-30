@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   StyleSheet, ScrollView, Text,
   View, StatusBar, Platform, TouchableOpacity, TouchableNativeFeedback, Image, useWindowDimensions
@@ -10,15 +11,66 @@ import Card from '../../components/UI/Card';
 import { FlatList } from 'react-native-gesture-handler';
 import TouchCard from '../../components/UI/TouchCard';
 import Colors from '../../constants/Colors';
+import { fetchDeptData } from '../../store/actions/dataActions';
 
-const DeptDetailScreen = ({ route }) => {
-  //remember to change this and get only the id from the params/rout(ie don't pass an obj through where you are navigating from)
-  //you can then search the obj in your data (eg from db) array with array.find()
-  const {
-    id, image, fullName, designation, department, post,
-    staffNumber, regNumber, phoneNumber, office, gender, level, capacity
-  } = route.params.item;
 
+const DeptDetailScreen = ({ navigation, route: { params: { title, itemId, item } } }) => {
+  const dispatch = useDispatch();
+  const loadData = useCallback(async () => {
+    //   setError(null);
+    //   setIsRefreshing(true)
+    //try {
+    await dispatch(fetchDeptData());
+
+    //catch (err) {
+    //     setError(err.message);
+    //   }
+    //   setIsRefreshing(false);
+  }, [dispatch]);//setIsLoading is handled already by react,
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', loadData);
+
+    //clean up function to run when effect is about to rerun or when component is destroyed or unmounted
+    return (() => {
+      unsubscribe();
+    });
+  }, [loadData]);
+
+
+  useEffect(//will run only when the component loads and not again unless dependencies change
+    //don't use async keyword here, instead, use .then() after the dispatch()
+    () => {
+      //     setIsLoading(true);
+      loadData().then(() => {
+        //       setIsLoading(false);
+      });
+    }
+    , [dispatch, loadData]);
+
+  const allItems = title === 'Staff' ?
+    useSelector(state => state.dataReducer.availableStaff) :
+    title === 'Student' ?
+      useSelector(state => state.dataReducer.availableStudents) :
+      title === 'Hall' ? useSelector(state => state.dataReducer.availableHalls) :
+        title === 'Event' ? useSelector(state => state.dataReducer.availableEvents) :
+          [];
+
+  const itemObj = {
+    id, image, fullName, designation,rank, department, post,
+    staffNumber, regNumber, phoneNumber, office, gender, level, capacity,
+    date, time, type, venue, honours
+  } = allItems && allItems.length !== 0 ?
+      allItems.find(item => {
+        return item.id === itemId
+      }) :
+      item;
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle: fullName ? fullName : itemObj.title,
+    });
+  });
 
   return (
     <View style={styles.screen}>
@@ -32,8 +84,8 @@ const DeptDetailScreen = ({ route }) => {
               <Image
                 style={{
                   ...styles.detailImage,
-                  borderWidth: !capacity ? 2 : 0,
-                  borderColor: !capacity ? 'white' : 'transparent',
+                  //borderWidth: !capacity ? 2 : 0,
+                  //borderColor: !capacity ? 'white' : 'transparent',
                   width: !!capacity ? '100%' : 250,
                   borderRadius: !!capacity ? 15 : 15,//250 / 2,
                 }}
@@ -43,19 +95,59 @@ const DeptDetailScreen = ({ route }) => {
           </View>
           <View style={styles.dataContainer}>
             <View style={styles.row}>
-              <View style={{ padding: 20, height: 250 }}>
-                {fullName && <Text style={styles.title} numberOfLines={2}>Name: {
-                  fullName} </Text>}
-                {designation && <Text style={styles.title}>Designation: {designation}</Text>}
-                {office && <Text style={styles.title}>Office: {office}</Text>}
-                {department && <Text style={styles.title}>Department: {department}</Text>}
-                {staffNumber && <Text style={styles.title}>Staff Number: {staffNumber}</Text>}
-                {regNumber && <Text style={styles.title}>Reg Number: {regNumber}</Text>}
-                {gender && <Text style={styles.title}>Gender: {gender}</Text>}
-                {post && <Text style={styles.title}>Post: {post}</Text>}
-                {phoneNumber && <Text style={styles.title}>Phone Number: {phoneNumber}</Text>}
-                {level && <Text style={styles.title}>level: {level}</Text>}
-                {capacity && <Text style={styles.title}>Capacity: {capacity}</Text>}
+              <View style={{ padding: 20, paddingTop: 40, }}>
+                <View>
+                  {(fullName || designation ||rank||(department && !venue) || staffNumber || regNumber) && <View style={{ marginBottom: 20 }}>
+                    {fullName && <View style={styles.detailContainer}><Text style={styles.title}>Name:</Text><Text style={styles.detail}>{fullName}</Text></View>}
+                    {designation && <View style={styles.detailContainer}><Text style={styles.title}>Designation:</Text><Text style={styles.detail}>{designation}</Text></View>}
+                    {rank && <View style={styles.detailContainer}><Text style={styles.title}>Rank:</Text><Text style={styles.detail}>{rank}</Text></View>}
+                    {department && !venue && <View style={styles.detailContainer}><Text style={styles.title}>Department:</Text><Text style={styles.detail}>{department}</Text></View>}
+                    {staffNumber && <View style={styles.detailContainer}><Text style={styles.title}>Staff Number:</Text><Text style={styles.detail}>{staffNumber}</Text></View>}
+                    {regNumber && <View style={styles.detailContainer}><Text style={styles.title}>Reg Number:</Text><Text style={styles.detail}>{regNumber}</Text></View>}
+
+                  </View>}
+
+                  {(level || post || office|| honours) && <View style={{ marginBottom: 20 }}>
+                    {level && <View style={styles.detailContainer}><Text style={styles.title}>Level:</Text><Text style={styles.detail}>{level}</Text></View>}
+                    {post && <View style={styles.detailContainer}><Text style={styles.title}>Post:</Text><Text style={styles.detail}>{post}</Text></View>}
+                    {office && <View style={styles.detailContainer}><Text style={styles.title}>Office:</Text><Text style={styles.detail}>{office}</Text></View>}
+                    {honours &&
+                      <View style={styles.detailContainer}>
+                        <Text style={styles.title}>Honours:</Text>
+                        <View style={{ flex: styles.detail.flex, flexDirection: 'column', }}>
+                          {
+                            honours.map((h, i) =>
+                              <View key={i} style={{
+                                flex: styles.detail.flex,
+                                flexDirection: 'column',
+                                marginTop: i>0? 10: 0
+                              }}>
+                                <Text style={styles.detail}>{h.title}</Text>
+                                <Text style={styles.detail}>{h.year}</Text>
+                              </View>)
+                          }
+                        </View>
+
+                      </View>
+
+                    }
+                  </View>}
+
+                  <View style={{ marginBottom: 20 }}>
+                    {phoneNumber && <View style={styles.detailContainer}><Text style={styles.title}>Phone Number:</Text><Text style={styles.detail}>{phoneNumber}</Text></View>}
+                    {gender && <View style={styles.detailContainer}><Text style={styles.title}>Gender:</Text><Text style={styles.detail}>{gender}</Text></View>}
+                    {capacity && <View style={styles.detailContainer}><Text style={styles.title}>Capacity:</Text><Text style={styles.detail}>{capacity}</Text></View>}
+                    {itemObj.title && <View style={styles.detailContainer}><Text style={styles.title}>Event Title:</Text><Text style={styles.detail}>{itemObj.title}</Text></View>}
+                    {type && <View style={styles.detailContainer}><Text style={styles.title}>Event Type:</Text><Text style={styles.detail}>{type}</Text></View>}
+                    {date && <View style={styles.detailContainer}><Text style={styles.title}>Date:</Text><Text style={styles.detail}>{date}</Text></View>}
+                    {time && <View style={styles.detailContainer}><Text style={styles.title}>Time:</Text><Text style={styles.detail}>{time}</Text></View>}
+                    {venue && <View style={styles.detailContainer}><Text style={styles.title}>Venue:</Text><Text style={styles.detail}>{venue}</Text></View>}
+
+                  </View>
+
+
+                </View>
+
               </View>
             </View>
           </View>
@@ -66,18 +158,15 @@ const DeptDetailScreen = ({ route }) => {
 };
 export const screenOptions = ({ navigation, route: { params } }) => {
   const notificationIcon = Platform.OS == 'android' ? 'md-notifications' : 'ios-notifications';
-  const menuIcon = Platform.OS == 'android' ? 'md-menu' : 'ios-menu';
-  const title = params.item;
   return (
     {
-      headerTitle: title.fullName,
       headerRight: (props) => (
         <HeaderButtons HeaderButtonComponent={HeaderBtn}>
           <Item
             tile='Notifications'
             iconName={notificationIcon}
             onPress={() => {
-             
+
             }}
           />
         </HeaderButtons>
@@ -90,12 +179,10 @@ export const screenOptions = ({ navigation, route: { params } }) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    //justifyContent: 'center',
-    // alignItems: 'center',
+    backgroundColor: '#f3f6f7',    // alignItems: 'center',
   },
   scroll: {
     width: '100%',
-
   },
   container: {
     flex: 1,
@@ -104,19 +191,11 @@ const styles = StyleSheet.create({
   dataContainer: {
     flex: 1,
     marginTop: 20,
-    //paddingTop: 20,
-    //backgroundColor: '#fff',
     borderTopStartRadius: 70,//please set this wrt screen dimensions
-    borderColor: Colors.primary,
-    borderTopWidth: 1,
-    borderStartWidth: 1,
     overflow: 'hidden',
   },
   row: {
-
-    borderBottomColor: '#e7e7e7',
-
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f3f6f7',
 
   },
   detailImageContainer: {
@@ -135,6 +214,36 @@ const styles = StyleSheet.create({
     height: 250,
     //borderRadius: 250/2,
   },
+
+  detailContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    //marginBottom: 15,
+    //borderTopLeftRadius: 15,
+    //borderTopRightRadius: 15,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#f5f5f5',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+
+  },
+  detail: {
+    fontFamily: 'OpenSansBold',
+    fontSize: 14,
+    color: '#333',
+    textAlign: 'justify',
+    //backgroundColor: 'red',
+    flex: 1.2,
+  },
+  title: {
+    fontFamily: 'OpenSansBold',
+    fontSize: 16,
+    color: Colors.primary,//'#333',
+    flex: 1,
+
+  },
+
 });
 
 export default DeptDetailScreen;

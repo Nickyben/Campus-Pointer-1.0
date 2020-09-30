@@ -8,15 +8,28 @@ import { Ionicons } from '@expo/vector-icons';
 
 import Touch from './Touch';
 
-const TouchIcon = ({ onTouch, touched, toggleIcons, size, name, color }) => {
+const TouchIcon = ({ disabled, useIos, onTouch, touched, toggleIcons, size, name, color, style, borderColor }) => {
+  //const [icon, setIcon] = useState(Platform.OS === 'android' ? `md-${toggleIcons[0]}` : `ios-${toggleIcons[0]}`);
 
+  // const changeIconHandler = () => {
+  //   setIcon(prev =>
+  //     (icon === `md-${toggleIcons[0]}`) || (prev === `ios-${toggleIcons[0]}`) ?
+  //       Platform.OS === 'android' ? `md-${toggleIcons[1]}` : `ios-${toggleIcons[1]}` :
+  //       Platform.OS === 'android' ? `md-${toggleIcons[0]}` : `ios-${toggleIcons[0]}`
+
+  //   );
+  //   onTouch();
+  // }
   return (
     <View style={{
-      borderRadius: 20,
-      overflow: 'hidden'
+      ...styles.container, ...style,
+      borderColor: borderColor,
+      borderWidth: borderColor ? 1 : 0,
     }}>
       <Touch
-        onTouch={onTouch}
+        disabled={disabled}
+        onTouch={onTouch}//{changeIconHandler}
+        useIos={useIos}
         style={{
           width: size + 10,
           height: size + 10,
@@ -25,9 +38,12 @@ const TouchIcon = ({ onTouch, touched, toggleIcons, size, name, color }) => {
         }}>
         <Ionicons
           name={
-            touched() ?
-              Platform.OS === 'android' ? `md-${toggleIcons[1]}` : `ios-${toggleIcons[1]}` :
-              Platform.OS === 'android' ? `md-${toggleIcons[0]}` : `ios-${toggleIcons[0]}` //initial state
+            //icon
+            toggleIcons ?
+              touched() ?
+                Platform.OS === 'android' ? `md-${toggleIcons[1]}` : `ios-${toggleIcons[1]}` :
+                Platform.OS === 'android' ? `md-${toggleIcons[0]}` : `ios-${toggleIcons[0]}` //initial state
+              : Platform.OS === 'android' ? `md-${name}` : `ios-${name}`
           }
           size={size}
           color={color}
@@ -39,7 +55,10 @@ const TouchIcon = ({ onTouch, touched, toggleIcons, size, name, color }) => {
 };
 
 const styles = StyleSheet.create({
-
+  container: {
+    borderRadius: 20,
+    overflow: 'hidden'
+  }
 });
 
 export default TouchIcon;

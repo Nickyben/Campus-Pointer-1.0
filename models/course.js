@@ -13,4 +13,8 @@ class Course {
   };
 }
 
+// const obj = new Course(2,3,5,6,3,4,5,6,7,7,4);
+// obj.semester= 23;
+// console.log(obj);
+
 export default Course;

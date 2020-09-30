@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Platform, SafeAreaView, Button, View,
-  TouchableOpacity, TouchableNativeFeedback, Text, Image
+  TouchableOpacity, TouchableNativeFeedback, Text, Image, ImageBackground
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -36,12 +36,18 @@ import SchoolOptionsScreen, {
 import CourseDetailsScreen, {
   screenOptions as courseDetailsScreenOpts
 } from '../screens/department/CourseDetailsScreen';
+
 import HomeScreen, {
   screenOptions as homeScreenOpts
 } from '../screens/pointerApp/HomeScreen';
+
 import AssocOverviewScreen, {
   screenOptions as assocScreenOpts
 } from '../screens/department/AssocOverviewScreen';
+import AssocOptionsScreen, {
+  screenOptions as assocOptionsScreenOpts
+} from '../screens/department/AssocOptionsScreen';
+
 import StudentProfileScreen, {
   screenOptions as stdProfScreenOpts
 } from '../screens/student/StudentProfileScreen';
@@ -134,7 +140,7 @@ const DeptStackNavigator = () => {
         options={deptScreenOpts}
       />
       <DeptStackNav.Screen
-        name='DeptDetail'
+        name='DeptDetails'
         component={DeptDetailScreen}
         options={deptDetailScreenOpts}
       />
@@ -195,7 +201,7 @@ const SchoolStackNavigator = () => {
       />
 
       <SchoolStackNav.Screen
-        name='DeptDetail'
+        name='DeptDetails'
         component={DeptDetailScreen}
         options={deptDetailScreenOpts}
       />
@@ -239,16 +245,16 @@ const AssocStackNavigator = () => {
         component={AssocOverviewScreen}
         options={assocScreenOpts}
       />
-      {/* <AssocStackNav.Screen
-        name='ProductDetail'
-        component={ProductDetailScreen}
-        options={prodDetailScreenOptions}
+      <AssocStackNav.Screen
+        name='AssocOptions'
+        component={AssocOptionsScreen}
+        options={assocOptionsScreenOpts}
       />
       <AssocStackNav.Screen
-        name='Cart'
-        component={CartScreen}
-        options={cartScreenOptions}
-      /> */}
+        name='DeptDetails'
+        component={DeptDetailScreen}
+        options={deptDetailScreenOpts}
+      />
     </AssocStackNav.Navigator>
   );
 };
@@ -263,8 +269,8 @@ const StdProfStackNavigator = () => {
         component={StudentProfileScreen}
         options={stdProfScreenOpts}
       />
-       <StdProfStackNav.Screen
-         name='CourseDetails'
+      <StdProfStackNav.Screen
+        name='CourseDetails'
         component={CourseDetailsScreen}
         options={courseDetailsScreenOpts}
       />
@@ -276,7 +282,7 @@ const StdProfStackNavigator = () => {
       />
 
       <StdProfStackNav.Screen
-        name='DeptDetail'
+        name='DeptDetails'
         component={DeptDetailScreen}
         options={deptDetailScreenOpts}
       />
@@ -398,79 +404,84 @@ export const PointerDrawerNavigator = () => {
 
             <DrawerContentScrollView {...props} style={{ flex: 1, height: '100%', backgroundColor: Colors.switchPrimary }}
               contentContainerStyle={{ height: '100%', }}>
-              <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: 'white' }}>
+              <ImageBackground
+                style={{ width: '100%', height: '100%' }}
+                source={require('../assets/images/me.jpg')} 
+              ><View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: '#fffd' }}>
 
-                <View>
-                  <View style={{
-                    padding: 20,
-                    width: '100%',
-                    height: 140,
-                    backgroundColor: Colors.switchPrimary,
-                    // flexDirection: 'row',
-                    justifyContent: "space-between",
-                    alignItems: 'center',
+                  <View>
+                    <View style={{
+                      padding: 20,
+                      width: '100%',
+                      height: 140,
+                      backgroundColor: Colors.switchPrimary,
+                      // flexDirection: 'row',
+                      justifyContent: "space-between",
+                      alignItems: 'center',
 
-                  }}>
-                    {/* <TouchableCmp > */}
-                    <TouchableCmp
-                      onPress={() => { console.log('working') }} style={{
-                        width: 100, height: 100,
-                        borderRadius: 50,
-                        //borderRadius: 50,
-                        backgroundColor: Colors.primary
-                      }}>
-                      <Image
-                        source={require('../assets/images/user.png')}
-                        style={{
+                    }}>
+                      {/* <TouchableCmp > */}
+                      <TouchableCmp
+                        onPress={() => { console.log('working') }} style={{
                           width: 100, height: 100,
                           borderRadius: 50,
-                          borderColor: '#f7f7f7',
-                          borderWidth: 2,
-                        }} />
-                    </TouchableCmp>
-                    {/* <View style={{
+                          //borderRadius: 50,
+                          backgroundColor: Colors.primary
+                        }}>
+                        <Image
+                          source={require('../assets/images/user.png')}
+                          style={{
+                            width: 100, height: 100,
+                            borderRadius: 50,
+                            borderColor: '#f7f7f7',
+                            borderWidth: 2,
+                          }} />
+                      </TouchableCmp>
+                      {/* <View style={{
                       //width: '70%', height: '100%',
                       borderRadius: 8,
                       backgroundColor: '#f8f8f8'
                     }}>
                     </View> */}
+                    </View>
+
+
+                    <DrawerItemList {...props} itemStyle={{
+                      // marginHorizontal: 0, 
+                      //borderRadius: 0 
+                    }} />
                   </View>
-                  <DrawerItemList {...props} itemStyle={{
-                    // marginHorizontal: 0, 
-                    //borderRadius: 0 
-                  }} />
-                </View>
-                <View style={{}}>
-                  <DrawerItem {...props}
-                    style={{
-                      marginHorizontal: 0,
-                      marginVertical: 0,
-                      padding: 10,
-                      borderRadius: 0,
-                      //marginTop: '95%',color: '#fff', 
-                      backgroundColor: Colors.switchPrimary//'#ff2244',
-                    }
-                    }
-                    label='Logout'
-                    labelStyle={{
-                      color: Colors.switchWhite,
-                      fontSize: 17,
-                      fontFamily: 'OpenSansBold',
-                    }}
-                    icon={
-                      ({ focused, color, size }) =>
-                        <Ionicons name='ios-log-out' size={size + 1}
-                          color={Colors.switchWhite}
-                        //color={color}
-                        />
-                    }
-                    onPress={() => {
-                      //dispatch(authActions.logout());
-                      //props.navigation.navigate('Auth')//already handled by the renderer(AppNavigator) of the ShopNavigator @ app.js
-                    }}
-                  />
-                </View>
-              </View>
+                  <View style={{}}>
+                    <DrawerItem {...props}
+                      style={{
+                        marginHorizontal: 0,
+                        marginVertical: 0,
+                        padding: 10,
+                        borderRadius: 0,
+                        //marginTop: '95%',color: '#fff', 
+                        backgroundColor: Colors.switchPrimary//'#ff2244',
+                      }
+                      }
+                      label='Logout'
+                      labelStyle={{
+                        color: Colors.switchWhite,
+                        fontSize: 17,
+                        fontFamily: 'OpenSansBold',
+                      }}
+                      icon={
+                        ({ focused, color, size }) =>
+                          <Ionicons name='ios-log-out' size={size + 1}
+                            color={Colors.switchWhite}
+                          //color={color}
+                          />
+                      }
+                      onPress={() => {
+                        //dispatch(authActions.logout());
+                        //props.navigation.navigate('Auth')//already handled by the renderer(AppNavigator) of the ShopNavigator @ app.js
+                      }}
+                    />
+                  </View>
+                </View></ImageBackground>
             </DrawerContentScrollView>
 
           );

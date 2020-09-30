@@ -19,7 +19,7 @@ const CourseDetailsScreen = ({ navigation, route: { params } }) => {
 
   const viewPersonHandler = (item) => {
     //console.log('I\'m here')
-    navigation.navigate('DeptDetail', { item: item });
+    navigation.navigate('DeptDetails', { item: item, itemId: item.id, title: item.constructor.name })
   };
 
   return (
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     //paddingTop: 0,
     padding: 20,
     borderTopRightRadius: 70,
-    backgroundColor: '#f7f7f7'
+    backgroundColor: '#f3f6f7',//'#f5f5f5',
     //overflow
   },
   content: {

@@ -186,19 +186,19 @@ const styles = StyleSheet.create({
 optionsContainer:{
   marginTop: 20,
   paddingTop: 20,
-  backgroundColor: '#f5f5f5',
+  backgroundColor: '#f3f6f7',//'#f5f5f5',
   borderRadius: 50,
   overflow: 'hidden',
   
 },
-  row: {
+  row: { 
     flex: 1,
-    paddingHorizontal: '3%',
+    paddingHorizontal: '2%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#f5f5f5',
-    paddingVertical: 10,
-
+    backgroundColor: '#f3f6f7',//'#f5f5f5',
+    paddingVertical: 5,
+ 
   },
 
 

@@ -41,10 +41,10 @@ const StudentProfileScreen = ({ navigation }) => {
       content={item}
       onSelect={() => {
         navigation.navigate(
-           'CourseDetails',
-           {
-              courseId: item.id
-            }
+          'CourseDetails',
+          {
+            courseId: item.id
+          }
         )
       }} />
   );
@@ -201,7 +201,9 @@ const StudentProfileScreen = ({ navigation }) => {
 
         <View style={{ ...styles.row, }}>
           <Text style={styles.rowLabel}>Reports</Text>
-          <View style={styles.courseActions}>
+          <View style={{
+            ...styles.courseActions, paddingHorizontal: '3%', marginTop: 10,
+          }}>
             <SelectOption
               style={styles.selectOption}
               data={resultOptions[0]} icon='analytics'
@@ -212,7 +214,9 @@ const StudentProfileScreen = ({ navigation }) => {
               color={'#44ffb0'} onSelect={selectOptionHandler} />
           </View>
 
-          <View style={styles.courseActions}>
+          <View style={{
+            ...styles.courseActions, paddingHorizontal: '3%', marginTop:10,
+          }}>
             <SelectOption
               style={styles.selectOption}
               data={resultOptions[2]} icon='pie'
@@ -285,21 +289,22 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 250,
     // borderTopColor: '#fff',
-    borderBottomColor: '#e7e7e7',
+    borderBottomColor: '#cacccf',
     // borderTopWidth: 3,
-    // borderBottomWidth: 3,
-    backgroundColor: '#efefef',
+    borderBottomWidth: 1,    
+    backgroundColor: '#ebeeef',
     paddingVertical: 10,
 
   },
   row: {
     flex: 1,
     //maxHeight: 350,
-    borderTopColor: '#fdfdfd',
-    borderBottomColor: '#ededed',
+    borderTopColor: '#fdffff',
+    //borderBottomColor: '#eaecef',
+    borderBottomColor: '#cacccf',
     borderTopWidth: 2,
-    borderBottomWidth: 2,
-    backgroundColor: '#f5f5f5',
+    borderBottomWidth: 1,
+    backgroundColor: '#f3f6f7',//'#f5f5f5',
     //backgroundColor: 'blue',
     alignItems: 'center',
     paddingVertical: 10,
@@ -372,7 +377,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
     //backgroundColor: 'red',
     maxWidth: 600,
     //alignItems: 'center',

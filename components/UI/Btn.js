@@ -9,11 +9,12 @@ import {
   Dimensions,
   Platform
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import Colors from '../../constants/Colors';
 
 
-const Btn = ({ type, onPress, style, children, bgColor, textColor, borderColor, }) => {
+const Btn = ({ type, onPress, disabled, style, children, bgColor, textColor, borderColor, icon, }) => {
 
   let BtnComponent = TouchableOpacity;
 
@@ -21,13 +22,13 @@ const Btn = ({ type, onPress, style, children, bgColor, textColor, borderColor, 
     BtnComponent = TouchableNativeFeedback;
   }
 
-  let btnColor = Colors.primary
+  let btnColor = !disabled ? Colors.primary : Colors.primary + '77';
   switch (type) {
     case 'accent':
-      btnColor = Colors.accent;
+      btnColor = !disabled ? Colors.accent : Colors.accent + '77';
       break;
     case 'accent2':
-      btnColor = Colors.accent2;
+      btnColor = !disabled ? Colors.accent2 : Colors.accent2 + '77';
       break;
   }
 
@@ -35,7 +36,7 @@ const Btn = ({ type, onPress, style, children, bgColor, textColor, borderColor, 
   return (
     <View style={{
       ...styles.touchable,
-      backgroundColor: bgColor ? bgColor : btnColor,
+      backgroundColor: bgColor ? !disabled ? bgColor : bgColor + '77' : btnColor,
       borderColor: bgColor === 'white' ?
         Colors.primary :
         borderColor ? borderColor :
@@ -44,7 +45,10 @@ const Btn = ({ type, onPress, style, children, bgColor, textColor, borderColor, 
       ...style,
     }}>
       <BtnComponent onPress={onPress}
-        activeOpacity={0.7}>
+        activeOpacity={0.7}
+        disabled={disabled}
+      >
+
         <View style={{
           ...styles.button,
 
@@ -61,7 +65,18 @@ const Btn = ({ type, onPress, style, children, bgColor, textColor, borderColor, 
             }}>
             {children}
           </Text>
+          {icon &&
+            <View style={{ marginLeft: 10 }}>
+              <Ionicons
+                name={
+                  Platform.OS === 'android' ? `md-${icon.iconName}` : `ios-${icon.iconName}`
+                }
+                size={23}
+                color='#fff'
+              />
+            </View>
 
+          }
         </View>
       </BtnComponent>
     </View>
@@ -83,9 +98,11 @@ const styles = StyleSheet.create({
     width: '100%',
     minWidth: 80,
     paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     borderRadius: 25,
-
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    flexDirection: 'row'
   },
 
   btnText: {

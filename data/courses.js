@@ -1,11 +1,11 @@
 import Course from '../models/course';
 import staff from '../data/staff';
 
-const templateCoordinator = staff().find(s => (s.designation === 'Senior Staff' && s.department === 'Computer Engineering'));
+const templateCoordinator = staff.find(s => (s.designation === 'Senior Staff' && s.department === 'Computer Engineering'));
 const templateLecturers = [];
-for (let i = 1; i <= staff().length; i++) {
-  if (staff()[i].department === 'Computer Engineering' && staff()[i].isAcademic === true) {
-    templateLecturers.push(staff()[i]);
+for (let i = 1; i <= staff.length; i++) {
+  if (staff[i].department === 'Computer Engineering' && staff[i].isAcademic === true) {
+    templateLecturers.push(staff[i]);
     if (templateLecturers.length === 5) break;
   }
 

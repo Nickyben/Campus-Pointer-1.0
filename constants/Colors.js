@@ -7,10 +7,9 @@ let Colors, primary, primary2, switchPrimary, switchPrimary2, switchWhite, accen
   success, error, warning, divider;
 
 primary2 = '#00afdf';
-primary = '#00a7e7'; //'#e700a7';//'#a700e7';//
-accent = '#2a8fff';
-accent2 = '#ff7f0a';
-
+primary ='#00a7e7'; //'#e700a7';// '#a700e7';//
+accent = '#7787e7';//'#64d797';
+accent2 = '#ef7f0a';
 white = '#fff';
 black = '#000';
 grey0 = '#888899';
@@ -30,11 +29,11 @@ grey_6 = '#111122';
 greyOutline = '#ccc';
 searchBg = '#eee';
 success = '#ccffdd'
-error = '#ffddcc';
+error = '#ffeeee';
 warning = '#ffddaa'
 divider = '#ddd';
 
-if (Platform.OS == 'ios') {
+if (Platform.OS == 'android') {
   switchPrimary = primary;
   switchPrimary2 = primary2;
   switchAccent = accent;

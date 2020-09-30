@@ -11,7 +11,7 @@ import HeaderBtn from '../../components/UI/HeaderBtn';
 import Colors from '../../constants/Colors';
 import SelectOption from '../../components/pointerComponents/SelectOption';
 
-const AssocOverviewScreen = props => {
+const AssocOverviewScreen = ({ navigation }) => {
   const WIDTH = useWindowDimensions().width;
   const HEIGHT = useWindowDimensions().height;
   const sliderImages = [
@@ -25,24 +25,20 @@ const AssocOverviewScreen = props => {
   const assocOptions = [
     { id: Math.random().toString(), title: 'Offices' },
     { id: Math.random().toString(), title: 'Events Table' },
-    { id: Math.random().toString(), title: 'Hall of Fame' },
-    { id: Math.random().toString(), title: 'Election' },
+    { id: Math.random().toString(), title: 'Hall of Honours' },
+    { id: Math.random().toString(), title: 'Elections Portal' },
     { id: Math.random().toString(), title: 'Dues and Payments' },
     { id: Math.random().toString(), title: 'Souvenir and Uniforms' },
+    { id: Math.random().toString(), title: 'Projects' },
+
   ];
 
 
 
-  const selectOptionHandler = (optionData) => {
-    console.log(optionData.title);
+  const selectOptionHandler = ({ title }) => {
+    navigation.navigate('AssocOptions', { title: title });
   };
 
-
-
-
-  const renderItem = ({ item }) => (//auto gets data in obj form , I deStructured it in params
-    <Item content={item} />
-  );
 
   return (
     <View style={styles.screen}
@@ -81,7 +77,7 @@ const AssocOverviewScreen = props => {
           />
         </View>
 
-       <View style={styles.optionsContainer}>
+        <View style={styles.optionsContainer}>
           <View style={styles.row}>
             <SelectOption
               data={assocOptions[0]} icon='person'
@@ -112,13 +108,13 @@ const AssocOverviewScreen = props => {
           </View>
           <View style={styles.row}>
             <SelectOption
-              data={assocOptions[2]} icon='analytics'
+              data={assocOptions[6]} icon='analytics'
               color={'#ff11b0'} onSelect={selectOptionHandler} />
             <SelectOption
               data={assocOptions[4]} icon='analytics'
               color={'#44ffb0'} onSelect={selectOptionHandler} />
           </View>
-       </View>
+        </View>
         {/* <Text>{WIDTH}</Text>
         <Text>{ HEIGHT}</Text> */}
       </ScrollView>
@@ -138,14 +134,7 @@ export const screenOptions = (navProps) => {
             tile='Notifications'
             iconName={notificationIcon}
             onPress={() => {
-              // navProps.navigation.navigate(
-              //   {
-              //     name: 'Cart',
-              //     params: {
 
-              //     }
-              //   }
-              // );
             }}
           />
         </HeaderButtons>
@@ -156,8 +145,6 @@ export const screenOptions = (navProps) => {
             tile='Menu'
             iconName={menuIcon}
             onPress={() => {
-              //console.log(navProps);
-              // console.log(props);
               navProps.navigation.toggleDrawer();
             }}
           />
@@ -191,17 +178,19 @@ const styles = StyleSheet.create({
   optionsContainer: {
     marginTop: 20,
     paddingTop: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f3f6f7',//'#f5f5f5',
     borderRadius: 50,
     overflow: 'hidden',
   },
   row: {
     flex: 1,
-    paddingHorizontal: '3%',
+    paddingHorizontal: '2%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#f5f5f5',//'#efefef',//'#f7faff',
-    paddingVertical: 10,
+    backgroundColor: '#f3f6f7',//'#f5f5f5',
+    paddingVertical: 5,
+    // backgroundColor: 'red',
+    //marginBottom:10,
   },
 
 

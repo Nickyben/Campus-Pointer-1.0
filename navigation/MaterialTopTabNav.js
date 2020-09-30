@@ -125,6 +125,8 @@ export const FacultyTabNavigator = () => {
   );
 };
 
+
+
 export const facultyTabNavScreenOptions = (navProps) => {
   const notificationIcon = Platform.OS == 'android' ? 'md-notifications' : 'ios-notifications';
   const menuIcon = Platform.OS == 'android' ? 'md-menu' : 'ios-menu';

@@ -44,7 +44,7 @@ const styles = StyleSheet.create(
   {
     itemCard: {
       //flex: 1,
-      width: '47.5%',//please do this with respect to the device dimensions
+      width: '49%',//please do this with respect to the device dimensions
       //margin: '5%',
       //height: '100%', //please do this with respect to the device dimensions
       borderRadius: 10,

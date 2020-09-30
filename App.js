@@ -14,6 +14,9 @@ import { AppLoading } from 'expo';
 //to use it, run: npm install --save-dev redux-dev...(close the ...)tools-extension, pass composeWithDevTools as 2nd arg to createStore
 import AppNavigator from './navigation/AppNavigator';
 import courseAppReducer from './store/reducers/courseAppReducer';
+import dataReducer from './store/reducers/dataReducer';
+import homeReducer from './store/reducers/homeReducer';
+import electionPortalReducer from './store/reducers/electionPortalReducer';
 
 enableScreens(); //useScreens(); is for lower versions of expo and react-native
 
@@ -23,8 +26,9 @@ const rootReducer = combineReducers({
     return null;
   },
     courseAppReducer: courseAppReducer,
-    // ordersRed: ordersReducer,
-    // authRed: authReducer
+    dataReducer: dataReducer,
+    homeReducer: homeReducer,
+    electionPortalReducer: electionPortalReducer,
 });
 
 //creates the store with the rootReducer as arg

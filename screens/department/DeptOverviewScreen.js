@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   StyleSheet, ScrollView, Text,
   View, StatusBar, Platform, TouchableOpacity, TouchableNativeFeedback, Image, useWindowDimensions, Button
@@ -11,88 +12,99 @@ import { FlatList } from 'react-native-gesture-handler';
 import TouchCard from '../../components/UI/TouchCard';
 import Colors from '../../constants/Colors';
 import Btn from '../../components/UI/Btn';
-import staff from '../../data/staff';
-import students from '../../data/students';
-
-const deptStaff = staff().filter(s => s.department === 'Computer Engineering');
-const deptCourseReps = students().filter(s => s.department  === 'Computer Engineering' && s.post)
-
-const content = (type) => {
-  const contentArr = [];
-  if (type === 'halls') {
-    for (let s = 1; s <= 5; s++) {
-      contentArr.push(
-        {
-          id: Math.random().toString(),
-          image: require('../../assets/images/hall2.jpg'),
-          fullName: 'Hall ' + (s).toString(),
-          capacity: (s * 75),
-        }
-      );
-    }
-  }
+import { fetchDeptData } from '../../store/actions/dataActions';
 
 
-  return contentArr;
-};
 
 
+const _Item = ({ content: { id, fullName, image, designation, office, level, capacity }, onSelect }) => (
+  <TouchCard
+    useIos
+    onTouch={onSelect}
+    style={{ ...styles.itemCard, }}>
+    <View style={styles.itemContainer}>
+
+      <View style={styles.imageContainer}>
+        <Image style={{
+          ...styles.listImage,
+          width: styles.listImage.width + !!capacity * 100,
+          borderRadius: !capacity * 20 + !!capacity * 10,
+        }} source={image} />
+      </View>
+      <View style={styles.infoContainer}>
+        <View style={styles.titleContainer}>
+          {fullName && <Text style={styles.title} numberOfLines={2}>{
+            fullName} </Text>}
+        </View>
+
+        <Btn
+          style={styles.btn}
+          bgColor={'transparent'}
+          borderColor={Colors.primary}
+          onPress={onSelect}
+          textColor={Colors.primary}>View</Btn>
+        {/* {designation && <Text style={styles.title}>{designation}</Text>}
+          {office && <Text style={styles.title}>{office}</Text>}
+          {level && <Text style={styles.title}>Level: {level}</Text>}
+          {capacity && <Text style={styles.title}>Capacity: {capacity}</Text>} */}
+      </View>
+
+    </View>
+
+  </TouchCard>
+);
 
 const DeptOverviewScreen = ({ navigation }) => {
   const WIDTH = useWindowDimensions().width;
   const HEIGHT = useWindowDimensions().height;
+  const dispatch = useDispatch();
 
-  let TouchableCmp = TouchableOpacity;
+  const loadData = useCallback(async () => {
+    //   setError(null);
+    //   setIsRefreshing(true)
+    //try {
+    await dispatch(fetchDeptData());
 
-  if (Platform.OS === 'android' && Platform.Version >= 21) {
-    TouchableCmp = TouchableNativeFeedback;
-  }
+    //catch (err) {
+    //     setError(err.message);
+    //   }
+    //   setIsRefreshing(false);
+  }, [dispatch]);//setIsLoading is handled already by react,
 
-  const welcomeMessage = ''
-  //remember that this function is recreated(becomes a different one) at each re-render(eg state change, id also changes) 
-  //anyways, this is just a temporary use
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', loadData);
+
+    //clean up function to run when effect is about to rerun or when component is destroyed or unmounted
+    return (() => {
+      unsubscribe();
+    });
+  }, [loadData]);
 
 
-  const Item = ({ content: { id, fullName, image, designation, office, level, capacity }, onSelect }) => (
-    <TouchCard
-      useIos
-      onTouch={onSelect}
-      style={{ ...styles.itemCard, maxWidth: styles.itemCard.maxWidth + !!capacity * 100 }}>
-      <View style={styles.itemContainer}>
+  useEffect(//will run only when the component loads and not again unless dependencies change
+    //don't use async keyword here, instead, use .then() after the dispatch()
+    () => {
+      //     setIsLoading(true);
+      loadData().then(() => {
+        //       setIsLoading(false);
+      });
+    }
+    , [dispatch, loadData]);
 
-        <View style={styles.imageContainer}>
-          <Image style={{
-            ...styles.listImage,
-            width: styles.listImage.width + !!capacity * 100,
-            borderRadius: !capacity * 20 + !!capacity * 10,
-          }} source={image} />
-        </View>
-        <View style={styles.infoContainer}>
-          <View style={styles.titleContainer}>
-            {fullName && <Text style={styles.title} numberOfLines={2}>{
-              fullName} </Text>}
-          </View>
 
-          <Btn
-            style={styles.btn}
-            bgColor={'transparent'}
-            borderColor={Colors.primary}
-            onPress={onSelect}
-            textColor={Colors.primary}>View</Btn>
-          {/* {designation && <Text style={styles.title}>{designation}</Text>}
-          {office && <Text style={styles.title}>{office}</Text>}
-          {level && <Text style={styles.title}>Level: {level}</Text>}
-          {capacity && <Text style={styles.title}>Capacity: {capacity}</Text>} */}
-        </View>
+  const deptStaff = useSelector(state => state.dataReducer.availableStaff)
+    .filter(s => s.department === 'Computer Engineering');
+  const deptCourseReps = useSelector(state => state.dataReducer.availableStudents)
+    .filter(s => s.department === 'Computer Engineering' && !!s.post)
+  const deptHalls = useSelector(state => state.dataReducer.availableHalls)
+    .filter(s => s.department === 'Computer Engineering');
 
-      </View>
 
-    </TouchCard>
-  );
+
   const renderItem = ({ item }) => (//auto gets data in obj form , I deStructured it in params
-    <Item content={item} onSelect={() => {
-      //remember to change this and pass only the id to the params/rout(ie don't pass an obj)
-      navigation.navigate('DeptDetail', { item: item })
+    <_Item content={item} onSelect={() => {
+      //console.log(item.constructor.name);
+      navigation.navigate('DeptDetails', { item: item, itemId: item.id, title: item.constructor.name })
     }} />
   );
 
@@ -162,7 +174,7 @@ const DeptOverviewScreen = ({ navigation }) => {
             showsHorizontalScrollIndicator={false}
             //initialNumToRender, refreshing 
             keyExtractor={(item, index) => item.id}
-            data={content('halls')}
+            data={deptHalls}
             renderItem={renderItem}
             horizontal={true}
             contentContainerStyle={styles.listContainer}
@@ -231,20 +243,22 @@ const styles = StyleSheet.create({
   welcomeItemContainer: {
     //maxHeight: 350,
     // marginBottom: 20,
-    backgroundColor: '#f5f5f5',
-    borderBottomColor: '#ededed',
-    borderBottomWidth: 2,
+    backgroundColor: '#f3f6f7',//'#f5f5f5',
+    borderBottomColor: '#cacccf',
+    borderBottomWidth: 1,
     padding: 20,
 
   },
 
   row: {
     //flex: 1,
-    borderTopColor: '#fdfdfd',
-    borderBottomColor: '#ededed',
+    //flex: 1,
+    borderTopColor: '#fdffff',
+    //borderBottomColor: '#eaecef',
+    borderBottomColor: '#cacccf',
     borderTopWidth: 2,
-    borderBottomWidth: 2,
-    backgroundColor: '#f5f5f5',
+    borderBottomWidth: 1,
+    backgroundColor: '#f3f6f7',//'#f5f5f5',
     paddingVertical: 10,
 
   },
@@ -275,21 +289,22 @@ const styles = StyleSheet.create({
   itemCard: {
     padding: 0,
     flex: 1,
-    maxWidth: 250,
+    // maxWidth: 250,
     backgroundColor: '#fff',
     marginLeft: 25,
     borderRadius: 20,
 
   },
   itemContainer: {
-
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: 10,
   },
   imageContainer: {
-    flex: 1,
-    padding: 10,
+    padding: 15,
     paddingBottom: 0,
-    // backgroundColor: 'red',
-
 
   },
   listImage: {
@@ -300,14 +315,14 @@ const styles = StyleSheet.create({
 
   },
   infoContainer: {
-    flex: 1,
+    width: '100%',
     marginTop: 10,
-    paddingBottom: 10,
+    //paddingBottom: 10,
     alignItems: 'center',
   },
   btn: {
     width: '50%',
-    marginTop: 10,
+    marginVertical: 10,
   },
   listContainer: {
     paddingVertical: 15,
@@ -317,17 +332,15 @@ const styles = StyleSheet.create({
   titleContainer: {
     width: '100%',
     alignItems: 'center',
-    //alignSelf: 'flex-end',
-    //borderTopStartRadius: 25,
-    //backgroundColor: Colors.primary + '10',
-    //backgroundColor: '#f5f5f5',
+    maxWidth: 150,
     padding: 5,
+    paddingHorizontal: 0,
   },
 
   title: {
     fontFamily: 'OpenSansBold',
     fontSize: 13,
-    //color: Colors.primary//,
+    textAlign: 'center',
     color: '#444',
   }
 });

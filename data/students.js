@@ -1,10 +1,44 @@
 import Student from '../models/student';
 
-const students = (department = null) => {
+const content = (department = null) => {
   //you can implement department later
+  const titles = [
+    ['Most Handsome Student', 'Social Awards'], ['Mr. Association', 'Social Awards'], ['Mrs. Association', 'Social Awards'],
+    ['Most Humorous Student', 'Social Awards'],
+    ['Most Humble Student', 'General Awards'], ['Most Cooperative Student', 'General Awards'], ['Neatest Student', 'General Awards'],
+    ['Best Graduating Student', 'Academic Awards'],
+    ['Highest CGPA Pointer 100Level', 'Academic Awards'], ['Highest CGPA Pointer 200Level', 'Academic Awards'],
+    ['Highest CGPA Pointer 300Level', 'Academic Awards'],
+    ['Best Dressed Student', 'General Awards'], ['Most Beautiful Student', 'Social Awards'], ['Mr. Book', 'Social Awards'],
+    ['Mrs.Book', 'Social Awards'], ['Football Gold Medalist', 'Sports Awards'],
+    ['Athletic Gold Medalist', 'Sports Awards'], ['Basketball Gold Medalist', 'Sports Awards'],
+    ['Best Exhibition Project', 'Project Awards'], ['Best Final Year Project', 'Project Awards'],
+    ['Best Semester Project', 'Project Awards'], ['Best Session Project', 'Project Awards']
+  ];
+  const years = ['2016/2017', '2017/2018', '2018/2019', '2019/2020', '2020/2021'];
+
   const students = [];
   for (let i = 1; i <= 6000; i++) {
     const j = i % 4 === 0 ? 4 : i % 3 === 0 ? 3 : i % 2 === 0 ? 2 : i % 5 == 0 ? 1 : 0;
+    const title = titles[+(Math.random() * (titles.length - 2)).toFixed(0)];
+    const title2 = titles[+(Math.random() * (titles.length - 2)).toFixed(0)];
+
+    const honours = [
+      {
+        title: title[0],
+        category: title[1],
+        year: years[+(Math.random() * (years.length - 2)).toFixed(0)]
+      },
+
+    ]
+    i % 3 === 0 && honours.push(
+      {
+        title: title2[0],
+        category: title2[1],
+        year: years[+(Math.random() * (years.length - 2)).toFixed(0)]
+      }
+    );
+
     students.push(
       new Student(
         Math.random().toString(),
@@ -30,9 +64,9 @@ const students = (department = null) => {
 
         'CEET',
 
-        i % 84 === 0 ? ['Course Rep', 'Assistant Course Rep'][+(Math.random() * 1.7).toFixed(0)] : null,
+        i % 84 === 0 ? ['Assistant Course Rep', 'Course Rep'][+(Math.random() * 1.7).toFixed(0)] : null,
 
-        i % 100 === 0 ? ['President', 'Vice President', 'SEC GEN', 'ASG', 'DOF', 'DOP', 'DOT', 'DOS', 'DOPR', 'Treasurer'][+(Math.random() * 9).toFixed(0)] : null,
+        i % 96 === 0 ? ['President', 'Vice President', 'SEC GEN', 'A SEC GEN', 'DOF', 'DOP', 'DOT', 'DOS', 'DOPR', 'Treasurer'][+(Math.random() * 9).toFixed(0)] : null,
 
         '081' + (+(Math.random() * 100000000).toFixed(0)).toString(),
 
@@ -40,6 +74,7 @@ const students = (department = null) => {
 
         i % 10 === 0 ? require('../assets/images/femaleStudent.png') : require('../assets/images/maleStudent.png'),
 
+        i % 55 === 0 ? honours : null
 
       )
     );
@@ -47,10 +82,26 @@ const students = (department = null) => {
   return (
     students.sort(
       (s1, s2) => {
-        return s2.office ? s1.office? -1 : 1: -1;
+        return (s2.post < s1.post && s1.post - s2.post) || (s2.post > s1.post && s2.post - s1.post);
+      }
+    ).sort(
+      (s1, s2) => {
+        return (s2.office < s1.post && s1.post - s2.post) || (s2.office > s1.post && s2.post - s1.post);
+      }
+    ).sort(
+      (s1, s2) => {
+        return (s2.level < s1.level && s1.level - s2.level) || (s2.level > s1.level && s2.level - s1.level);
+      }
+    ).sort(
+      (s1, s2) => {
+        return s2.office === 'President' ?
+          s2.office === 'President' :
+          (s2.level < s1.level && s1.level - s2.level) || (s2.level > s1.level && s2.level - s1.level);
       }
     )
   )
 };
+
+const students = content();
 
 export default students;

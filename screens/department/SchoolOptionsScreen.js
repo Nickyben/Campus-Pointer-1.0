@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { u } from 'react';
+//import { useSelector, useDispatch } from 'react-redux';// another approach is importing and using the connect function
+
 import {
   StyleSheet, ScrollView, Text,
   View, StatusBar, Platform, TouchableOpacity, TouchableNativeFeedback, Image, useWindowDimensions
@@ -6,40 +8,48 @@ import {
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 import HeaderBtn from '../../components/UI/HeaderBtn';
-import Card from '../../components/UI/Card';
-import { FlatList } from 'react-native-gesture-handler';
-import TouchCard from '../../components/UI/TouchCard';
 import Colors from '../../constants/Colors';
 import CoursesScreen from './CoursesScreen';
+import EventsTableScreen from './EventsTableScreen';
+import TimetableScreen from './TimetableScreen';
 
-const SchoolOptionsScreen = ({ navigation, route: { params: { title, }} }) => {
+const SchoolOptionsScreen = ({ navigation, route: { params: { title, } } }) => {
+
+  const Temp = () => (
+    <View style={styles.screen}>
+      <Text>This is {title} screen</Text>
+    </View>)
+
   let Screen;
   switch (title) {
     case 'Courses':
       Screen = CoursesScreen;
       break;
     case 'Calendar and Events':
-      Screen = View;
+      Screen = EventsTableScreen;
       break;
     case 'Timetable':
-      Screen = View;
+      Screen = TimetableScreen;
       break;
     case 'Fees':
-      Screen = View;
+      Screen = Temp;
       break;
     case 'Library':
-      Screen = View;
+      Screen = Temp;
       break;
     case 'Labs and Research':
-      Screen = View;
+      Screen = Temp;
       break;
     default:
-      Screen = View; 
+      Screen = Temp;
 
   }
   return (
     <View style={styles.screen}>
-      <Screen navig={navigation}/>
+      <Screen
+        navig={navigation}
+        source={{ option: title, }}
+      />
     </View>
   );
 };
@@ -49,7 +59,7 @@ export const screenOptions = ({ navigation, route: { params } }) => {
   const title = params.title;
   return (
     {
-      headerTitle: title? title: 'SchoolOptions',
+      headerTitle: title ? title : 'SchoolOptions',
       headerRight: (props) => (
         <HeaderButtons HeaderButtonComponent={HeaderBtn}>
           <Item

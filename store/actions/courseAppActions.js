@@ -9,16 +9,19 @@ export const registerCourses = (markedCourses)=>{
   });
 }
 
-export const markCourse =(course)=>{
+export const markCourse =(course, mark)=>{
   return({
     type: MARK_COURSE,
     markedCourse: course,
+    mark:mark
   });
 };
 
-export const markAllCourses = (courses) => {
+export const markAllCourses = (courses, mark) => {
+  
   return ({
     type: MARK_ALL_COURSES,
     markedCourses: courses,
+    mark,
   });
 };

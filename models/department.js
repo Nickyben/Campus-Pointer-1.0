@@ -1,7 +1,7 @@
 class Department {
   constructor(
     id, name, deptCode, levels, hod, offices, courses,
-    staff, courseReps, students, halls, assoc, faculty,welcome
+    staff, courseReps, students, halls, assoc, faculty,welcome, timetable
   ) {
     this.id = id;
     this.name = name;
@@ -17,7 +17,7 @@ class Department {
     this.association = assoc;
     this.faculty = faculty;
     this.welcomeMessage = welcome;
-
+    this.timetable = timetable;
   };
 }
 
