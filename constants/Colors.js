@@ -7,8 +7,8 @@ let Colors, primary, primary2, switchPrimary, switchPrimary2, switchWhite, accen
   success, error, warning, divider;
 
 primary2 = '#00afdf';
-primary ='#00a7e7'; //'#e700a7';// '#a700e7';//
-accent = '#7787e7';//'#64d797';
+primary ='#00a7e7'; //'#a700e7';//'#e700a7';// 
+accent = '#6797e7';//'#64d797';
 accent2 = '#ef7f0a';
 white = '#fff';
 black = '#000';
@@ -28,7 +28,7 @@ grey_5 = '#222233';
 grey_6 = '#111122';
 greyOutline = '#ccc';
 searchBg = '#eee';
-success = '#ccffdd'
+success = '#eeffee'
 error = '#ffeeee';
 warning = '#ffddaa'
 divider = '#ddd';

@@ -41,8 +41,9 @@ const _Item = ({ addCalendar, calenderHandler, content: { id, title, date, time,
             <TouchIcon
               name={'calendar'}
               size={25}
-              borderColor={Colors.accent2}
-              color={Colors.accent2}
+              borderColor={Colors.accent}
+              style={{backgroundColor: '#f3f6f7'}}
+              color={Colors.accent}
               onTouch={() => { calenderHandler(date) }}
             />
           }
@@ -75,19 +76,18 @@ const EventsTableScreen = ({ navig, source: { option } }) => {
 
   const dispatch = useDispatch();
 
-  const calenderHandler = useCallback(
-    (date) => {
-      const year = new Date(date).getFullYear();
-      const theDate = new Date(date).toLocaleDateString().split('/')
-      theDate.pop();
-      theDate.unshift(year);
-      const dateDashForm = theDate.join('-');
+  const calenderHandler = (date) => {
+    const year = new Date(date).getFullYear();
+    const theDate = new Date(date).toLocaleDateString().split('/')
+    theDate.pop();
+    theDate.unshift(year);
+    const dateDashForm = theDate.join('-');
 
-      //console.log(dateDashForm)
-      setShowModal(() => true);
-      setEventDate(() => dateDashForm);
-    }
-  );
+    //console.log(dateDashForm)
+    setEventDate(() => dateDashForm);
+    setShowModal(() => true);
+    
+  };
 
   const loadData = useCallback(async () => {
     //   setError(null);
@@ -118,7 +118,7 @@ const EventsTableScreen = ({ navig, source: { option } }) => {
       });
     }
     , [loadData]);
- 
+
   const renderItem = ({ item }) => (
     //auto gets data in obj form , I deStructured it in params
     <_Item content={item} calenderHandler={calenderHandler} addCalendar={addCalendar} onSelect={() => {
@@ -162,7 +162,7 @@ const EventsTableScreen = ({ navig, source: { option } }) => {
                   current={eventDate}
                   markingType={'dot'}
                   markedDates={{
-                    [eventDate]: { selected: true, selectedColor: Colors.accent2, textColor: '#fff' },
+                    [eventDate]: { selected: true, selectedColor: Colors.accent, textColor: '#fff' },
                   }}
                   enableSwipeMonths={true}
                 //markedDates={{[eventDate.string]: }}
@@ -215,8 +215,8 @@ const EventsTableScreen = ({ navig, source: { option } }) => {
                   style={{ alignSelf: 'center', marginTop: 10 }}
                   onPress={() => { setShowModal(prev => !prev) }}
                   bgColor={'transparent'}
-                  textColor={Colors.accent2}
-                  borderColor={Colors.accent2}
+                  textColor={Colors.accent}
+                  borderColor={Colors.accent}
                 >Close</Btn>
               </View>
             </View>
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   },
   calendarModal: {
     flex: 1,
-    backgroundColor: '#013b',
+    backgroundColor: '#000b',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   calendarHeader: {
-    backgroundColor: Colors.accent2,
+    backgroundColor: Colors.accent,
     padding: 20,
     width: '100%',
     borderBottomLeftRadius: 15,

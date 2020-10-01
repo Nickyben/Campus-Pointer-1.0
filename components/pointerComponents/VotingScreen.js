@@ -27,9 +27,7 @@ import { voteOffice } from '../../store/actions/electionPortalActions';
 const MyItem = ({ content, content: { studentData: { id, fullName, image, }, applicantId, aspiringOffice, coverQuote },
   onClickVote, onSelect, style, office }) => {
   const _dispatch = useDispatch();
-  const voter = useSelector(s => s.electionPortalReducer.votedVoters).
-    find(v => v.regNumber === 'MyRegNum' && v.id === 'myUserId');
-  const voteSummary = useSelector(s => s.electionPortalReducer.userOfficesVoted);
+
   const officeIsVoted = useSelector(s => s.electionPortalReducer.userOfficesVoted)
     .find(o => o.hasOwnProperty(office) && !!o[office]);
 
@@ -43,7 +41,7 @@ const MyItem = ({ content, content: { studentData: { id, fullName, image, }, app
 
   const [displayConfirm, setDisplayConfirm] = useState(false);
   const onPressItemHandler = () => {
-
+    onSelect(content);
   };
 
   const clickedVoteHandler = () => {
@@ -85,11 +83,15 @@ const MyItem = ({ content, content: { studentData: { id, fullName, image, }, app
               width: '100%',
               padding: 10,
               paddingHorizontal: 20,
-              alignItems: 'flex-end'
+              alignItems: 'center'
             }}>
-              {candidateIsVoted && <Text
-                style={{ color: Colors.primary, fontFamily: 'OpenSansRegular' }}
-              >Candidate is Voted</Text>}
+              {candidateIsVoted && <Ionicons
+                name={
+                  Platform.OS === 'android' ? `md-thumbs-up` : `ios-thumbs-up`
+                }
+                size={23}
+                color={Colors.primary}
+              />}
               <Btn
                 disabled={officeIsVoted}
                 style={styles.btn}
@@ -133,32 +135,37 @@ const SectionItem = ({ onCollapse, title, showingOffice, candidates }) => {
   return (
     <View style={{ backgroundColor: Colors.switchPrimary }}>
       <View style={{
-        ...styles.sectionHeader,
-        borderBottomColor: !showCandidates ? '#e3e6e7' : Colors.switchPrimary,
-        borderBottomWidth: !showCandidates ? 1 : 0,
+        ...styles.sectionHeader, borderBottomColor: !showCandidates ? '#e3e6e7' : Colors.switchPrimary,
+        borderBottomWidth: !showCandidates ? .8 : 0,
       }}>
-        <View style={{ marginLeft: 10, alignItems: 'flex-start' }}>
+        <View style={{
+          ...styles.sectionHeaderWrap,
+
+        }}>
+          <View style={{ marginLeft: 10, alignItems: 'flex-start' }}>
+            <TouchIcon
+              //onTouch={() => { setIsVoted(p => !p); setIsClicked(p => true) }}
+              touched={() => officeIsVoted}
+              disabled
+              name={Ionicons}
+              size={24}
+              color={Colors.switchWhite}
+              toggleIcons={['square-outline', 'checkbox-outline']}
+            >
+            </TouchIcon>
+          </View>
+          <Text style={styles.sectionHeaderLabel}>{title}</Text>
           <TouchIcon
-            //onTouch={() => { setIsVoted(p => !p); setIsClicked(p => true) }}
-            touched={() => officeIsVoted}
-            disabled
+            onTouch={showCandidatesHandler.bind(this, title)}
+            touched={() => !showCandidates} //hiddenSections.includes(title)}
             name={Ionicons}
-            size={24}
+            size={23}
             color={Colors.switchWhite}
-            toggleIcons={['square-outline', 'checkbox-outline']}
+            toggleIcons={['arrow-dropdown-circle', 'arrow-dropright-circle']}
           >
           </TouchIcon>
         </View>
-        <Text style={styles.sectionHeaderLabel}>{title}</Text>
-        <TouchIcon
-          onTouch={showCandidatesHandler.bind(this, title)}
-          touched={() => !showCandidates} //hiddenSections.includes(title)}
-          name={Ionicons}
-          size={23}
-          color={Colors.switchWhite}
-          toggleIcons={['arrow-dropdown-circle', 'arrow-dropright-circle']}
-        >
-        </TouchIcon>
+
       </View>
 
       {showCandidates &&
@@ -201,8 +208,10 @@ const VotingScreen = ({ navig, }) => {
   const electoralOffices = useSelector(state => state.electionPortalReducer.availableOffices);
   const contestants = useSelector(state => state.electionPortalReducer.validCandidates);
   const votedOffices = useSelector(state => state.electionPortalReducer.votedOffices);
+  const voter = useSelector(s => s.electionPortalReducer.votedVoters).
+    find(v => v.regNumber === 'MyRegNum' && v.id === 'myUserId');
 
-  // console.log('we have'+ contestants.length)
+
   const OFFICE_SECTIONS = [];
   for (let i = 1; i <= electoralOffices.length; i++) {
     OFFICE_SECTIONS.push(
@@ -236,7 +245,7 @@ const VotingScreen = ({ navig, }) => {
       fullName: 'Nicholas Ikechukwu',
       //officesVoted: 
     }));
-    setShowModal(p=>false);
+    setShowModal(p => false);
   };
 
   useEffect
@@ -244,7 +253,9 @@ const VotingScreen = ({ navig, }) => {
     return (
       showingOffice !== title ?
         <></> :
-        <MyItem content={item} onClickVote={voteHandler} onSelect={() => { }} office={title} />
+        <MyItem content={item} onClickVote={voteHandler} onSelect={() => {
+          navig.navigate('DeptDetails', { item: {},candidateId: item.applicantId, title: item.constructor.name })
+        }} office={title} />
     )
   };
 
@@ -282,28 +293,32 @@ const VotingScreen = ({ navig, }) => {
         <View style={styles.confirmModal}>
           {voteData &&
             <View style={styles.confirmBox}>
-              <Text style={styles.noteText}>
-                Vote
-                <Text style={{ color: '#00a7e7' }}> {voteData.candidate}</Text>
-                {} of Id:
-              <Text style={{ color: '#00a7e7' }}> {voteData.applicantId}</Text>
-                {} for the office of the
-                <Text style={{ color: '#00a7e7' }}> {voteData.office}</Text>?
-              </Text>
-              <Text style={styles.warningText}>Once you click --Confirm-- your vote will be casted
+              <Text style={styles.confirmBoxHeader}>CONFIRMATION</Text>
+              <View style={{ padding: 20 }}>
+                <Text style={styles.noteText}>
+                  Vote
+                  <Text style={{ color: '#00a7e7' }}> {voteData.candidate}</Text>
+                  {} of Id:
+                  <Text style={{ color: '#00a7e7' }}> {voteData.applicantId}</Text>
+                  {} for the office of the
+                  <Text style={{ color: '#00a7e7' }}> {voteData.office}</Text>?
+                </Text>
+                <Text style={styles.warningText}>Once you click --Confirm-- your vote will be casted
               {} and you can't change it.
               </Text>
 
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Btn
-                  style={styles.confirmBtn}
-                  bgColor={Colors.accent}
-                  onPress={() => { setShowModal(p => false) }}>Change</Btn>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Btn
+                    style={styles.confirmBtn}
+                    bgColor={Colors.accent}
+                    onPress={() => { setShowModal(p => false) }}>Change</Btn>
 
-                <Btn
-                  style={styles.confirmBtn}
-                  bgColor={Colors.primary}
-                onPress={clickedConfirmHandler}>Confirm</Btn>
+                  <Btn
+                    style={styles.confirmBtn}
+                    bgColor={Colors.primary}
+                    onPress={clickedConfirmHandler}>Confirm</Btn>
+                </View>
+
               </View>
 
             </View>
@@ -324,13 +339,14 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     backgroundColor: Colors.switchPrimary,
-    padding: 20,
-    paddingTop: 40,
+    paddingHorizontal: 20,
+  },
+  sectionHeaderWrap: {
+    width: '100%',
+    paddingVertical: 30,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-
-
   },
   sectionHeaderLabel: {
     fontFamily: 'OpenSansBold',
@@ -393,21 +409,31 @@ const styles = StyleSheet.create({
   },
   confirmModal: {
     flex: 1,
-    backgroundColor: '#013b',
+    backgroundColor: '#000b',
     justifyContent: 'center',
     alignItems: 'center',
   },
   confirmBox: {
-    borderTopWidth: 30,
-    borderColor: Colors.primary,
+
     backgroundColor: '#fff',
     width: '70%',
     minHeight: 200,
     borderRadius: 10,
-    padding: 20,
-    paddingVertical: 30,
+
+  },
+  confirmBoxHeader: {
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    textAlign: 'center',
+    fontFamily: 'OpenSansBold',
+    fontSize: 17,
+    padding: 15,
+    width: '100%',
+    backgroundColor: Colors.primary,
+    color: '#fff',
   },
   noteText: {
+    textAlign: 'justify',
     fontFamily: 'OpenSansBold',
     fontSize: 15,
     color: '#333',

@@ -291,8 +291,8 @@ const styles = StyleSheet.create({
     flex: 1,
     // maxWidth: 250,
     backgroundColor: '#fff',
-    marginLeft: 25,
-    borderRadius: 20,
+    marginRight:10,
+    borderRadius: 15,
 
   },
   itemContainer: {
@@ -326,6 +326,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingVertical: 15,
+    paddingLeft:20,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

@@ -1,5 +1,5 @@
-import React, { u } from 'react';
-//import { useSelector, useDispatch } from 'react-redux';// another approach is importing and using the connect function
+import React, { useEffect,useCallback, } from 'react';
+import { useSelector, useDispatch } from 'react-redux';// another approach is importing and using the connect function
 
 import {
   StyleSheet, ScrollView, Text,
@@ -12,8 +12,42 @@ import Colors from '../../constants/Colors';
 import CoursesScreen from './CoursesScreen';
 import EventsTableScreen from './EventsTableScreen';
 import TimetableScreen from './TimetableScreen';
+import {fetchDeptData} from '../../store/actions/dataActions';
 
 const SchoolOptionsScreen = ({ navigation, route: { params: { title, } } }) => {
+  const dispatch = useDispatch();
+  const loadData = useCallback(async () => {
+    //   setError(null);
+    //   setIsRefreshing(true)
+    //try {
+    await dispatch(fetchDeptData());
+    //   } 
+    //catch (err) {
+    //     setError(err.message);
+    //   }
+    //   setIsRefreshing(false);
+  }, [dispatch]);//setIsLoading is handled already by react,
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', loadData);
+    //clean up function to run when effect is about to rerun or when component is destroyed or unmounted
+    return (() => {
+      unsubscribe();
+    });
+  }, [loadData]);
+
+  useEffect(//will run only when the component loads and not again unless dependencies change
+    //don't use async keyword here, instead, use .then() after the dispatch()
+    () => {
+      //     setIsLoading(true);
+      loadData().then(() => {
+        //       setIsLoading(false);
+      });
+    }
+    , [loadData]);
+
+
+
 
   const Temp = () => (
     <View style={styles.screen}>

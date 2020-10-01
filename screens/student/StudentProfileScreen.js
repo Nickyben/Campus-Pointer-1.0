@@ -95,6 +95,7 @@ const StudentProfileScreen = ({ navigation }) => {
           <View style={styles.courseActions}>
             <View style={styles.courseActionContainer}>
               <TouchCard
+                disableCard
                 onTouch={() => {
                   navigation.navigate(
                     'CourseApplications',
@@ -116,6 +117,7 @@ const StudentProfileScreen = ({ navigation }) => {
             </View>
             <View style={styles.courseActionContainer}>
               <TouchCard
+                disableCard
                 onTouch={() => { }}
                 style={styles.touchCard}>
                 <View style={styles.actionIconContainer}>
@@ -130,6 +132,7 @@ const StudentProfileScreen = ({ navigation }) => {
             </View>
             <View style={styles.courseActionContainer}>
               <TouchCard
+                disableCard
                 onTouch={() => {
                   navigation.navigate(
                     'CourseApplications',
@@ -154,6 +157,7 @@ const StudentProfileScreen = ({ navigation }) => {
           <View style={styles.courseActions}>
             <View style={styles.courseActionContainer}>
               <TouchCard
+                disableCard
                 onTouch={() => { }}
                 style={styles.touchCard}>
                 <View style={styles.actionIconContainer}>
@@ -168,6 +172,7 @@ const StudentProfileScreen = ({ navigation }) => {
             </View>
             <View style={styles.courseActionContainer}>
               <TouchCard
+                disableCard
                 onTouch={() => { }}
                 style={styles.touchCard}>
                 <View style={styles.actionIconContainer}>
@@ -182,6 +187,7 @@ const StudentProfileScreen = ({ navigation }) => {
             </View>
             <View style={styles.courseActionContainer}>
               <TouchCard
+                disableCard
                 onTouch={() => { }}
                 style={styles.touchCard}>
                 <View style={styles.actionIconContainer}>
@@ -215,7 +221,7 @@ const StudentProfileScreen = ({ navigation }) => {
           </View>
 
           <View style={{
-            ...styles.courseActions, paddingHorizontal: '3%', marginTop:10,
+            ...styles.courseActions, paddingHorizontal: '3%', marginTop: 10,
           }}>
             <SelectOption
               style={styles.selectOption}
@@ -291,7 +297,7 @@ const styles = StyleSheet.create({
     // borderTopColor: '#fff',
     borderBottomColor: '#cacccf',
     // borderTopWidth: 3,
-    borderBottomWidth: 1,    
+    borderBottomWidth: 1,
     backgroundColor: '#ebeeef',
     paddingVertical: 10,
 
@@ -332,6 +338,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingVertical: 15,
+    paddingHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -341,7 +348,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     backgroundColor: '#fff',
-    marginLeft: 25,
+    marginRight: 10,
     borderRadius: 15,
 
   },
@@ -381,28 +388,29 @@ const styles = StyleSheet.create({
     //backgroundColor: 'red',
     maxWidth: 600,
     //alignItems: 'center',
-
   },
   courseActionContainer: {
-    //alignItems: 'center',
-    //backgroundColor: 'blue',
-    width: '25%',
+    padding: 10,
+    borderRadius: 20,
+    backgroundColor: 'white',
+    width: '30%',
     maxWidth: 200,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  touchCard: {
-    borderRadius: 30,
+  touchCard: {    
+    borderRadius: 20,
+
     width: '100%'
   },
   actionIconContainer: {
-    padding: 25,
+    padding: 20,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   actionLabel: {
-    marginTop: 10,
+    marginTop: 0,
     marginBottom: 15,
     fontFamily: 'OpenSansBold',
     fontSize: 15,

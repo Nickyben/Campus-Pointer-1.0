@@ -14,8 +14,12 @@ const TouchCard = props => {
     TouchableCmp = TouchableNativeFeedback;
   }
 
+  let CardDynamic = props.disableCard? View: Card; 
+
   return (
-    <Card style={{ ...styles.touchCard, ...props.style }}>
+    <CardDynamic style={{ ...styles.touchCard, ...props.style 
+    
+    }}>
       <TouchableCmp
       activeOpacity={0.6}
         style={styles.touchable}
@@ -23,7 +27,7 @@ const TouchCard = props => {
       >
         {props.children}
       </TouchableCmp>
-    </Card>
+    </CardDynamic>
   );
 };
 

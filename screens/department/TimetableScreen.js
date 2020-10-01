@@ -227,21 +227,9 @@ const TimetableScreen = ({ navig }) => {
   const lecturesTimetable = useSelector(s => s.dataReducer.availableTimetables)
     .find(t => (t.timetableType === 'Lectures') && (t.department === 'Computer Engineering'));
 
-  const dayRows = lecturesTimetable && lecturesTimetable.dayRows; //an obj
+  const daysRowsArr = lecturesTimetable?lecturesTimetable.dayRows :[]; //an obj
 
-  // const periods = [];
-  const daysRowsArr = [];
-  for (let d in dayRows) {
-    const periodsArr = [];
-    for (let p in dayRows[d]) {
-      periodsArr.push(dayRows[d][p])
-    }
-    daysRowsArr.push({
-      day: d,
-      periods: periodsArr,
-    });
 
-  }
   const dispatch = useDispatch();
   const loadData = useCallback(async () => {
     //   setError(null);

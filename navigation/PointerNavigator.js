@@ -326,7 +326,7 @@ export const DeptTabNavigator = () => {
 
       tabBarOptions={{
         activeTintColor: Colors.primary,
-        inactiveTintColor: '#777',
+        inactiveTintColor: '#678',
         activeBackgroundColor: 'white',
         inactiveBackgroundColor: '#f7f8f9', //'#effdff',
         //labelPosition: true,

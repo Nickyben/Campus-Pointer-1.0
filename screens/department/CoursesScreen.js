@@ -126,7 +126,14 @@ const SectionItem = ({ onCollapse, courses, title, Register, showingSection }) =
 
   return (
     <View style={{ backgroundColor: Colors.switchPrimary }}>
-      <View style={styles.sectionHeader}>
+      <View style={{
+        ...styles.sectionHeader,
+        borderBottomColor: !showSection ? '#e3e6e7' : Colors.switchPrimary,
+        borderBottomWidth: !showSection ? .8 : 0,
+      }}>
+        <View style={{
+          ...styles.sectionHeaderWrap,
+        }}>
         {Register &&
           <View style={{ marginLeft: 10, alignItems: 'flex-start' }}>
             <TouchIcon
@@ -149,6 +156,8 @@ const SectionItem = ({ onCollapse, courses, title, Register, showingSection }) =
           toggleIcons={['arrow-dropdown-circle', 'arrow-dropright-circle']}
         >
         </TouchIcon>
+      </View>
+        
       </View>
       {showSection //(!hiddenSections.includes(title) && courses.length !== 0)
         && <View style={{ backgroundColor: '#f7f7f7', borderTopLeftRadius: 50, height: 50, width: '100%' }}></View>}
@@ -351,14 +360,17 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     backgroundColor: Colors.switchPrimary,
-    padding: 20,
-    paddingTop: 40,
+   paddingHorizontal:20,
+    
+    // borderBottomWidth: 0.1,
+
+  },
+  sectionHeaderWrap:{ 
+    width:'100%',
+    paddingVertical: 30,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderBottomColor: '#d7d7d7',
-    // borderBottomWidth: 0.1,
-
   },
   sectionHeaderLabel: {
     fontFamily: 'OpenSansBold',

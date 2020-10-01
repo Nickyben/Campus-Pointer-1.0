@@ -7,7 +7,7 @@ import {
 const initialState = {
   availableStudents: [],
   availableDepartments: [],
-  availableFaculties: [],
+  availableFaculties: [], 
   availableStaff: [],
   availableAssociations: [],
   availableCourses: [],

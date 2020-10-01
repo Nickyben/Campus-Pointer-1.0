@@ -14,7 +14,7 @@ import Colors from '../../constants/Colors';
 import { fetchDeptData } from '../../store/actions/dataActions';
 
 
-const DeptDetailScreen = ({ navigation, route: { params: { title, itemId, item } } }) => {
+const DeptDetailScreen = ({ navigation, route: { params: { title, itemId, item, candidateId } } }) => {
   const dispatch = useDispatch();
   const loadData = useCallback(async () => {
     //   setError(null);
@@ -56,19 +56,26 @@ const DeptDetailScreen = ({ navigation, route: { params: { title, itemId, item }
         title === 'Event' ? useSelector(state => state.dataReducer.availableEvents) :
           [];
 
+  const applicant = allItems.length===0 && title === 'ElectoralApplicant' && useSelector(s => s.electionPortalReducer.validCandidates);
+  const {
+    studentData, coverQuote, manifesto, applicantId, aspiringOffice
+  } = applicant && applicant.length !== 0 && applicant.find(c => {
+    return ((c.applicantId === candidateId))
+  }) 
+
   const itemObj = {
     id, image, fullName, designation,rank, department, post,
     staffNumber, regNumber, phoneNumber, office, gender, level, capacity,
-    date, time, type, venue, honours
+    date, time, type, venue, honours, 
   } = allItems && allItems.length !== 0 ?
       allItems.find(item => {
-        return item.id === itemId
+        return( (item.id === itemId) )
       }) :
       item;
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: fullName ? fullName : itemObj.title,
+      headerTitle: fullName ? fullName : studentData? studentData.fullName: itemObj.title,
     });
   });
 
@@ -81,7 +88,7 @@ const DeptDetailScreen = ({ navigation, route: { params: { title, itemId, item }
         <View style={styles.container}>
           <View style={styles.row}>
             <View style={{ ...styles.detailImageContainer }}>
-              <Image
+             { image? <Image
                 style={{
                   ...styles.detailImage,
                   //borderWidth: !capacity ? 2 : 0,
@@ -90,27 +97,43 @@ const DeptDetailScreen = ({ navigation, route: { params: { title, itemId, item }
                   borderRadius: !!capacity ? 15 : 15,//250 / 2,
                 }}
                 source={image}
-              />
+              />:
+              (studentData && studentData.image)?
+                  <Image
+                    style={{
+                      ...styles.detailImage,
+                      //borderWidth: !capacity ? 2 : 0,
+                      //borderColor: !capacity ? 'white' : 'transparent',
+                      width: !!capacity ? '100%' : 250,
+                      borderRadius: !!capacity ? 15 : 15,//250 / 2,
+                    }}
+                    source={studentData.image}
+                  />
+                  :<View></View>
+                  }
             </View>
           </View>
           <View style={styles.dataContainer}>
             <View style={styles.row}>
               <View style={{ padding: 20, paddingTop: 40, }}>
                 <View>
-                  {(fullName || designation ||rank||(department && !venue) || staffNumber || regNumber) && <View style={{ marginBottom: 20 }}>
-                    {fullName && <View style={styles.detailContainer}><Text style={styles.title}>Name:</Text><Text style={styles.detail}>{fullName}</Text></View>}
+                  {(studentData|| fullName || designation ||rank||(department && !venue) || staffNumber || regNumber|| coverQuote) && <View style={{ marginBottom: 20 }}>
+                    {(fullName || studentData) && <View style={styles.detailContainer}><Text style={styles.title}>Name:</Text><Text style={styles.detail}>{fullName || studentData.fullName}</Text></View>}
                     {designation && <View style={styles.detailContainer}><Text style={styles.title}>Designation:</Text><Text style={styles.detail}>{designation}</Text></View>}
                     {rank && <View style={styles.detailContainer}><Text style={styles.title}>Rank:</Text><Text style={styles.detail}>{rank}</Text></View>}
                     {department && !venue && <View style={styles.detailContainer}><Text style={styles.title}>Department:</Text><Text style={styles.detail}>{department}</Text></View>}
                     {staffNumber && <View style={styles.detailContainer}><Text style={styles.title}>Staff Number:</Text><Text style={styles.detail}>{staffNumber}</Text></View>}
-                    {regNumber && <View style={styles.detailContainer}><Text style={styles.title}>Reg Number:</Text><Text style={styles.detail}>{regNumber}</Text></View>}
+                    {(regNumber || studentData) && <View style={styles.detailContainer}><Text style={styles.title}>Reg Number:</Text><Text style={styles.detail}>{regNumber || studentData.regNumber}</Text></View>}
+                    {applicantId && <View style={styles.detailContainer}><Text style={styles.title}>Applicant Id:</Text><Text style={styles.detail}>{applicantId}</Text></View>}
 
                   </View>}
 
-                  {(level || post || office|| honours) && <View style={{ marginBottom: 20 }}>
-                    {level && <View style={styles.detailContainer}><Text style={styles.title}>Level:</Text><Text style={styles.detail}>{level}</Text></View>}
+                  {(studentData||level || post || office|| honours) && <View style={{ marginBottom: 20 }}>
+                    {(level || studentData) && <View style={styles.detailContainer}><Text style={styles.title}>Level:</Text><Text style={styles.detail}>{level || studentData.level}</Text></View>}
                     {post && <View style={styles.detailContainer}><Text style={styles.title}>Post:</Text><Text style={styles.detail}>{post}</Text></View>}
                     {office && <View style={styles.detailContainer}><Text style={styles.title}>Office:</Text><Text style={styles.detail}>{office}</Text></View>}
+                    {aspiringOffice && <View style={styles.detailContainer}><Text style={styles.title}>Aspiring Office:</Text><Text style={styles.detail}>{aspiringOffice[0]}</Text></View>}
+
                     {honours &&
                       <View style={styles.detailContainer}>
                         <Text style={styles.title}>Honours:</Text>
@@ -142,6 +165,8 @@ const DeptDetailScreen = ({ navigation, route: { params: { title, itemId, item }
                     {date && <View style={styles.detailContainer}><Text style={styles.title}>Date:</Text><Text style={styles.detail}>{date}</Text></View>}
                     {time && <View style={styles.detailContainer}><Text style={styles.title}>Time:</Text><Text style={styles.detail}>{time}</Text></View>}
                     {venue && <View style={styles.detailContainer}><Text style={styles.title}>Venue:</Text><Text style={styles.detail}>{venue}</Text></View>}
+                    {coverQuote && <View style={styles.detailContainer}><Text style={styles.title}>Cover Quote:</Text><Text style={styles.detail}>{coverQuote}</Text></View>}
+                    {manifesto && <View style={{...styles.detailContainer,flexDirection: 'column'}}><Text style={{...styles.title, marginBottom: 15}}>Manifesto:</Text><Text style={{...styles.detail, flex: 1}}>{manifesto}</Text></View>}
 
                   </View>
 
