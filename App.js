@@ -17,6 +17,7 @@ import courseAppReducer from './store/reducers/courseAppReducer';
 import dataReducer from './store/reducers/dataReducer';
 import homeReducer from './store/reducers/homeReducer';
 import electionPortalReducer from './store/reducers/electionPortalReducer';
+import reportsReducer from './store/reducers/reportsReducer';
 
 enableScreens(); //useScreens(); is for lower versions of expo and react-native
 
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
     dataReducer: dataReducer,
     homeReducer: homeReducer,
     electionPortalReducer: electionPortalReducer,
+    reportsReducer: reportsReducer,
 });
 
 //creates the store with the rootReducer as arg

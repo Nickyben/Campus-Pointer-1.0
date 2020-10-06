@@ -100,14 +100,14 @@ const ElectionsPortalScreen = ({ navig }) => {
   };
 
   const instructions = [
-    'Make sure you are logged in with your own account',
+    'Make sure you are logged in with your own account.',
     'Use the button below (if active) to access the screen where candidates are shown.',
     'In the Candidates\' screen, search for the office you want to vote on.',
     'For each electoral office, select --Vote-- for a candidate you want.',
   ];
 
   const instructions2 = [
-    'Make sure you are logged in with your own account',
+    'Make sure you are logged in with your own account.',
     'Use the button below (if active) to access the screen for application.',
     'In the Contestant screen, fill in the form with the required details.',
     'Make sure the required payments are made.',
@@ -226,7 +226,7 @@ const ElectionsPortalScreen = ({ navig }) => {
                     })}
 
                     <View style={{ padding: 15, borderRadius: 10, marginTop:15,
-                    backgroundColor: (availableOffices.length/voteSummary.length-1<=2? Colors.success: Colors.error)}}>
+                    backgroundColor: (availableOffices.length/(voteSummary.length-1)<=2? Colors.success: Colors.error)}}>
                       <Text style={{ ...styles.summaryText, color: '#555' }}>
                         You have voted for {voteSummary.length} office{voteSummary.length!==1?'s':''} out of {availableOffices.length}
                       </Text>
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     marginBottom: 10,
-    width: '48%'
+    width: '35%'
   },
   titleText: {
     fontFamily: 'OpenSansBold',

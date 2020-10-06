@@ -160,11 +160,11 @@ const SectionItem = ({ onCollapse, courses, title, Register, showingSection }) =
         
       </View>
       {showSection //(!hiddenSections.includes(title) && courses.length !== 0)
-        && <View style={{ backgroundColor: '#f7f7f7', borderTopLeftRadius: 50, height: 50, width: '100%' }}></View>}
+        && <View style={{ backgroundColor: '#f3f6f7', borderTopLeftRadius: 50, height: 50, width: '100%' }}></View>}
       {showSection && courses.length === 0// && !hiddenSections.includes(title)
         &&
         <View style={{
-          backgroundColor: '#f7f7f7',
+        backgroundColor: '#f3f6f7',
           width: '100%',
           padding: 20,
           alignItems: 'center',
@@ -227,8 +227,10 @@ const CoursesScreen = ({ navig, source, submitCourses }) => {
       });
     }
     , [dispatch, loadCourses]);
+
+    
   const title = source ? source.title : null;
-  const studentId = source ? source.studentId : null;
+  const studentId = source ? source.studentId : '';
   const registeredCourses = useSelector(state => state.courseAppReducer.registeredCourses);
   const courses = useSelector(state => state.dataReducer.availableCourses);
 
@@ -272,8 +274,9 @@ const CoursesScreen = ({ navig, source, submitCourses }) => {
 
   const markedCourses = useSelector(state => state.courseAppReducer.markedCourses);
 
-  const [showingSection, setShowingSection] = useState(COURSES[0].title);
-  console.log(showingSection)
+  const [showingSection, setShowingSection] = COURSES.length > 0 ? useState(COURSES[0].title) : useState('');
+  //initial shown should be the current level of user
+
 
   const titleHandler = (title) => {
     setShowingSection(p => title);

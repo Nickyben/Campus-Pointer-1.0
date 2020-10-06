@@ -2,16 +2,8 @@ import Course from '../models/course';
 import staff from '../data/staff';
 
 const templateCoordinator = staff.find(s => (s.designation === 'Senior Staff' && s.department === 'Computer Engineering'));
-const templateLecturers = [];
-for (let i = 1; i <= staff.length; i++) {
-  if (staff[i].department === 'Computer Engineering' && staff[i].isAcademic === true) {
-    templateLecturers.push(staff[i]);
-    if (templateLecturers.length === 5) break;
-  }
 
-}
-
-
+const templateLecturers = staff.filter(s => s.department === 'Computer Engineering' && s.isAcademic === true);
 export const content = (level) => {
   const contentArr = [];
 
@@ -29,8 +21,12 @@ export const content = (level) => {
         (100 * level),
         'Computer Engineering',
         'First',
-        templateCoordinator,
-        templateLecturers,
+        templateLecturers.map((s, i) =>
+          templateLecturers[+(Math.random() * (templateLecturers.length - 2)).toFixed(0)]
+        ).find(s => (s.designation === 'Senior Staff' || s.designation === 'Junior Staff')),
+        templateLecturers.map((s, i) =>
+          templateLecturers[+(Math.random() * (templateLecturers.length - 2)).toFixed(0)]
+        ).filter((s, i) => i <= 5 && s)
       )
     );
   }
@@ -49,8 +45,12 @@ export const content = (level) => {
         (100 * level),
         'Computer Engineering',
         'Second',
-        templateCoordinator,
-        templateLecturers,
+        templateLecturers.map((s, i) =>
+          templateLecturers[+(Math.random() * (templateLecturers.length - 2)).toFixed(0)]
+        ).find(s => (s.designation === 'Senior Staff' || s.designation === 'Junior Staff')),
+        templateLecturers.map((s, i) =>
+          templateLecturers[+(Math.random() * (templateLecturers.length - 2)).toFixed(0)]
+        ).filter((s, i) => i <= 5 && s)
       )
     );
   }

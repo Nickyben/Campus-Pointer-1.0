@@ -2,9 +2,9 @@ import HomePost from '../models/homePost';
 
 const content = () => {
   const posts = [
-    ['US on Visa to Nigerians', 'Global', 'US president halts issuing of visa to Nigerians. 100Level students should prepare for their Text on Tuesday'],
+    ['US on Visa to Nigerians', 'Global', 'US president halts issuing of visa to Nigerians. 100Level students should prepare for their Test on Tuesday'],
     ['To The Course Reps', 'Departmental',
-      'Course Reps should meet me in my office on Friday with their respective class lists. 100Level students should prepare for their Text on Tuesday'],
+      'Course Reps should meet me in my office on Friday with their respective class lists. 100Level students should prepare for their Test on Tuesday'],
     ['Registration and Payments', 'Departmental', 'You are advised to make all your payments and registrations as soon as possible as exam starts soon'
     ],
     ['FG And ASUU', 'National', 'FG assures ASUU of the implementation'],
@@ -69,3 +69,15 @@ const content = () => {
 const homePosts = content();
 
 export default homePosts;
+
+
+
+
+
+
+
+
+
+
+
+

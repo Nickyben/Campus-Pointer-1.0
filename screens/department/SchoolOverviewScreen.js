@@ -26,6 +26,7 @@ const sliderImages = [
     { id: Math.random().toString(), title: 'Fees' },
     { id: Math.random().toString(), title: 'Library' },
     { id: Math.random().toString(), title: 'Labs and Research' },
+    { id: Math.random().toString(), title: 'Reserve' },
 
   ];
 
@@ -109,10 +110,10 @@ const SchoolOverviewScreen = ({navigation,route}) => {
           </View>
           <View style={styles.row}>
             <SelectOption
-              data={academicOptions[2]} icon='analytics'
+              data={academicOptions[6]} icon='analytics'
               color={'#ff55dd'} onSelect={selectOptionHandler} />
             <SelectOption
-              data={academicOptions[4]} icon='analytics'
+              data={academicOptions[6]} icon='analytics'
               color={'#ee3e11'} onSelect={selectOptionHandler} />
           </View>
         </View>

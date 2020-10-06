@@ -79,7 +79,7 @@ const styles = StyleSheet.create(
     },
     actionLabel: {
       //backgroundColor: 'red',
-
+      textAlign: 'center',
       fontFamily: 'OpenSansBold',
       fontSize: 18,
       //color: 'black',//'#444',

@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   noteText: {
-    textAlign: 'justify',
+    textAlign: 'center',
     fontFamily: 'OpenSansBold',
     fontSize: 15,
     color: '#333',

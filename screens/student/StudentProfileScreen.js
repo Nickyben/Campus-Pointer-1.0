@@ -55,14 +55,17 @@ const StudentProfileScreen = ({ navigation }) => {
     { id: Math.random().toString(), title: 'Results' },
     { id: Math.random().toString(), title: 'Assessments' },
     { id: Math.random().toString(), title: 'General Attendance' },
-    { id: Math.random().toString(), title: 'CGPA Calculator' },
+    { id: Math.random().toString(), title: 'CGPA Tracker' },
 
   ];
 
 
-  const selectOptionHandler = (optionData) => {
-    //console.log(optionData.title);
-  };
+  const selectOptionHandler = (screen, params) => {
+    navigation.navigate(
+      screen, params
+    )
+  }
+
   return (
     <View style={styles.screen}>
       <ScrollView style={styles.scrollView}>
@@ -96,14 +99,12 @@ const StudentProfileScreen = ({ navigation }) => {
             <View style={styles.courseActionContainer}>
               <TouchCard
                 disableCard
-                onTouch={() => {
-                  navigation.navigate(
-                    'CourseApplications',
-                    {
-                      title: 'Register', studentId: '...'
-                    }
-                  )
-                }}
+                onTouch={
+                  selectOptionHandler.bind(this, 'CourseApplications', {
+                    title: 'Register', studentId: 'userStudentId'
+                  })
+                }
+
                 style={styles.touchCard}>
                 <View style={styles.actionIconContainer}>
                   <Ionicons
@@ -115,32 +116,16 @@ const StudentProfileScreen = ({ navigation }) => {
               </TouchCard>
               <Text style={styles.actionLabel}>Register</Text>
             </View>
+            
+
             <View style={styles.courseActionContainer}>
               <TouchCard
                 disableCard
-                onTouch={() => { }}
-                style={styles.touchCard}>
-                <View style={styles.actionIconContainer}>
-                  <Ionicons
-                    name={Platform.OS === 'android' ? 'ios-hand' : 'ios-hand'}
-                    size={50}
-                    color={Colors.primary}
-                  />
-                </View>
-              </TouchCard>
-              <Text style={styles.actionLabel}>Pending</Text>
-            </View>
-            <View style={styles.courseActionContainer}>
-              <TouchCard
-                disableCard
-                onTouch={() => {
-                  navigation.navigate(
-                    'CourseApplications',
-                    {
-                      title: 'Registered', studentId: '...'
-                    }
-                  )
-                }}
+                onTouch={
+                  selectOptionHandler.bind(this, 'CourseApplications', {
+                    title: 'Registered', studentId: 'userStudentId'
+                  })
+                }
                 style={styles.touchCard}>
                 <View style={styles.actionIconContainer}>
                   <Ionicons
@@ -153,27 +138,14 @@ const StudentProfileScreen = ({ navigation }) => {
               <Text style={styles.actionLabel}>Registered</Text>
             </View>
 
-          </View>
-          <View style={styles.courseActions}>
             <View style={styles.courseActionContainer}>
               <TouchCard
                 disableCard
-                onTouch={() => { }}
-                style={styles.touchCard}>
-                <View style={styles.actionIconContainer}>
-                  <Ionicons
-                    name={Platform.OS === 'android' ? 'md-checkmark-circle' : 'ios-checkmark-circle'}
-                    size={50}
-                    color={Colors.primary}
-                  />
-                </View>
-              </TouchCard>
-              <Text style={styles.actionLabel}>Approved</Text>
-            </View>
-            <View style={styles.courseActionContainer}>
-              <TouchCard
-                disableCard
-                onTouch={() => { }}
+                onTouch={
+                  selectOptionHandler.bind(this, 'CourseApplications', {
+                    title: 'Add/Drop', studentId: 'userStudentId'
+                  })
+                }
                 style={styles.touchCard}>
                 <View style={styles.actionIconContainer}>
                   <Ionicons
@@ -185,10 +157,23 @@ const StudentProfileScreen = ({ navigation }) => {
               </TouchCard>
               <Text style={styles.actionLabel}>Add/Drop</Text>
             </View>
+
+          </View>
+
+
+
+
+          
+          <View style={styles.courseActions}>
+         
             <View style={styles.courseActionContainer}>
               <TouchCard
                 disableCard
-                onTouch={() => { }}
+                onTouch={
+                  selectOptionHandler.bind(this, 'CourseApplications', {
+                    title: 'Apply For Excess', studentId: 'userStudentId'
+                  })
+                }
                 style={styles.touchCard}>
                 <View style={styles.actionIconContainer}>
                   <Ionicons
@@ -200,6 +185,47 @@ const StudentProfileScreen = ({ navigation }) => {
               </TouchCard>
               <Text style={styles.actionLabel}>Apply For Excess</Text>
             </View>
+
+            <View style={styles.courseActionContainer}>
+              <TouchCard
+                disableCard
+                onTouch={
+                  selectOptionHandler.bind(this, 'CourseApplications', {
+                    title: 'Pending', studentId: 'userStudentId'
+                  })
+                }
+                style={styles.touchCard}>
+                <View style={styles.actionIconContainer}>
+                  <Ionicons
+                    name={Platform.OS === 'android' ? 'ios-hand' : 'ios-hand'}
+                    size={50}
+                    color={Colors.primary}
+                  />
+                </View>
+              </TouchCard>
+              <Text style={styles.actionLabel}>Pending</Text>
+            </View>
+
+            <View style={styles.courseActionContainer}>
+              <TouchCard
+                disableCard
+                onTouch={
+                  selectOptionHandler.bind(this, 'CourseApplications', {
+                    title: 'Approved', studentId: 'userStudentId'
+                  })
+                }
+                style={styles.touchCard}>
+                <View style={styles.actionIconContainer}>
+                  <Ionicons
+                    name={Platform.OS === 'android' ? 'md-checkmark-circle' : 'ios-checkmark-circle'}
+                    size={50}
+                    color={Colors.primary}
+                  />
+                </View>
+              </TouchCard>
+              <Text style={styles.actionLabel}>Approved</Text>
+            </View>
+            
 
           </View>
 
@@ -213,11 +239,15 @@ const StudentProfileScreen = ({ navigation }) => {
             <SelectOption
               style={styles.selectOption}
               data={resultOptions[0]} icon='analytics'
-              color={'#ffdd15'} onSelect={selectOptionHandler} />
+              color={'#ffdd15'} onSelect={selectOptionHandler.bind(this, 'StudentReports', {
+                title: 'Results', studentId: 'userStudentId'
+              })} />
             <SelectOption
               style={styles.selectOption}
               data={resultOptions[1]} icon='stats'
-              color={'#44ffb0'} onSelect={selectOptionHandler} />
+              color={'#44ffb0'} onSelect={selectOptionHandler.bind(this, 'StudentReports', {
+                title: 'Assessments', studentId: 'userStudentId'
+              })} />
           </View>
 
           <View style={{
@@ -226,11 +256,15 @@ const StudentProfileScreen = ({ navigation }) => {
             <SelectOption
               style={styles.selectOption}
               data={resultOptions[2]} icon='pie'
-              color={'#ff55dd'} onSelect={selectOptionHandler} />
+              color={'#ff55dd'} onSelect={selectOptionHandler.bind(this, 'StudentReports', {
+                title: 'General Attendance', studentId: 'userStudentId'
+              })} />
             <SelectOption
               style={styles.selectOption}
               data={resultOptions[3]} icon='calculator'
-              color={'#55a5ff'} onSelect={selectOptionHandler} />
+              color={'#55a5ff'} onSelect={selectOptionHandler.bind(this, 'StudentReports', {
+                title: 'CGPA Tracker', studentId: 'userStudentId'
+              })} />
           </View>
         </View>
       </ScrollView>
@@ -398,7 +432,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  touchCard: {    
+  touchCard: {
     borderRadius: 20,
 
     width: '100%'

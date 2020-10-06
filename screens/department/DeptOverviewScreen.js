@@ -144,42 +144,49 @@ const DeptOverviewScreen = ({ navigation }) => {
           </Card>
 
         </View>
-        <View style={styles.row}>
-          <Text style={styles.rowLabel}>Staff</Text>
-          <FlatList
-            showsHorizontalScrollIndicator={false}
-            //initialNumToRender, refreshing
-            keyExtractor={(item, index) => item.id}
-            data={deptStaff}
-            renderItem={renderItem}
-            horizontal={true}
-            contentContainerStyle={styles.listContainer}
-          />
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.rowLabel}>Course Reps</Text>
-          <FlatList
-            showsHorizontalScrollIndicator={false}
-            //initialNumToRender, refreshing
-            keyExtractor={(item, index) => item.id}
-            data={deptCourseReps}
-            renderItem={renderItem}
-            horizontal={true}
-            contentContainerStyle={styles.listContainer}
-          />
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.rowLabel}>Halls and Labs</Text>
-          <FlatList
-            showsHorizontalScrollIndicator={false}
-            //initialNumToRender, refreshing 
-            keyExtractor={(item, index) => item.id}
-            data={deptHalls}
-            renderItem={renderItem}
-            horizontal={true}
-            contentContainerStyle={styles.listContainer}
-          />
-        </View>
+        {deptStaff.length !== 0 &&
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Staff</Text>
+
+            <FlatList
+              showsHorizontalScrollIndicator={false}
+              //initialNumToRender, refreshing
+              keyExtractor={(item, index) => item.id}
+              data={deptStaff}
+              renderItem={renderItem}
+              horizontal={true}
+              contentContainerStyle={styles.listContainer}
+            />
+          </View>
+        }
+        {deptCourseReps.length !== 0 &&
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Course Reps</Text>
+
+            <FlatList
+              showsHorizontalScrollIndicator={false}
+              //initialNumToRender, refreshing
+              keyExtractor={(item, index) => item.id}
+              data={deptCourseReps}
+              renderItem={renderItem}
+              horizontal={true}
+              contentContainerStyle={styles.listContainer}
+            />
+          </View>}
+        {deptHalls.length !== 0 &&
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Halls and Labs</Text>
+
+            <FlatList
+              showsHorizontalScrollIndicator={false}
+              //initialNumToRender, refreshing 
+              keyExtractor={(item, index) => item.id}
+              data={deptHalls}
+              renderItem={renderItem}
+              horizontal={true}
+              contentContainerStyle={styles.listContainer}
+            />
+          </View>}
       </ScrollView>
 
     </View>
@@ -291,7 +298,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // maxWidth: 250,
     backgroundColor: '#fff',
-    marginRight:10,
+    marginRight: 10,
     borderRadius: 15,
 
   },
@@ -326,7 +333,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingVertical: 15,
-    paddingLeft:20,
+    paddingLeft: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

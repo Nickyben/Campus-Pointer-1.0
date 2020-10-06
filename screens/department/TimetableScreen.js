@@ -69,7 +69,7 @@ const PeriodComponent = ({ day, p, index, onNavigate, showingTitle, hideOthers }
   return (
     <>
       <View style={{ flexDirection: 'row' }}>
-        <View style={{ width: 10, backgroundColor: p.color, height: '100%' }}></View>
+        <View style={{ width: '2%', backgroundColor: p.color, height: '100%' }}></View>
         <View style={{
           ...styles.periodContainer,
           backgroundColor: isPresentPeriod ? p.color + '22' : '#fff',
@@ -229,7 +229,6 @@ const TimetableScreen = ({ navig }) => {
 
   const daysRowsArr = lecturesTimetable?lecturesTimetable.dayRows :[]; //an obj
 
-
   const dispatch = useDispatch();
   const loadData = useCallback(async () => {
     //   setError(null);
@@ -268,7 +267,6 @@ const TimetableScreen = ({ navig }) => {
 
   const to_date = new Date().toDateString();
   const today = to_date.split(' ')[0];
-
   return (
 
     daysRowsArr.length !== 0 &&
@@ -375,7 +373,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   periodContainer: {
-    width: '100%',
+    width: '98%',
     flexDirection: 'row',
     backgroundColor: '#fff',//'#f3f6f7',
     alignItems: 'center',

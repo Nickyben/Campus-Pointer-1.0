@@ -5,6 +5,22 @@ const content = (department = null) => {
   const titles = ['Best Department Staff', 'Most Social Staff', 'Most Good-Looking Staff', 'Most Humorous Staff',
     'Most Humble Staff', 'Best-Dressed Staff', 'Most Audible Staff', 'Most Cooperative Staff'];
   const years = ['2016/2017', '2017/2018', '2018/2019', '2019/2020', '2020/2021'];
+  const firstNames = [
+    `Nicholas`, 'Bernard', 'Nick', 'Nicky', 'Tony', 'Max', `Chukwuka`, `Nickyben`, 'Chukwuka', 'Frank', 'Victory',
+    'James', 'Jerry', 'Tressy', 'Delight', 'Angela', 'Augusta', 'GodLead', 'Anita', 'Stephen', 'MacFord',
+    `Ikechukwu`, 'Iyke', 'Cyriacus', 'Cyril', 'Stark', 'Bernard', 'Shwarzmiller', 'Iyke', 'Nick',
+    'Stark', 'Smith', 'Johnson', 'Anthony', 'Clevery', 'Smart', 'Harry', 'Wilson', 'Will', 'Brad',
+    'Roberts', 'Griphen', 'Grinder', 'Best', 'George', 'Marcus', 'Martial', 'Greenwood','MacFurry', 'Stephenie', 'Nora', 'Clara', 'Nelly', 'Victoria', 'Amanda', 'Kelvin', 'Mary', 'Silver', 'Anabelle',
+    'Bella', 'MacStephen', 'Kelly', 'Humphery', 'Melanin', 'Angel', 'Terry', 'John', 'Mack', 'Clevelyn',
+    'Jones'];
+  const lastNames = [
+    'MacFurry', 'Stephenie', 'Nora', 'Clara', 'Nelly', 'Victoria', 'Amanda', 'Kelvin', 'Mary', 'Silver', 'Anabelle',
+    'Bella', 'MacStephen', 'Kelly', 'Humphery', 'Melanin', 'Angel', 'Terry', 'John', 'Mack', 'Clevelyn',
+    'Jones', `Ikechukwu`, 'Iyke', 'Cyriacus', 'Cyril', 'Stark', 'Bernard', 'Shwarzmiller', 'Iyke', 'Nick',
+    'Stark', 'Smith', 'Johnson', 'Anthony', 'Clevery', 'Smart', 'Harry', 'Wilson', 'Will', 'Brad',
+    'Roberts', 'Griphen', 'Grinder', 'Best', 'George', 'Marcus', 'Martial', 'Greenwood'];
+
+
   const staff = [];
 
   for (let i = 1; i <= 200; i++) {
@@ -27,18 +43,18 @@ const content = (department = null) => {
     staff.push(
       new Staff(
         Math.random().toString(),
-        i % 8 === 0 ? { firstName: `Nicholas${i}`, lastName: 'James' } :
-          i % 7 === 0 ? { firstName: 'Max', lastName: 'Shwarzmiller' } :
-            {
-              firstName: ['Bernard', 'Tony', `Chukwuka${i}`, `Nickyben${i}`, 'Jerry'][j],
-              lastName: [`Nick${i}`, 'Stark', 'Kelvin', 'Iyke', 'Larry'][j]
-            },
+
+        {
+          firstName: firstNames[+(Math.random() * (firstNames.length - 2)).toFixed(0)],
+
+          lastName: lastNames[+(Math.random() * (lastNames.length - 2)).toFixed(0)]
+        },
         i % 2 === 0 ?
           'MOUAU/STAFF/ACAD/CME/' + (+(Math.random() * 100000).toFixed(0)).toString() :
           'MOUAU/STAFF/NON-ACAD/CME/' + (+(Math.random() * 100000).toFixed(0)).toString(),
         i % 4 === 0 ? 'female' : 'male',
         i % 5 === 0 ? '2010' : '2015',
-        i < 45 ? 'Computer Engineering' : 'CEET Engineering', //this should be an instance of Department
+        i < 60 ? 'Computer Engineering' : 'CEET Engineering', //this should be an instance of Department
         'CEET',
         i % 5 === 0 ? 'Senior Staff' : i % 3 === 0 ? 'Junior Staff' : 'Assisting Staff',
         ['Professor','Doctor of Philosophy', 'Masters Holder','PGD Holder','Graduate', 'HND Holder'][+(Math.random() * 4).toFixed(0)],

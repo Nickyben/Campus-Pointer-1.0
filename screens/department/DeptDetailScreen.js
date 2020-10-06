@@ -56,26 +56,26 @@ const DeptDetailScreen = ({ navigation, route: { params: { title, itemId, item, 
         title === 'Event' ? useSelector(state => state.dataReducer.availableEvents) :
           [];
 
-  const applicant = allItems.length===0 && title === 'ElectoralApplicant' && useSelector(s => s.electionPortalReducer.validCandidates);
+  const applicant = allItems.length === 0 && title === 'ElectoralApplicant' && useSelector(s => s.electionPortalReducer.validCandidates);
   const {
     studentData, coverQuote, manifesto, applicantId, aspiringOffice
   } = applicant && applicant.length !== 0 && applicant.find(c => {
     return ((c.applicantId === candidateId))
-  }) 
+  })
 
   const itemObj = {
-    id, image, fullName, designation,rank, department, post,
+    id, image, fullName, designation, rank, department, post,
     staffNumber, regNumber, phoneNumber, office, gender, level, capacity,
-    date, time, type, venue, honours, 
+    date, time, type, venue, honours,
   } = allItems && allItems.length !== 0 ?
       allItems.find(item => {
-        return( (item.id === itemId) )
+        return ((item.id === itemId))
       }) :
       item;
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: fullName ? fullName : studentData? studentData.fullName: itemObj.title,
+      headerTitle: fullName ? fullName : studentData ? studentData.fullName : itemObj.title,
     });
   });
 
@@ -88,7 +88,7 @@ const DeptDetailScreen = ({ navigation, route: { params: { title, itemId, item, 
         <View style={styles.container}>
           <View style={styles.row}>
             <View style={{ ...styles.detailImageContainer }}>
-             { image? <Image
+              {image ? <Image
                 style={{
                   ...styles.detailImage,
                   //borderWidth: !capacity ? 2 : 0,
@@ -97,8 +97,8 @@ const DeptDetailScreen = ({ navigation, route: { params: { title, itemId, item, 
                   borderRadius: !!capacity ? 15 : 15,//250 / 2,
                 }}
                 source={image}
-              />:
-              (studentData && studentData.image)?
+              /> :
+                (studentData && studentData.image) ?
                   <Image
                     style={{
                       ...styles.detailImage,
@@ -109,15 +109,15 @@ const DeptDetailScreen = ({ navigation, route: { params: { title, itemId, item, 
                     }}
                     source={studentData.image}
                   />
-                  :<View></View>
-                  }
+                  : <View></View>
+              }
             </View>
           </View>
           <View style={styles.dataContainer}>
             <View style={styles.row}>
               <View style={{ padding: 20, paddingTop: 40, }}>
                 <View>
-                  {(studentData|| fullName || designation ||rank||(department && !venue) || staffNumber || regNumber|| coverQuote) && <View style={{ marginBottom: 20 }}>
+                  {(studentData || fullName || designation || rank || (department && !venue) || staffNumber || regNumber || coverQuote) && <View style={{ marginBottom: 20 }}>
                     {(fullName || studentData) && <View style={styles.detailContainer}><Text style={styles.title}>Name:</Text><Text style={styles.detail}>{fullName || studentData.fullName}</Text></View>}
                     {designation && <View style={styles.detailContainer}><Text style={styles.title}>Designation:</Text><Text style={styles.detail}>{designation}</Text></View>}
                     {rank && <View style={styles.detailContainer}><Text style={styles.title}>Rank:</Text><Text style={styles.detail}>{rank}</Text></View>}
@@ -128,7 +128,7 @@ const DeptDetailScreen = ({ navigation, route: { params: { title, itemId, item, 
 
                   </View>}
 
-                  {(studentData||level || post || office|| honours) && <View style={{ marginBottom: 20 }}>
+                  {(studentData || level || post || office || honours) && <View style={{ marginBottom: 20 }}>
                     {(level || studentData) && <View style={styles.detailContainer}><Text style={styles.title}>Level:</Text><Text style={styles.detail}>{level || studentData.level}</Text></View>}
                     {post && <View style={styles.detailContainer}><Text style={styles.title}>Post:</Text><Text style={styles.detail}>{post}</Text></View>}
                     {office && <View style={styles.detailContainer}><Text style={styles.title}>Office:</Text><Text style={styles.detail}>{office}</Text></View>}
@@ -143,7 +143,7 @@ const DeptDetailScreen = ({ navigation, route: { params: { title, itemId, item, 
                               <View key={i} style={{
                                 flex: styles.detail.flex,
                                 flexDirection: 'column',
-                                marginTop: i>0? 10: 0
+                                marginTop: i > 0 ? 10 : 0
                               }}>
                                 <Text style={styles.detail}>{h.title}</Text>
                                 <Text style={styles.detail}>{h.year}</Text>
@@ -166,7 +166,11 @@ const DeptDetailScreen = ({ navigation, route: { params: { title, itemId, item, 
                     {time && <View style={styles.detailContainer}><Text style={styles.title}>Time:</Text><Text style={styles.detail}>{time}</Text></View>}
                     {venue && <View style={styles.detailContainer}><Text style={styles.title}>Venue:</Text><Text style={styles.detail}>{venue}</Text></View>}
                     {coverQuote && <View style={styles.detailContainer}><Text style={styles.title}>Cover Quote:</Text><Text style={styles.detail}>{coverQuote}</Text></View>}
-                    {manifesto && <View style={{...styles.detailContainer,flexDirection: 'column'}}><Text style={{...styles.title, marginBottom: 15}}>Manifesto:</Text><Text style={{...styles.detail, flex: 1}}>{manifesto}</Text></View>}
+                    {manifesto &&
+                      <View style={{ ...styles.detailContainer, flexDirection: 'column', }}>
+                        <Text style={{ ...styles.title, marginBottom: 15 }}>Manifesto:</Text>
+                        <Text style={{ ...styles.detail, fontSize: 15, fontFamily: 'OpenSansRegular', flex: 1 }}>{manifesto}</Text>
+                      </View>}
 
                   </View>
 

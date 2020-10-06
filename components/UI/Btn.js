@@ -57,6 +57,7 @@ const Btn = ({ type, onPress, disabled, style, children, bgColor, textColor, bor
           <Text
             style={{
               ...styles.btnText,
+              fontSize: 14,
               color: textColor ?
                 textColor :
                 (bgColor === 'white' || bgColor == '#fff') ?
@@ -72,7 +73,11 @@ const Btn = ({ type, onPress, disabled, style, children, bgColor, textColor, bor
                   Platform.OS === 'android' ? `md-${icon.iconName}` : `ios-${icon.iconName}`
                 }
                 size={23}
-                color='#fff'
+                color={textColor ?
+                  textColor :
+                  (bgColor === 'white' || bgColor == '#fff') ?
+                    Colors.primary :
+                    styles.btnText.color}
               />
             </View>
 
@@ -98,7 +103,7 @@ const styles = StyleSheet.create({
     width: '100%',
     minWidth: 80,
     paddingVertical: 5,
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
     borderRadius: 25,
     justifyContent: 'space-evenly',
     alignItems: 'center',

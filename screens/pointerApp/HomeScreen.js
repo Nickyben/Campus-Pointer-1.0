@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   StyleSheet, Text, View, TouchableOpacity,
-  TouchableNativeFeedback, FlatList, Image, Platform
+  TouchableNativeFeedback, FlatList, Image, Platform, SafeAreaView
 } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
@@ -10,7 +10,7 @@ import HeaderBtn from '../../components/UI/HeaderBtn';
 import Colors from '../../constants/Colors';
 import { fetchHomeData, likePost, sharePost } from '../../store/actions/homeActions';
 import TouchIcon from '../../components/UI/TouchIcon';
-
+import { TabRouter } from '@react-navigation/native';
 
 let TouchableCmp = TouchableOpacity;
 
@@ -20,7 +20,7 @@ if (Platform.OS === 'android' && Platform.Version >= 21) {
 
 const _Item = ({ content: { id, title, type, author:
   { name, office, post }, text, image, likes, shares }, onSelect }) => {
-  const initiallyLiked = useSelector(state=>state.homeReducer.availableLikes).includes(id);
+  const initiallyLiked = useSelector(state => state.homeReducer.availableLikes).includes(id);
   const [isLiked, setIsLiked] = useState(initiallyLiked);
   const [isClicked, setIsClicked] = useState(false);
   const _dispatch = useDispatch();
@@ -33,14 +33,14 @@ const _Item = ({ content: { id, title, type, author:
       _dispatch(likePost(id, isLiked));
     }
 
-  }, [isLiked,isClicked]);
+  }, [isLiked, isClicked]);
 
   useEffect(() => {
     if (!isLiked && isClicked) {
       _dispatch(likePost(id, isLiked));
     }
 
-  }, [isLiked,isClicked]);
+  }, [isLiked, isClicked]);
 
 
 
@@ -98,13 +98,13 @@ const _Item = ({ content: { id, title, type, author:
           <View style={styles.infoActions}>
             <View style={styles.actionContainer}>
               <TouchIcon
-                
-                onTouch={() => { setIsLiked(prev => !prev); setIsClicked(p=>true) }}
+
+                onTouch={() => { setIsLiked(prev => !prev); setIsClicked(p => true) }}
                 name={'thumbs-up'}
                 size={22}
-                color={isLiked ? Colors.primary : '#bcd' } //'#ff3355' : '#bcd'}
+                color={isLiked ? Colors.primary : '#bcd'} //'#ff3355' : '#bcd'}
               />
-             {<Text style={styles.actionText}>{likes}</Text>}
+              {<Text style={styles.actionText}>{likes}</Text>}
             </View>
 
             <View style={styles.actionContainer}>
@@ -136,7 +136,9 @@ const _Item = ({ content: { id, title, type, author:
 
 const HomeScreen = ({ navigation }) => {
   const homePosts = useSelector(state => state.homeReducer.availablePosts);
+  const [showHeader, setShowHeader] = useState(false);
   const dispatch = useDispatch();
+  
   const loadData = useCallback(async () => {
     //   setError(null);
     //   setIsRefreshing(true)
@@ -169,7 +171,16 @@ const HomeScreen = ({ navigation }) => {
     }
     , [dispatch, loadData]);
 
-
+// useEffect(()=>{
+//   navigation.setOptions({
+//     //headerShown: ()=> showHeader,
+//    // header:({})=>null
+//    // headerTransparent: ()=>true
+//    headerStyle:{
+//      backgroundColor: 'transparent'
+//    }
+//   });  
+// }, []);
 
 
   const shareHandler = (postId) => {
@@ -201,9 +212,20 @@ export const screenOptions = (navProps) => {
   const searchIcon = Platform.OS == 'android' ? 'md-search' : 'ios-search';
   const notificationIcon = Platform.OS == 'android' ? 'md-notifications' : 'ios-notifications';
   const menuIcon = Platform.OS == 'android' ? 'md-menu' : 'ios-menu';
+  const homeIcon = Platform.OS == 'android' ? 'md-home' : 'ios-home';
+
   return (
     {
-      headerTitle: 'Home',
+      headerTitle: (props) =>
+        <HeaderButtons HeaderButtonComponent={HeaderBtn}>
+          <Item
+            tile='Menu'
+            iconName={homeIcon} //this should rather be the app's logo!!
+            onPress={() => {
+            }}
+          />
+
+        </HeaderButtons>,
       headerRight: (props) => (
         <HeaderButtons HeaderButtonComponent={HeaderBtn}>
           <Item
@@ -337,3 +359,5 @@ const styles = StyleSheet.create({
 
 
 export default HomeScreen;
+
+

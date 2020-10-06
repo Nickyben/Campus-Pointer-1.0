@@ -14,42 +14,27 @@ import Colors from '../../constants/Colors';
 import RegisterCourseScreen from './RegisterCourseScreen';
 import CoursesScreen from '../department/CoursesScreen';
 import Btn from '../../components/UI/Btn';
-import { registerCourses } from '../../store/actions/courseAppActions';
+import ResultsScreen from '../student/ResultsScreen';
 
-
-const CourseAppScreen = ({ navigation, route: { params: { title, studentId } } }) => {
-  const markedCourses = useSelector(state => state.courseAppReducer.markedCourses);
-  const dispatch = useDispatch();
-
-  const submitCourseHandler = useCallback(() => {
-    dispatch(registerCourses(markedCourses));
-  });
+const ReportsScreen = ({ navigation, route: { params: { title, studentId } } }) => {
 
   useEffect(() => {
     const notificationIcon = Platform.OS == 'android' ? 'md-notifications' : 'ios-notifications';
     const printIcon = Platform.OS == 'android' ? 'md-print' : 'ios-print';
 
     navigation.setOptions({
-      headerRight: () => title === 'Register' ?
-        <View style={{ paddingRight: 10 }}>
-          <Btn
-          icon={{iconName: 'cloud-upload'}}
-            onPress={submitCourseHandler}//function to upload the selected(register) courses array...get this from main component
-            bgColor={Colors.switchPrimary}
-            borderColor={Colors.switchWhite}
-          >Submit</Btn>
-        </View> :
-        title === 'Registered'?
-        (
-          <HeaderButtons HeaderButtonComponent={HeaderBtn}>
-            <Item
-              tile='Print'
-              iconName={printIcon}
-              onPress={() => {
-              }}
-            />
-          </HeaderButtons>
-        ):
+      headerRight: () => 
+        title === 'Results' ?
+          (
+            <HeaderButtons HeaderButtonComponent={HeaderBtn}>
+              <Item
+                tile='Print'
+                iconName={printIcon}
+                onPress={() => {
+                }}
+              />
+            </HeaderButtons>
+          ) :
           (
             <HeaderButtons HeaderButtonComponent={HeaderBtn}>
               <Item
@@ -66,6 +51,7 @@ const CourseAppScreen = ({ navigation, route: { params: { title, studentId } } }
   });
 
 
+
   const Temp = () => (
     <View style={styles.screen2}>
       <Text style={styles.screenText}>Hmm... Looks like the <Text style={styles.highlight}>{title}</Text> screen is unavailable!</Text>
@@ -75,22 +61,16 @@ const CourseAppScreen = ({ navigation, route: { params: { title, studentId } } }
   let Screen;
   let onRegister;
   switch (title) {
-    case 'Register':
-      Screen = CoursesScreen;
+    case 'Results':
+      Screen = ResultsScreen;
       break;
-    case 'Pending':
+    case 'Assessments':
       Screen = Temp;
       break;
-    case 'Registered':
-      Screen = CoursesScreen;
-      break;
-    case 'Approved':
+    case 'General Attendance':
       Screen = Temp;
       break;
-    case 'Add/Drop':
-      Screen = Temp;
-      break;
-    case 'Apply For Excess':
+    case 'CGPA Tracker':
       Screen = Temp;
       break;
     default:
@@ -112,8 +92,7 @@ export const screenOptions = ({ navigation, route: { params } }) => {
   const title = params.title;
   return (
     {
-      headerTitle: title ? title : 'Course Applications',
-
+      headerTitle: title ? title : 'Student Reports',
     }
   );
 };
@@ -149,4 +128,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CourseAppScreen;
+export default ReportsScreen;

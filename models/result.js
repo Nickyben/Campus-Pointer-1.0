@@ -9,8 +9,8 @@ class Result {
     this.faculty = faculty;
     this.isDegree = (this.type === 'Degree_Exam'); // &&(this.type === 'Exam Result') // bool
     this.students = students;
-    this.courses = courses ? courses : this.level.courses; //array or 
-    this.resultData = resultData; //an obj containing course properties as arrays(courses) of
+    this.courses = courses; //? courses : this.level.courses; //array or 
+    this.resultData = resultData; //an arr containing course properties as arrays(courses) of
     // objs(with regNum, score and grade props)
     //eg {
     //Mth111 : [{regNum : 94423 : score: 78, grade : 'A'},{regNum : 92463 : score: 58, grade : 'C'}, ...],

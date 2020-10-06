@@ -1,4 +1,4 @@
-import React, { useEffect,useCallback, } from 'react';
+import React, { useEffect, useCallback, } from 'react';
 import { useSelector, useDispatch } from 'react-redux';// another approach is importing and using the connect function
 
 import {
@@ -12,7 +12,7 @@ import Colors from '../../constants/Colors';
 import CoursesScreen from './CoursesScreen';
 import EventsTableScreen from './EventsTableScreen';
 import TimetableScreen from './TimetableScreen';
-import {fetchDeptData} from '../../store/actions/dataActions';
+import { fetchDeptData } from '../../store/actions/dataActions';
 
 const SchoolOptionsScreen = ({ navigation, route: { params: { title, } } }) => {
   const dispatch = useDispatch();
@@ -50,11 +50,13 @@ const SchoolOptionsScreen = ({ navigation, route: { params: { title, } } }) => {
 
 
   const Temp = () => (
-    <View style={styles.screen}>
-      <Text>This is {title} screen</Text>
+    <View style={styles.screen2}>
+      <Text style={styles.screenText}>Hmm... Looks like the <Text style={styles.highlight}>{title}</Text> screen is unavailable!</Text>
+      <Text style={styles.screenText2}>Please update the App to the latest version.</Text>
     </View>)
 
   let Screen;
+
   switch (title) {
     case 'Courses':
       Screen = CoursesScreen;
@@ -120,9 +122,31 @@ export const screenOptions = ({ navigation, route: { params } }) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    //justifyContent: 'center',
-    // alignItems: 'center',
+   
   },
+  screen2: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  screenText: {
+    fontSize: 17,
+    fontFamily: 'OpenSansBold',
+    color: '#333',
+    marginBottom: 5,
+    textAlign: 'center',
+
+  },
+  screenText2: {
+    fontSize: 15,
+    fontFamily: 'OpenSansBold',
+    color: '#777',
+    textAlign: 'center',
+  },
+  highlight: {
+    color: Colors.primary
+  }
 });
 
 export default SchoolOptionsScreen;

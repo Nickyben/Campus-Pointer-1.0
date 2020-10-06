@@ -54,6 +54,9 @@ import StudentProfileScreen, {
 import CourseAppScreen, {
   screenOptions as courseAppScreenOpts
 } from '../screens/student/CourseAppScreen';
+import ReportsScreen, {
+  screenOptions as reportsScreenOpts
+} from '../screens/student/ReportsScreen';
 
 import SettingsScreen, {
   screenOptions as settingsScreenOpts
@@ -74,7 +77,7 @@ const defaultNavOptions = (props) => {
   //console.log(props);
   return ({
 
-    headerTitle: 'Pointer',
+    headerTitle: 'Pointer', //Should be the app logo instead
     headerTitleStyle: {
       fontFamily: 'OpenSansBold',
     },
@@ -194,6 +197,7 @@ const SchoolStackNavigator = () => {
         options={schOptsScreenOpts}
       />
 
+
       <SchoolStackNav.Screen
         name='CourseDetails'
         component={CourseDetailsScreen}
@@ -218,12 +222,15 @@ const HomeStackNavigator = () => {
       <HomeStackNav.Screen
         name='HomeScreen'
         component={HomeScreen}
-        options={homeScreenOpts}
+        options={
+          homeScreenOpts
+          //  headerShown: true
+        }
       />
       {/* <HomeStackNav.Screen
-        name='ProductDetail'
-        component={ProductDetailScreen}
-        options={prodDetailScreenOptions}
+        name='Search'
+        component={SearchScreen}
+        options={searchScreenOpts}
       />
       <HomeStackNav.Screen
         name='Cart'
@@ -282,6 +289,12 @@ const StdProfStackNavigator = () => {
       />
 
       <StdProfStackNav.Screen
+        name='StudentReports'
+        component={ReportsScreen}
+        options={reportsScreenOpts}
+      />
+
+      <StdProfStackNav.Screen
         name='DeptDetails'
         component={DeptDetailScreen}
         options={deptDetailScreenOpts}
@@ -316,6 +329,14 @@ const SettingsStackNavigator = () => {
 };
 
 
+
+
+
+
+
+
+
+
 //TABS NAVIGATION****************************************************
 
 const DeptTabNav = createBottomTabNavigator();
@@ -326,9 +347,9 @@ export const DeptTabNavigator = () => {
 
       tabBarOptions={{
         activeTintColor: Colors.primary,
-        inactiveTintColor: '#678',
+        inactiveTintColor: '#778',
         activeBackgroundColor: 'white',
-        inactiveBackgroundColor: '#f7f8f9', //'#effdff',
+        inactiveBackgroundColor: '#fafeff', //'#effdff',
         //labelPosition: true,
 
         showLabel: (Platform.OS !== 'android'),
@@ -406,7 +427,7 @@ export const PointerDrawerNavigator = () => {
               contentContainerStyle={{ height: '100%', }}>
               <ImageBackground
                 style={{ width: '100%', height: '100%' }}
-                source={require('../assets/images/me.jpg')} 
+                source={require('../assets/images/me.jpg')}
               ><View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: '#fffd' }}>
 
                   <View>
@@ -451,27 +472,32 @@ export const PointerDrawerNavigator = () => {
                       //borderRadius: 0 
                     }} />
                   </View>
-                  <View style={{}}>
+                  <View style={{
+                    padding: 10,
+                    paddingBottom: 15,
+                    //backgroundColor: 'red',
+                    borderColor: '#f3f5f6', borderTopWidth: 2
+                  }}>
                     <DrawerItem {...props}
                       style={{
                         marginHorizontal: 0,
                         marginVertical: 0,
-                        padding: 10,
-                        borderRadius: 0,
+                        borderColor: Colors.primary,
+                        borderWidth: 1,
+                        borderRadius: 10,
                         //marginTop: '95%',color: '#fff', 
-                        backgroundColor: Colors.switchPrimary//'#ff2244',
-                      }
-                      }
-                      label='Logout'
+                        backgroundColor: '#fff', //Colors.switchPrimary//'#ff2244',
+                      }}
+                      label='Sign Out'
                       labelStyle={{
-                        color: Colors.switchWhite,
+                        color: Colors.primary,// Colors.switchWhite,
                         fontSize: 17,
                         fontFamily: 'OpenSansBold',
                       }}
                       icon={
                         ({ focused, color, size }) =>
                           <Ionicons name='ios-log-out' size={size + 1}
-                            color={Colors.switchWhite}
+                            color={Colors.primary}//Colors.switchWhite}
                           //color={color}
                           />
                       }
@@ -489,6 +515,7 @@ export const PointerDrawerNavigator = () => {
       }
       drawerStyle={
         {
+          width: '65%',
           paddingHorizontal: 0,
           backgroundColor: '#fff',
         }

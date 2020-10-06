@@ -16,7 +16,16 @@ const content = (department = null) => {
     ['Best Semester Project', 'Project Awards'], ['Best Session Project', 'Project Awards']
   ];
   const years = ['2016/2017', '2017/2018', '2018/2019', '2019/2020', '2020/2021'];
-
+  const firstNames = [
+    `Nicholas`, 'Bernard', 'Nick', 'Nicky', 'Tony', 'Max', `Chukwuka`, `Nickyben`, 'Chukwuka', 'Frank', 'Victory',
+    'James', 'Jerry', 'Tressy', 'Delight', 'Angela', 'Augusta', 'GodLead', 'Anita', 'Stephen', 'MacFord',
+    'MacFurry', 'Stephenie', 'Nora', 'Clara', 'Nelly', 'Victoria', 'Amanda', 'Kelvin', 'Mary', 'Silver', 'Anabelle',
+    'Bella', 'MacStephen', 'Kelly', 'Humphery', 'Melanin', 'Angel', 'Terry', 'John', 'Mack', 'Clevelyn',
+    'Jones'];
+  const lastNames = [
+    `Ikechukwu`, 'Iyke', 'Cyriacus', 'Cyril', 'Stark', 'Bernard', 'Shwarzmiller', 'Iyke', 'Nick',
+    'Stark', 'Smith', 'Johnson', 'Anthony', 'Clevery', 'Smart', 'Harry', 'Wilson', 'Will', 'Brad',
+    'Roberts', 'Griphen', 'Grinder', 'Best', 'George', 'Marcus', 'Martial', 'Greenwood'];
   const students = [];
   for (let i = 1; i <= 6000; i++) {
     const j = i % 4 === 0 ? 4 : i % 3 === 0 ? 3 : i % 2 === 0 ? 2 : i % 5 == 0 ? 1 : 0;
@@ -38,14 +47,61 @@ const content = (department = null) => {
         year: years[+(Math.random() * (years.length - 2)).toFixed(0)]
       }
     );
+    // {
+    //   firstName: [`Nicholas${i}`, 'Bernard', 'Tony', 'Max', `Chukwuka${i}`, `Nickyben${i}`, 'Chukwuka'][+(Math.random() * 6).toFixed(0)],
+    //     lastName: [`Nick${i}`, 'Stark', 'Bernard', 'Shwarzmiller', 'Iyke', 'Nick', 'Stark'][+(Math.random() * 6).toFixed(0)]
+    // }
+      if(i==1){
+        students.push(
+          new Student(
+            'studentUserId',
+
+            {
+              firstName: 'StudentUserFirstName',
+
+              lastName: 'StudentUserLastName'
+            },
+            'studentUserRegNumber',
+
+            'male',
+
+            '2016',
+
+            '400',
+
+            'Computer Engineering',
+
+            'CEET',
+
+            'Course Rep',
+
+            'President',
+
+            '08100000000',
+
+            null,
+
+            require('../assets/images/maleStudent.png'),
+
+            honours
+
+          ),
+        )
+      }
+
+
+
+
 
     students.push(
+     
       new Student(
         Math.random().toString(),
 
         {
-          firstName: [`Nicholas${i}`, 'Bernard', 'Tony', 'Max', `Chukwuka${i}`, `Nickyben${i}`, 'Chukwuka'][+(Math.random() * 6).toFixed(0)],
-          lastName: [`Nick${i}`, 'Stark', 'Bernard', 'Shwarzmiller', 'Iyke', 'Nick', 'Stark'][+(Math.random() * 6).toFixed(0)]
+          firstName: firstNames[+(Math.random() * (firstNames.length - 2)).toFixed(0)],
+
+          lastName: lastNames[+(Math.random() * (lastNames.length - 2)).toFixed(0)]
         },
 
         i < 1001 ?
@@ -77,7 +133,7 @@ const content = (department = null) => {
         i % 55 === 0 ? honours : null
 
       )
-    );
+    )
   }
   return (
     students.sort(

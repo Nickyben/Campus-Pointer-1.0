@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback} from 'react';
-import {useSelector, useDispatch } from 'react-redux';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   StyleSheet, ScrollView, Text,
   View, StatusBar, Platform, TouchableOpacity, TouchableNativeFeedback, Image, useWindowDimensions
@@ -8,7 +8,7 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 import HeaderBtn from '../../components/UI/HeaderBtn';
 import Colors from '../../constants/Colors';
-import { fetchDeptData  } from '../../store/actions/dataActions';
+import { fetchDeptData } from '../../store/actions/dataActions';
 import OfficesScreen from './OfficesScreen';
 import EventsTableScreen from './EventsTableScreen';
 import HallOfHonoursScreen from './HallOfHonoursScreen';
@@ -48,9 +48,15 @@ const AssocOptionsScreen = ({ navigation, route: { params: { title, } } }) => {
         //       setIsLoading(false);
       });
     }
-    , [ loadData]);
+    , [loadData]);
 
-  let Screen = () => (<View><Text >This is the {title} screen</Text></View>);
+  let Screen;
+  const Temp = () => (
+    <View style={styles.screen2}>
+      <Text style={styles.screenText}>Hmm... Looks like the <Text style={styles.highlight}>{title}</Text> screen is unavailable!</Text>
+      <Text style={styles.screenText2}>Please update the App to the latest version.</Text>
+    </View>)
+
   switch (title) {
     case 'Offices':
       Screen = OfficesScreen;
@@ -65,21 +71,21 @@ const AssocOptionsScreen = ({ navigation, route: { params: { title, } } }) => {
       Screen = ElectionsPortalScreen;
       break;
     case 'Dues and Payments':
-      Screen = Screen;
+      Screen = Temp;
       break;
     case 'Souvenir and Uniforms':
-      Screen = Screen;
+      Screen = Temp;
       break;
     case 'Projects':
-      Screen = Screen;
+      Screen = Temp;
       break;
     default:
-      Screen = Screen;
+      Screen = Temp;
 
   }
   return (
-    <View  style={styles.screen}>
-      <Screen navig={navigation} source={{option: title}}/>
+    <View style={styles.screen}>
+      <Screen navig={navigation} source={{ option: title }} />
     </View>
   );
 };
@@ -96,7 +102,7 @@ export const screenOptions = ({ navigation, route: { params } }) => {
             tile='Notifications'
             iconName={notificationIcon}
             onPress={() => {
-             
+
             }}
           />
         </HeaderButtons>
@@ -109,9 +115,31 @@ export const screenOptions = ({ navigation, route: { params } }) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    //justifyContent: 'center',
-    // alignItems: 'center',
   },
+
+  screen2: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  screenText: {
+    fontSize: 17,
+    fontFamily: 'OpenSansBold',
+    color: '#333',
+    marginBottom: 5,
+    textAlign: 'center',
+
+  },
+  screenText2: {
+    fontSize: 15,
+    fontFamily: 'OpenSansBold',
+    color: '#777',
+    textAlign: 'center',
+  },
+  highlight: {
+    color: Colors.primary
+  }
 });
 
 export default AssocOptionsScreen;
