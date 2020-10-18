@@ -9,9 +9,23 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 //Mth113: [{ regNum: 94423 : score: 78, grade: 'A' }, { regNum: 92463 : score: 62, grade: 'B' }, ...],
 //}
 
+
+const levels = [100, 200, 300, 400, 500];//should be dept.levels array
+const sessions = ['2019/2020', '2020/2021', '2021/2022'];
+const depts = ['Computer Engineering', 'Electrical', 'Mechanical', 'Civil', 'Chemical', 'Agric and Bio Resource'];
+const semesters = ['First', 'Second'];
+const colors = ['#55a5ff', '#f58915', '#24df90', '#ff55dd', '#ee3e11', '#7722ff', '#cc3466', '#65de27', '#a829ff'];
+const scores = [];
+  for (let i = 20; i <= 95; i++) {
+    scores.push(i);
+  }
+  
 export const getGrade = (score = (0 || '0'), scale = '5.0') => {
-  //A=70-100,B =60-69,C=50-59,D=45-49,E=40-44, F=0-39
+  //A=70-100,B =60-69,C=50-59,D=45-49,E=40-44, F=0-39 
   if (scale === '5.0' || scale === 5 || scale === '5') {
+    if (isNaN(score)) {
+      return 'RA';
+    }
     if ((score / 70) >= 1) {
       if (score > 100) {
         return 'Invalid Score (above 100)!'
@@ -37,8 +51,11 @@ export const getGrade = (score = (0 || '0'), scale = '5.0') => {
 };
 
 
-const getPoints = (grade) =>{
+const getPoints = (grade) => {
   const grades = ['F', 'E', 'D', 'C', 'B', 'A']
+  if (grade === 'RA') {
+    return (0);
+  }
   return (grades.indexOf(grade));
 
 };
@@ -48,22 +65,14 @@ const rand = (arr) => {
   const validIndex = (index < arr.length ? index : index === arr.length ? index - 1 : arr.length - 1);
   return arr[validIndex];
 }
-const levels = [100, 200, 300, 400, 500];
-const sessions = ['2019/2020', '2020/2021', '2021/2022'];
-const depts = ['Computer Engineering', 'Electrical', 'Mechanical', 'Civil', 'Chemical', 'Agric and Bio Resource'];
-const semesters = ['First', 'Second'];
-const colors = ['#55a5ff', '#f58915', '#24df90', '#ff55dd', '#ee3e11', '#7722ff', '#cc3466', '#65de27', '#a829ff'];
-
 
 const results = [];
 for (let i = 1; i <= 120; i++) {
-  const dept = rand(depts);
+  const dept = 'Computer Engineering';//rand(depts);
   const lev = rand(levels);
   const sem = rand(semesters);
-  const scores = [];
-  for (let i = 20; i <= 95; i++) {
-    scores.push(i);
-  }
+  const isFinals = (levels.indexOf(lev) === levels.length - 1) && (semesters.indexOf(sem) === semesters.length - 1)
+  
   //console.log(lev, dept)
 
   const resultData = courses.filter(c =>
@@ -82,10 +91,10 @@ for (let i = 1; i <= 120; i++) {
         score: score,
         grade: {
           value: getGrade(score),
-          color: getGrade(score) === 'F' ? '#ff3333' : getGrade(score) === 'A' ? '#11ff33' : '#222',
-        
-        }, 
-        points: getPoints(getGrade(score))
+          color: getGrade(score) === 'F' ? '#ff3333' : getGrade(score) === 'A' ? '#11dd11' : '#222',
+
+        },
+        points: getPoints(getGrade(score)) * course.creditUnits
       });
     });
 
@@ -99,13 +108,13 @@ for (let i = 1; i <= 120; i++) {
   results.push(
     new Result(
       Math.random().toString(),
-      'Non_Degree_Exam',
+      !isFinals ? 'Non_Degree_Exam' : 'Degree_Exam',
       lev,
       sem,
       rand(sessions), //for now
       dept,
       'CEET',
-      students.filter(s => s.department === dept), // && s.level === lev.toString()),
+      students.filter(s => s.department === dept && +s.level > lev),
       courses.filter(c => c.department === dept && c.courseLevel === lev && c.semester === sem),
       resultData
     )

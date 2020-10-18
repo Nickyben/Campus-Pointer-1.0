@@ -5,7 +5,7 @@ import {
   TouchableNativeFeedback
 } from 'react-native';
 
-const Touch = ({disabled, onTouch, children, style, useIos}) => {
+const Touch = ({ disabled, onTouch, children, style, useIos }) => {
   let TouchableCmp = TouchableOpacity;
 
   if ((Platform.OS === 'android' && Platform.Version >= 21) && !!useIos !== true) {
@@ -14,7 +14,7 @@ const Touch = ({disabled, onTouch, children, style, useIos}) => {
   return (
     <View style={styles.container}>
       <TouchableCmp
-      disabled={disabled}
+        disabled={disabled}
         activeOpacity={0.4}
         style={{ ...styles.touchable, }}
         onPress={onTouch}
@@ -29,14 +29,14 @@ const Touch = ({disabled, onTouch, children, style, useIos}) => {
 };
 
 const styles = StyleSheet.create({
-  container:{
+  container: {
   },
   touchable: {
-   
+
   },
   children: {
     alignItems: 'center',
-    justifyContent: 'center', 
+    justifyContent: 'center',
     //width: 'auto',
   }
 });

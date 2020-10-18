@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   dataContainer: {
     flex: 1,
     marginTop: 20,
-    borderTopStartRadius: 70,//please set this wrt screen dimensions
+    borderTopLeftRadius: 70,//please set this wrt screen dimensions
     overflow: 'hidden',
   },
   row: {

@@ -11,23 +11,43 @@ import { Ionicons } from '@expo/vector-icons';
 import { fetchReportsData } from '../../store/actions/reportsActions';
 import Colors from '../../constants/Colors';
 import TouchIcon from '../../components/UI/TouchIcon';
+import Card from '../../components/UI/Card';
+import MyPieChart from '../../components/pointerComponents/MyPieChart';
 
 
 
-const MyItem = ({ content, content: { course, gradeData, color }, style, index, onNavigate, showingTitle, hideOthers }) => {
+const MyItem = ({ content, reportTitle, studentData, content: { course, gradeData, CA_Sheet, ATD_Sheet, color },
+  style, index, onNavigate, showingTitle, hideOthers }) => {
   const [showCourseTitle, setShowCourseTitle] = useState(false);
-  const studentResultData = gradeData.find(student => student.regNumber === 'studentUserRegNumber');
-  const { grade, score, points } = studentResultData ? studentResultData : { grade: { value: 'RA', color: '#333' }, score: 'RA' }//for now!!
-  const itemColor = color//Colors.accent;
+
+  useEffect(() => {
+    setShowCourseTitle(p => showingTitle === course.courseCode);
+  }, [showingTitle]);
+
   const courseTitleHandler = (courseCode) => {
     showCourseTitle === true ?
       hideOthers('') :
       hideOthers(courseCode);
   }
+  const isResult = reportTitle === 'Results';
+  const isAssessment = reportTitle === 'Assessments';
+  const isAttendance = !(isResult || isAssessment);
+  const { regNumber } = studentData;
 
-  useEffect(() => {
-    setShowCourseTitle(p => showingTitle === course.courseCode);
-  }, [showingTitle]);
+  let studentResultData, student_CA_Sheet, student_ATD_Sheet;
+  if (isResult) {
+    studentResultData = gradeData.find(student => student.regNumber === regNumber);//'studentUserRegNumber');
+  } else if (reportTitle === 'Assessments') {
+    student_CA_Sheet = CA_Sheet.find(student => student.regNumber === regNumber);//'studentUserRegNumber');
+  } else {
+    student_ATD_Sheet = ATD_Sheet.find(student => student.regNumber === regNumber);//'studentUserRegNumber');
+  }
+
+  const { grade, score, points } = studentResultData ? studentResultData : {};
+  const { quiz1, quiz2, test, CA } = student_CA_Sheet ? student_CA_Sheet : {};
+  const { attendance, barColor } = student_ATD_Sheet ? student_ATD_Sheet : {};
+
+  const itemColor = color;
 
 
 
@@ -37,14 +57,14 @@ const MyItem = ({ content, content: { course, gradeData, color }, style, index, 
         <View style={{ ...styles.leftColorBar, backgroundColor: itemColor, }}></View>
 
         <View style={{
-          ...styles.courseContainer, ...style
+          ...styles.courseContainer, ...style,
           //backgroundColor: isPresentPeriod ?itemColor+ '22' : '#fff',
           // borderColor: isPresentPeriod ? itemColor + '22' : '#e3e6e7',
         }} >
 
           <View style={{
             flexDirection: 'row',
-            alignItems: 'center',
+            justifyContent: 'center', alignItems: 'center', flex: 1.5,
           }}>
             <Text
               onPress={onNavigate.bind(this, course.id)}
@@ -60,19 +80,73 @@ const MyItem = ({ content, content: { course, gradeData, color }, style, index, 
               onTouch={courseTitleHandler.bind(this, course.courseCode)}
             />
           </View>
+          {(isResult || isAssessment) &&
+            <View style={{ flex: 4, flexDirection: 'row' }}>
+              {isResult ?
+                <Text style={{
+                  ...styles.courseText2, color: '#444',
+                }}>{score}</Text>
+                :
+                <Text style={{
+                  ...styles.courseText2, color: '#444',
+                }}>{quiz1}</Text>
+              }
 
 
-          <Text style={{ ...styles.courseText2, color: '#444' }}>{score}</Text>
+              {isResult ? <Text onPress={() => { }}
+                style={{
+                  ...styles.courseText2, color: grade ? grade.color : '#222',
+                }}>{grade.value}</Text>
+                :
+                <Text style={{
+                  ...styles.courseText2, color: '#444',
+                }}>{quiz2}</Text>
+              }
 
 
-          <Text onPress={() => { }}
-            style={{ ...styles.courseText2, color: grade ? grade.color : '#222' }}>{grade.value}</Text>
+              {isResult ? <Text style={{
+                ...styles.courseText2, color: '#555',
+              }}>{course.creditUnits}</Text>
+                :
+                <Text style={{
+                  ...styles.courseText2, color: '#444',
+                }}>{test}</Text>
+              }
 
+              {isResult ? <Text style={{
+                ...styles.courseText2, color: '#555',
+              }}>{points}</Text>
+                :
+                <Text style={{
+                  ...styles.courseText2, color: CA >= 25 ? '#11dd11' : CA <= 14 ? '#ff3333' : '#444',
+                }}>{CA}%</Text>
+              }
+            </View>
+          }
 
-          <Text style={{ ...styles.courseText2, color: '#555' }}>{course.creditUnits}</Text>
+          {
+            isAttendance &&
+            <View style={{
+              flex: 4,
+              backgroundColor: '#d3d6d7',
+              borderRadius: 20,
+              //borderColor: '#e3e6e7',
+              //borderWidth:1
+            }}>
+              <View style={{
+                backgroundColor: barColor,
+                width: attendance.toString() + '%',
+                borderRadius: 20
+              }
+              }>
+                <Text
+                  style={{
+                    ...styles.courseText2, color: '#fff', fontSize: 12
+                  }}>{attendance}%</Text>
+              </View>
+            </View>
 
-          <Text style={{ ...styles.courseText2, color: '#555' }}>{course.creditUnits * points}</Text>
-
+          }
 
         </View>
 
@@ -85,8 +159,9 @@ const MyItem = ({ content, content: { course, gradeData, color }, style, index, 
             onPress={onNavigate.bind(this, course.id)}
             style={{
               ...styles.courseText,
+              textAlign: 'center',
               width: '100%',
-              backgroundColor: itemColor, padding: 15, paddingLeft: 40,
+              backgroundColor: itemColor, padding: 10, paddingLeft: 40,
               marginRight: 5,
               color: '#f3f6f7'
             }}>Course Title: {course.courseTitle}
@@ -100,20 +175,16 @@ const MyItem = ({ content, content: { course, gradeData, color }, style, index, 
 
 
 
-const SectionHeaderItem = ({ onCollapse, courses, title, showingSection }) => {
-  const [isClicked, setIsClicked] = useState(false);
-
-  const _dispatch = useDispatch();
-
+const SectionHeaderItem = ({ onCollapse, reportTitle, courses, title, showingSection }) => {
 
   const [showSection, setShowSection] = useState(false);
 
   const showSectionHandler = (title) => {
-    showSection === true ?
-      onCollapse('empty') :
-      onCollapse(title);
+    showSection === true ? onCollapse('empty') : onCollapse(title);
   }
-
+  const isResult = reportTitle === 'Results';
+  const isAssessment = reportTitle === 'Assessments';
+  const isAttendance = !(isResult || isAssessment);
   useEffect(() => {
     setShowSection(p => showingSection === title);
   }, [showingSection]);
@@ -129,38 +200,60 @@ const SectionHeaderItem = ({ onCollapse, courses, title, showingSection }) => {
           ...styles.sectionHeaderWrap,
         }}>
 
-          <Text style={styles.sectionHeaderLabel}>{title}</Text>
+          <Text
+            style={styles.sectionHeaderLabel}
+            onPress={showSectionHandler.bind(this, title)}
+          >{title}</Text>
           <TouchIcon
-            onTouch={showSectionHandler.bind(this, title)}//setIsCollapsed(p => !p); setIsTapped(p => true) }}
-            touched={() => !showSection} //hiddenSections.includes(title)}
+            onTouch={showSectionHandler.bind(this, title)}
+            touched={() => !showSection}
             name={Ionicons}
             size={23}
             color={Colors.switchWhite}
             toggleIcons={['arrow-dropdown-circle', 'arrow-dropright-circle']}
-          >
-          </TouchIcon>
+          />
         </View>
 
       </View>
-      {showSection //(!hiddenSections.includes(title) && courses.length !== 0)
+      {showSection
         &&
-        <View style={{
-          backgroundColor: '#fff', width: '100%',
-          borderBottomColor: '#f3f6f7', borderBottomWidth: 15,
-        }}>
+        <View style={styles.sectionBarContainer}>
           {
             showSection && courses.length !== 0 &&
-            <View style={{ flexDirection: 'row', paddingHorizontal: 15, }}>
+            <View style={{
+              flexDirection: 'row', paddingHorizontal: 15,
+            }}>
               <View style={{ ...styles.leftColorBar, }}></View>
 
               <View style={styles.sectionBar}>
 
-                <Text style={{ ...styles.sectionBarText, marginRight: 35 }}>Courses</Text>
-                <Text style={styles.sectionBarText}>S</Text>
-                <Text style={styles.sectionBarText}>G</Text>
-                <Text style={styles.sectionBarText}>CU</Text>
-                <Text style={styles.sectionBarText}>GP</Text>
+                <View style={{ flex: 1.5, flexDirection: 'row', justifyContent: 'center' }}>
+                  <Text style={{ ...styles.sectionBarText, }}>Courses</Text>
+                  <View style={{ width: 30 }}></View>
+                </View>
 
+                {(isResult || isAssessment) &&
+                  <View style={{ flex: 4, flexDirection: 'row' }}>
+                    {reportTitle === 'Results' ? <>
+                      <Text style={styles.sectionBarText}>S</Text>
+                      <Text style={styles.sectionBarText}>G</Text>
+                      <Text style={styles.sectionBarText}>CU</Text>
+                      <Text style={styles.sectionBarText}>WS</Text>
+                    </>
+                      :
+                      <>
+                        <Text style={styles.sectionBarText}>Q1</Text>
+                        <Text style={styles.sectionBarText}>Q2</Text>
+                        <Text style={styles.sectionBarText}>TS</Text>
+                        <Text style={styles.sectionBarText}>CA</Text>
+                      </>
+                    }
+                  </View>
+                }
+                {
+                  isAttendance &&
+                  <Text style={{ ...styles.sectionBarText, flex: 4 }}>Attendance</Text>
+                }
 
               </View>
             </View>
@@ -185,30 +278,429 @@ const SectionHeaderItem = ({ onCollapse, courses, title, showingSection }) => {
             textAlign: 'center',
           }}>
             It appears you have no result for: {title}.
-            </Text>
+          </Text>
         </View>
       }
-    </View >
-
+    </View>
   )
 };
 
 
-const SectionFooterItem = ({ onCollapse, courses, title, showingSection }) => {
-  return(
-    <Text>This is the footer</Text>
+const SectionFooterItem = ({ onCollapse, reportTitle, studentData, courses, title, showingSection, COURSES }) => {
+  const [showSection, setShowSection] = useState(false);
+  const { regNumber } = studentData;
+  const isResult = reportTitle === 'Results';
+  const isAssessment = reportTitle === 'Assessments';
+  const isAttendance = !(isResult || isAssessment);
+
+  const recordData =isAttendance &&  courses.map((c, i) => {
+    const { course: { courseCode }, ATD_Sheet, color } = isAttendance && c;
+    const { attendance, barColor } = ATD_Sheet.find(student => student.regNumber === regNumber);
+
+    return ({
+      courseCode,
+      attendance,
+      barColor,
+      courseColor: color,
+    });
+  });
+
+
+  const totalATDPie = isAttendance && recordData.reduce((a, b) => {
+    return (a + b.attendance)
+  }, 0)
+
+  const pieData = isAttendance &&
+    recordData.map(rd => ({
+      label: rd.courseCode,
+      value: +((rd.attendance / totalATDPie) * 100).toFixed(0),
+      labelColor: rd.courseColor
+    }));
+
+  console.log(totalATDPie);
+
+  const showSectionHandler = (title) => {
+    // showSection === true ?
+    //   onCollapse('empty') :
+    //   onCollapse(title);
+  }
+
+  const getGP = (courses) => {
+    return (
+      courses.length != 0 && courses.reduce((a, b) => {
+        const gradeData = b.gradeData;
+        const studentResultData = gradeData.find(student => student.regNumber === regNumber);
+        const { points } = studentResultData;
+        return (a + points);
+      }, 0)
+    )
+  };
+
+  const getTCL = (courses) => {
+    return (
+      courses.length != 0 && courses.reduce((a, b) => {
+        const { course: { creditUnits }, gradeData } = b;
+        const studentResultData = gradeData.find(student => student.regNumber === regNumber);
+        const { grade } = studentResultData;
+        let CU = creditUnits;
+        if (grade.value === 'RA') {
+          CU = 0;
+        }
+        return (a + CU);
+      }, 0)
+    );
+  };
+
+  const getGPA = (gp, tcl) => {
+
+    return (tcl !== 0 && (gp / tcl).toFixed(2));
+  };
+
+  let GP, TCL, GPA;
+  if (isResult) {
+    GP = getGP(courses);
+    TCL = getTCL(courses);
+    GPA = getGPA(GP, TCL);
+  }
+
+
+  const titles = isResult && COURSES.map(section => section.title);
+  const presentIndex = isResult && titles.indexOf(title);
+
+  const _2dCoursesArr = isResult && COURSES.filter((section, index) =>
+    index <= presentIndex && section.data.length !== 0
+  ).map(section => {
+    return (section.data);
+  });
+
+
+  const C_GP = isResult && _2dCoursesArr.reduce((initialGP, courses) => {
+    const gp = getGP(courses);
+    return (initialGP + gp);
+  }, 0);
+
+  const C_TCL = isResult && _2dCoursesArr.reduce((initialTCL, courses) => {
+    const tcl = getTCL(courses);
+    return (initialTCL + tcl);
+  }, 0);
+
+
+  const CGPA = isResult && getGPA(C_GP, C_TCL);
+
+  const carryOverCourses = isResult && courses.filter(
+    (c, i) => {
+      const { gradeData } = c;
+      const studentResultData = gradeData.find(student => student.regNumber === regNumber);
+      const { grade } = studentResultData;
+      return (grade.value === 'F')
+    }//this should include the previous semester or level carry over course which has not been cleared
+  ).map(c => c.course.courseCode)
+
+  const awaitingResults = isResult && courses.filter(
+    (c, i) => {
+      const { gradeData } = c;
+      const studentResultData = gradeData.find(student => student.regNumber === regNumber);
+      const { grade } = studentResultData;
+      return (grade.value === 'RA')
+    }//this should include the previous semester or level carry over course which has not been cleared
+  ).map(c => c.course.courseCode)
+
+
+
+
+  useEffect(() => {
+    setShowSection(p => showingSection === title);
+  }, [showingSection]);
+
+
+
+  const summary = [
+    // {
+    //   type: 'Previous',
+    //   details: [['TCL', 23], ['GP', 345], ['GPA', 4.33]]
+    // },
+    {
+      type: 'Current',
+      details: [['TCL', TCL], ['GP', GP], ['GPA', GPA]]
+    },
+    {
+      type: 'Cumulative',
+      details: [['TCL', C_TCL], ['GP', C_GP], ['CGPA', CGPA]]
+    }
+  ];
+
+  const abbrevs = isResult ? [
+    ['S   ', 'Score'], ['G   ', 'Grade'], ['CU ', 'Credit Unit'], ['WS ', 'Weighted Score'],
+    ['RA  ', 'Result Awaiting'],
+    ['TCL', 'Total Credit Load'], ['GP  ', 'Grade Points'], ['GPA', 'Grade Points Average']
+
+  ] :
+    [
+      ['Q1   ', '1st Quiz', '15 Marks'], ['Q2  ', '2nd Quiz', '15 Marks'],
+      ['TS ', 'Test Score', '30 Marks'], ['CA ', 'Total Score', '30%'],
+    ];
+
+  const scales = isResult && [
+    ['A    ', '5 points'], ['B    ', '4 points'], ['C    ', '3 points'],
+    ['D    ', '2 points'], ['E    ', '1 point  '], ['F    ', '0 points'],
+    ['RA   ', '- Empty ']
+  ];
+  const barColors = [
+    ['#22eeaa', 'Excellent Attendance'],
+    ['#6688ff', 'Very Good Attendance'],
+    ['#ff8833', 'Good Attendance'],
+    ['#ff33aa', 'Fair Attendance'],
+    ['#ff3333', 'Poor Attendance']
+  ];
+
+
+  return (
+    <View>
+      {showSection && courses.length !== 0
+        &&
+        <View style={{
+          ...styles.sectionFooterContainer,
+          //backgroundColor: isResult? '#f3f6f7': '#fff'
+        }}>
+          {
+            isAttendance &&
+            <View style={{ flexDirection: 'column', }}>
+              <Card style={{
+                padding: 10,
+                marginBottom: 10,
+                //alignItems:'center'
+                //width:'75%'
+              }}>
+                <MyPieChart
+                  chartData={pieData}
+                  chartTitle={'Total Attended'}
+                />
+              </Card>
+
+              <Card style={{
+                paddingHorizontal: 15,
+                paddingBottom: 10,
+                width: '45%'
+              }}>
+                {
+                  barColors.map((c, i) => {
+                    return (
+                      <View key={i} style={{
+                        flexDirection: 'row',
+                        marginBottom: 10
+                      }}>
+                        <View style={{ flex: 1 }}>
+                          <View
+                            style={{
+                              width: 30, height: 20, borderRadius: 15,
+                              backgroundColor: c[0], marginRight: 10,
+                            }}></View>
+                        </View>
+
+                        <Text style={{ ...styles.abbrevDetail, color: '#333', flex: 2 }}>{c[1]}</Text>
+                      </View>
+                    );
+                  })
+                }
+
+              </Card>
+
+
+
+            </View>
+          }
+
+          {(isResult || isAssessment) &&
+            <View>
+              {isResult &&
+                <View style={styles.CGPA_description}>
+                  {
+                    summary.map((result, i) => (
+                      <Card key={i} style={{
+                        padding: 10, paddingVertical: 15, width: '48%', alignItems: 'center',
+                        backgroundColor: '#fff', borderRadius: 7
+                      }}>
+                        <Text style={{
+                          ...styles.abbrevTitle, fontSize: 15, textAlign: 'center', borderBottomColor: '#ddd', color: Colors.primary,
+                          borderBottomWidth: 1, width: '100%', padding: 5,
+                        }}>
+                          {result.type}
+                        </Text>
+                        <View style={{
+                          flexDirection: 'row', justifyContent: 'space-between',
+
+                        }}>
+                          {
+                            result.details.map((detail, i) => (
+                              <View key={i} style={{
+                                justifyContent: 'center', width: '32%',
+                                alignItems: 'center',
+                                padding: 1, paddingVertical: 10, backgroundColor: Colors.primary, //'#f3f6f7',
+                                marginLeft: 2, borderBottomLeftRadius: 5, borderBottomRightRadius: 5,
+                              }}>
+                                <Text style={{
+                                  width: '100%', ...styles.abbrevDetail, fontSize: 13,
+                                  textAlign: 'center', color: '#fff'
+                                }}>{detail[0]}</Text>
+                                <Text style={{
+                                  width: '100%', ...styles.abbrevDetail, fontSize: 14,
+                                  textAlign: 'center', color: '#fff'
+                                }}>{detail[1]}</Text>
+                              </View>
+                            ))
+                          }
+                        </View>
+                      </Card>
+
+
+                    ))
+                  }
+                </View>
+              }
+
+              <View style={{
+                ...styles.abbrevsAndScales,
+                //justifyContent:!isResult? 'center':'space-between' 
+              }}>
+
+                {isResult &&
+                  <Card style={styles.scaleDescription}>
+                    {scales.map((scale, i) =>
+                      (
+                        <View key={i} style={{ flexDirection: 'row', }}>
+                          <Text style={styles.abbrevTitle}>{scale[0]}</Text>
+                          <Text style={styles.abbrevDetail}>{scale[1]}</Text>
+                        </View>
+                      ))
+                    }
+                  </Card>
+                }
+
+                <Card style={{
+                  ...styles.abbrevDescription,
+                  padding: isResult ? 15 : 20,
+                  // width: isResult ? '45%' : 'auto',
+                }}>
+                  <View style={{}}>
+                    {abbrevs.map((abv, i) =>
+                      (
+                        <Text key={i} style={styles.abbrevTitle}>{abv[0]}</Text>
+                      ))
+                    }
+                  </View>
+                  <View style={{ paddingHorizontal: 10, }}>
+                    {abbrevs.map((abv, i) =>
+                      (
+                        <Text key={i} style={{ ...styles.abbrevDetail, }} numberOfLines={2} lineBreakMode='tail'>{abv[1]}</Text>
+                      ))
+                    }
+                  </View>
+                  {
+                    isAssessment &&
+                    <View style={{ paddingHorizontal: 10, }}>
+                      {abbrevs.map((abv, i) =>
+                        (
+                          <Text key={i} style={{ ...styles.abbrevDetail, color: Colors.accent }} numberOfLines={2} lineBreakMode='tail'>{abv[2]}</Text>
+                        ))
+                      }
+                    </View>
+                  }
+                </Card>
+
+                {isAssessment &&
+                  <View style={styles.assessStats}>
+
+                  </View>
+
+                }
+
+                {isResult &&
+                  <Card style={{ width: '25%', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ ...styles.abbrevTitle, fontSize: 24, color: Colors.primary }}>CGPA</Text>
+                    <Text style={{ ...styles.abbrevDetail, fontSize: 24 }}>{CGPA}</Text>
+                  </Card>
+                }
+
+              </View>
+
+              {isResult &&
+                <View style={styles.resultRemarks}>
+                  <Card>
+
+                    <View style={{ flexDirection: 'row', padding: 5, alignItems: 'center' }}>
+                      <Text style={{
+                        ...styles.abbrevTitle, fontSize: 15, color: Colors.primary,
+
+                      }}>Carryover Courses: </Text>
+                      <View style={{ paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', }}>
+                        {carryOverCourses.length > 0 ?
+                          carryOverCourses.map((c, i) =>
+                            <Text key={i} style={{ ...styles.abbrevDetail, color: '#ff3333' }}>{c}, </Text>
+                          ) :
+                          <Text style={{ ...styles.abbrevDetail, color: '#11dd11' }}>NONE</Text>
+                        }
+                      </View>
+                    </View>
+
+
+                    <View style={{ flexDirection: 'row', padding: 5, alignItems: 'center' }}>
+                      <Text style={{
+                        ...styles.abbrevTitle, fontSize: 15, color: Colors.primary,
+
+                      }}>Awaiting Results: </Text>
+                      <View style={{ paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', }}>
+                        {awaitingResults.length > 0 ?
+                          awaitingResults.map((c, i) =>
+                            <Text key={i} style={{ ...styles.abbrevDetail, color: '#ff8833' }}>{c}, </Text>
+                          ) :
+                          <Text style={{ ...styles.abbrevDetail, color: '#11dd11' }}>NONE</Text>
+                        }
+                      </View>
+                    </View>
+
+                  </Card>
+
+                </View>
+              }
+            </View>
+          }
+
+        </View>
+
+
+      }
+    </View>
   );
 };
 
 
-const ResultsScreen = ({ navig }) => {
-  const studentResults = useSelector(state => state.reportsReducer.availableResults
-    .filter(r => r.department === 'Computer Engineering' && !!r.students.find(s => s.regNumber === 'studentUserRegNumber')) // <===very Important
-  )
-  console.log(studentResults.length + 'rew')
+const ResultsScreen = ({ navig, source: { title, studentId } }) => {
+  const reportTitle = title;
+  const studentData = useSelector(state => state.dataReducer.availableStudents)
+    .find(s => s.id === studentId);
+  const { regNumber, id, department } = studentData;
+  let studentResults, studentAssessments, studentAttendances;
+
+
+  if (reportTitle === 'Assessments') {
+    studentAssessments = useSelector(state => state.reportsReducer.availableAssessments
+      .filter(a => a.department === department &&
+        !!a.students.find(s => s.regNumber === regNumber))
+    )
+  } else if (reportTitle === 'Results') {
+    studentResults = useSelector(state => state.reportsReducer.availableResults
+      .filter(r => r.department === department &&
+        !!r.students.find(s => s.regNumber === regNumber))
+    )
+  } else {
+    studentAttendances = useSelector(state => state.reportsReducer.availableAttendances
+      .filter(r => r.department === department &&
+        !!r.students.find(s => s.regNumber === regNumber))
+    )
+  }
+
+
   const dispatch = useDispatch();
-
-
 
   const loadResultCourses = useCallback(async () => {
     //   setError(null);
@@ -253,25 +745,40 @@ const ResultsScreen = ({ navig }) => {
   ];
   const levels = [100, 100, 200, 200, 300, 300, 400, 400, 500, 500];
   const semesters = ['First', 'Second', 'First', 'Second', 'First', 'Second', 'First', 'Second', 'First', 'Second'];
-
   for (let i = 0; i < deptLevels.length; i++) {
-    const semResult = studentResults.find(r =>
-      r.level === levels[i] && r.semester === semesters[i]
-    );
-    const semResultData = semResult ? semResult.resultData : []
-    //console.log(semResultData)
+    let semResult, semResultData, semAssessment, semAssessmentData, semAttendance, semAttendanceData;
+
+    if (reportTitle === 'Results') {
+      semResult = studentResults.find(r =>
+        r.level === levels[i] && r.semester === semesters[i] // && r.level <= 
+      );
+      semResultData = semResult ? semResult.resultData : []
+    } else if (reportTitle === 'Assessments') {
+      semAssessment = studentAssessments.find(a =>
+        a.level === levels[i] && a.semester === semesters[i] // && r.level <= 
+      );
+      semAssessmentData = semAssessment ? semAssessment.assessmentData : []
+    } else {
+      semAttendance = studentAttendances.find(atd =>
+        atd.level === levels[i] && atd.semester === semesters[i] // && r.level <= 
+      );
+      semAttendanceData = semAttendance ? semAttendance.attendanceData : []
+    }
+
     dataArr.push(
       {
         title: deptLevels[i],
-        data: semResultData
+        data: reportTitle === 'Results' ? semResultData :
+          reportTitle === 'Assessments' ? semAssessmentData :
+            semAttendanceData
       }
     );
   }
 
   const COURSES = dataArr;
-  const [showingSection, setShowingSection] = COURSES.length > 0 ? useState(COURSES[0].title) : useState(''); //initial shown should be the current level of user
+  const lastResult = COURSES.filter(section => section.data.length > 0).reverse()[0]
+  const [showingSection, setShowingSection] = lastResult ? useState(lastResult.title) : useState('');
   const [showTitle, setShowTitle] = useState('');
-
   //console.log(userResults.length)
   //console.log(COURSES[0].title.length)
 
@@ -288,8 +795,6 @@ const ResultsScreen = ({ navig }) => {
   }
 
   const renderItem = ({ item, index, section: { title, data } }) => { //auto gets data in obj form , I deStructured it in params
-
-
 
     const courseItem = {
       even: {
@@ -311,8 +816,8 @@ const ResultsScreen = ({ navig }) => {
           onNavigate={displayCourseHandler}
           showingTitle={showTitle}
           hideOthers={titlesHandler}
-
-
+          studentData={studentData}
+          reportTitle={reportTitle}
         />
     )
   };
@@ -325,19 +830,25 @@ const ResultsScreen = ({ navig }) => {
         title={title}
         onCollapse={titleHandler}
         showingSection={showingSection}
+        reportTitle={reportTitle}
 
       />
     )
   };
 
   const renderSectionFooter = ({ section: { title, data } }) => {
+    // if (reportTitle === 'Assessments') {
+    //   return (<></>)
+    // }
     return (
       <SectionFooterItem
         courses={data}
         title={title}
-      //onCollapse={titleHandler}
-      //showingSection={showingSection}
-
+        onCollapse={titleHandler}
+        showingSection={showingSection}
+        COURSES={COURSES}
+        studentData={studentData}
+        reportTitle={reportTitle}
       />
     )
   };
@@ -387,6 +898,12 @@ const styles = StyleSheet.create({
     marginRight: 10,
 
   },
+  sectionBarContainer: {
+    backgroundColor: '#fff',
+     width: '100%',
+    borderBottomColor: '#f3f6f7', 
+    borderBottomWidth: 15,
+  },
   sectionBar: {
     width: '98%',
     padding: 25,
@@ -400,6 +917,8 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSansBold',
     fontSize: 16,
     color: Colors.primary,
+    flex: 1,
+    textAlign: 'center',
   },
 
   courseContainer: {
@@ -409,7 +928,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
-    padding: 15,
+    padding: 12,
     borderRadius: 5,
     // borderLeftWidth: 10,
     // borderBottomWidth: 1,
@@ -430,8 +949,66 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSansBold',
     fontSize: 14,
     color: '#222',
+    flex: 1,
+    textAlign: 'center',
+  },
+  sectionFooterContainer: {
+    backgroundColor: '#f3f6f7',
+    width: '100%',
+    borderTopColor: '#f3f6f7',
+    borderTopWidth: 15,
+    padding: 10,
+    paddingHorizontal: 15,
   },
 
+  CGPA_description: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    //padding: 10,
+    //paddingHorizontal: 20,
+    width: '100%',
+    //backgroundColor: '#ffccee',
+
+  },
+
+  abbrevsAndScales: {
+    //backgroundColor: 'red',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    // padding: 10,
+    marginBottom: 10,
+
+  },
+  abbrevDescription: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    padding: 15,
+    backgroundColor: '#fff',
+    width: '45%'
+  },
+  scaleDescription: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 15,
+    backgroundColor: '#fff',
+    //flex: 1
+    width: '25%'
+  },
+  resultRemarks: {
+
+  },
+  abbrevTitle: {
+    fontFamily: 'OpenSansBold',
+    color: Colors.primary,
+    fontSize: 12,
+  },
+  abbrevDetail: {
+    fontFamily: 'OpenSansBold',
+    color: '#555',
+    fontSize: 12,
+  }
 
 });
 

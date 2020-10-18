@@ -1,7 +1,8 @@
 import HomePost from '../models/homePost';
+import { rand } from '../constants/MyFunctions';
 
 const content = () => {
-  const posts = [
+  let posts = [
     ['US on Visa to Nigerians', 'Global', 'US president halts issuing of visa to Nigerians. 100Level students should prepare for their Test on Tuesday'],
     ['To The Course Reps', 'Departmental',
       'Course Reps should meet me in my office on Friday with their respective class lists. 100Level students should prepare for their Test on Tuesday'],
@@ -25,9 +26,28 @@ const content = () => {
     { name: 'Nick Chukwuka', level: 200, post: ' Assistant Course Rep' },
     { name: 'Anyone Somebody', level: 400, office: 'VicePresident' },
 
-
+  ];
+  const types = ['Global', 'International', 'National', 'University', 'Faculty', 'Departmental', 'General'];
+  const responses = [
+    ['Helpful', 'Wow!', 'Interesting', 'Amazing', 'WorldClass', 'Good info'],
+    ['Helpful', 'Wow!', 'Interesting', 'Amazing', 'Resourceful', 'Good info'],
+    ['Helpful', 'Wow!', 'Interesting', 'Amazing', 'Brilliant', 'Good info'],
+    ['Really helpful', 'Helpful', 'Interesting', 'I\'ll attend', 'Brilliant', 'Good info'],
+    ['Noted', 'Helpful', 'Interesting', 'I\'ll attend', 'Brilliant', 'Good info'],
+    ['Noted', 'Helpful', 'Interesting', 'I\'ll attend', 'Brilliant', 'Good info'],
+    ['Really helpful', 'Helpful', 'Interesting', 'Amazing', 'Brilliant', 'Resourceful'],
 
   ];
+  posts = posts.map((p, i) => {
+    types.map((t, i) => {
+      if (p[1] === types[i]) {
+        p.push(responses[i])
+      }
+    }) 
+    return p;
+  });
+
+
   const images = [
     require('../assets/images/news1.jpg'),
     require('../assets/images/news2.jpg'),
@@ -40,33 +60,34 @@ const content = () => {
     require('../assets/images/news9.jpg'),
     require('../assets/images/news10.jpg'),
     require('../assets/images/news11.jpg'),
-    null, null, null
+    null,
   ];
 
   const contentArr = [];
   for (let s = 1; s <= 22; s++) {
-    const postArr = posts[+((Math.random() * (posts.length - 2)).toFixed(0))];
-    const authorsArr = authors[+((Math.random() * (authors.length - 2)).toFixed(0))];
+    const postArr = rand(posts);
+    const authorsArr = rand(authors)
     contentArr.push(
       new HomePost(
         Math.random().toString(),
         postArr[0],
         postArr[1],
-        new Date().toLocaleDateString(),
-        postArr[1],
+        new Date(),
+        postArr[1], //for now, should be local, twitter,facebook, website,link etc 
         authorsArr,
         authorsArr,
         {
-          image: images[+((Math.random() * (images.length - 2)).toFixed(0))],
+          image: rand(images),
           text: postArr[2],
-        }
+        },
+        postArr[3]
       )
     );
   }
   return contentArr;
 }
 
-const homePosts = content();
+const homePosts = content().reverse();
 
 export default homePosts;
 

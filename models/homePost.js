@@ -1,5 +1,5 @@
 export default class HomePost {
-  constructor(id, title, type, date, source, authorizedAuthor, featuredAuthor, body) {
+  constructor(id, title, type, date, source, authorizedAuthor, featuredAuthor, body, responses) {
     this.id = id;
     this.title = title;
     this.type = type; //announcements, news, awards, general events, admin and authorized posts
@@ -9,7 +9,7 @@ export default class HomePost {
     this.source = source //website, department, faculty, general
     this.image = body.image;
     this.text = body.text;
-    this.likes = 0;
+    this.responses = responses;
   }
 };
 

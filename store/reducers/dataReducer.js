@@ -4,16 +4,25 @@ import {
   LOAD_STUDENTS, LOAD_DEPT_DATA, LOAD_HOME_DATA
 } from "../actions/dataActions";
 
-const initialState = {
-  availableStudents: [],
+
+
+import courses from '../../data/courses'; // should be replaced with data fetched from server/db and departments
+import students from '../../data/students'; // should be replaced with data fetched from server/db and departments
+import staff from '../../data/staff';
+import events from '../../data/events';
+import halls from '../../data/halls';
+import timetables from '../../data/timetables';
+
+const initialState = {//!!remember that students etc should be from departments[department ] depending on app owners
+  availableStudents: students,// [], 
   availableDepartments: [],
   availableFaculties: [], 
-  availableStaff: [],
+  availableStaff: staff,// [],
   availableAssociations: [],
-  availableCourses: [],
-  availableHalls: [],
-  availableEvents: [],
-  availableTimetables: [],
+  availableCourses:courses,// [],
+  availableHalls:halls,//[],
+  availableEvents: events,// [],
+  availableTimetables: timetables,// [],
 };
 
 export default (state = initialState, action) => {

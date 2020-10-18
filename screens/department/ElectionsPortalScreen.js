@@ -189,6 +189,8 @@ const ElectionsPortalScreen = ({ navig }) => {
       );
 
     case 'voting':
+      const denominator = (voteSummary.length - 1) <= 0 ? 1 : (voteSummary.length - 1)
+      const goodVoteStatus = (availableOffices.length /denominator) <= 2;
       return (
         <>
           <VotingScreen navig={navig} changeScreen={portalScreenHandler} />
@@ -226,7 +228,7 @@ const ElectionsPortalScreen = ({ navig }) => {
                     })}
 
                     <View style={{ padding: 15, borderRadius: 10, marginTop:15,
-                    backgroundColor: (availableOffices.length/(voteSummary.length-1)<=2? Colors.success: Colors.error)}}>
+                    backgroundColor: goodVoteStatus? Colors.success: Colors.error}}>
                       <Text style={{ ...styles.summaryText, color: '#555' }}>
                         You have voted for {voteSummary.length} office{voteSummary.length!==1?'s':''} out of {availableOffices.length}
                       </Text>
@@ -345,8 +347,10 @@ const styles = StyleSheet.create({
     fontSize: 17,
     padding: 15,
     width: '100%',
-    backgroundColor: Colors.primary,
-    color: '#fff',
+    backgroundColor: Colors.switchPrimary,
+    color: Colors.switchWhite,
+    borderBottomColor: '#e3e6e7',
+    borderBottomWidth: 1,
   },
   summaryTextTitle: {
     fontFamily: 'OpenSansBold',

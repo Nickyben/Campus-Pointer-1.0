@@ -15,6 +15,7 @@ import RegisterCourseScreen from './RegisterCourseScreen';
 import CoursesScreen from '../department/CoursesScreen';
 import Btn from '../../components/UI/Btn';
 import ResultsScreen from '../student/ResultsScreen';
+import { fetchReportsData } from '../../store/actions/reportsActions';
 
 const ReportsScreen = ({ navigation, route: { params: { title, studentId } } }) => {
 
@@ -28,7 +29,7 @@ const ReportsScreen = ({ navigation, route: { params: { title, studentId } } }) 
           (
             <HeaderButtons HeaderButtonComponent={HeaderBtn}>
               <Item
-                tile='Print'
+                title='Print'
                 iconName={printIcon}
                 onPress={() => {
                 }}
@@ -38,7 +39,7 @@ const ReportsScreen = ({ navigation, route: { params: { title, studentId } } }) 
           (
             <HeaderButtons HeaderButtonComponent={HeaderBtn}>
               <Item
-                tile='Notifications'
+                title='Notifications'
                 iconName={notificationIcon}
                 onPress={() => {
                 }}
@@ -48,7 +49,41 @@ const ReportsScreen = ({ navigation, route: { params: { title, studentId } } }) 
 
       // formSubmit: formSubmitHandler
     });
-  });
+  },[title]);
+
+  const dispatch = useDispatch();
+
+  const loadResultCourses = useCallback(async () => {
+    //   setError(null);
+    //   setIsRefreshing(true)
+    //try {
+    await dispatch(fetchReportsData());
+    //   } 
+    //catch (err) {
+    //     setError(err.message);
+    //   }
+    //   setIsRefreshing(false);
+  }, [dispatch]);//setIsLoading is handled already by react,
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', loadResultCourses);
+
+    //clean up function to run when effect is about to rerun or when component is destroyed or unmounted
+    return (() => {
+      unsubscribe();
+    });
+  }, [loadResultCourses]);
+
+
+  useEffect(//will run only when the component loads and not again unless dependencies change
+    //don't use async keyword here, instead, use .then() after the dispatch()
+    () => {
+      //     setIsLoading(true);
+      loadResultCourses().then(() => {
+        //       setIsLoading(false);
+      });
+    }
+    , [dispatch, loadResultCourses]);
 
 
 
@@ -65,10 +100,10 @@ const ReportsScreen = ({ navigation, route: { params: { title, studentId } } }) 
       Screen = ResultsScreen;
       break;
     case 'Assessments':
-      Screen = Temp;
+      Screen = ResultsScreen;
       break;
     case 'General Attendance':
-      Screen = Temp;
+      Screen = ResultsScreen;
       break;
     case 'CGPA Tracker':
       Screen = Temp;

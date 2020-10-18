@@ -1,4 +1,6 @@
 import results from '../../data/results';
+import assessments from '../../data/assessments';
+import attendances from '../../data/attendances';
 
 
 
@@ -10,6 +12,8 @@ export const fetchReportsData = () =>{
     {
       type: LOAD_RESULT_DATA,
       availableResults: results,
+      availableAssessments: assessments,
+      availableAttendances: attendances,
     }
 
   );

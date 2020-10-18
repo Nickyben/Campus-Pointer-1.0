@@ -2,11 +2,11 @@ import React from 'react';
 import {
   StyleSheet,
   View, Text
-  
+
 } from 'react-native';
 
-const Template = ({}) => {
-  
+const Form = ({ }) => {
+
   return (
     <View style={styles.screen}>
       <Text>This is ... screen</Text>
@@ -15,12 +15,12 @@ const Template = ({}) => {
   );
 };
 
-export const screenOptions =()=>{
-  return({});
+export const screenOptions = () => {
+  return ({});
 };
 
 const styles = StyleSheet.create({
   screen: {},
 });
 
-export default Template;
+export default Form;

@@ -13,13 +13,19 @@ import { FlatList } from 'react-native-gesture-handler';
 import TouchCard from '../../components/UI/TouchCard';
 import Colors from '../../constants/Colors';
 import Btn from '../../components/UI/Btn';
+
 import { fetchDeptData } from '../../store/actions/dataActions';
+import Input from '../UI/Input';
 
 
-const ApplicantScreen = ({changeScreen}) => {
+const ApplicantScreen = ({ changeScreen }) => {
 
   return (
-    <Text onPress={changeScreen.bind(this, 'overview')}>Apply screen</Text>
+    <View>
+      <Input />
+      {/* <Text onPress={changeScreen.bind(this, 'overview')}>Apply screen</Text> */}
+
+    </View>
 
   );
 };

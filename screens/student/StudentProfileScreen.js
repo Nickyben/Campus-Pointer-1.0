@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
 import {
   StyleSheet, Text, View, ScrollView, Image,
   TouchableOpacity,
@@ -11,33 +13,78 @@ import SelectOption from '../../components/pointerComponents/SelectOption';
 import HeaderBtn from '../../components/UI/HeaderBtn';
 import TouchCard from '../../components/UI/TouchCard';
 import Colors from '../../constants/Colors';
-import courses from '../../data/courses';
+import { fetchDeptData } from '../../store/actions/dataActions';
 
 //this should be courses for the present level and courses failed in past (check Student MODEL) ie Student.present
 //and this should be collected at the register/courseApp screen(s)
-const userCourses = courses.filter(c => c.courseLevel === 400);
 
+
+let TouchableCmp = TouchableOpacity;
+
+if (Platform.OS === 'android' && Platform.Version >= 21) {
+  TouchableCmp = TouchableNativeFeedback;
+}
+
+const _Item = ({ content: { courseTitle, courseCode }, onSelect }) => (
+  <TouchCard
+    onTouch={onSelect}
+    style={styles.itemCard}
+  >
+    <View style={styles.courseInfoContainer}>
+      <Text style={styles.courseTitle}>{courseTitle}</Text>
+      <Text style={styles.courseCode}>{courseCode}</Text>
+    </View>
+  </TouchCard>
+);
 
 const StudentProfileScreen = ({ navigation }) => {
-  let TouchableCmp = TouchableOpacity;
+  const studentUser = useSelector(state => state.dataReducer.availableStudents
+  ).find(s => s.id === 'studentUserId');
+  const presentCourses = useSelector(state => state.dataReducer.availableCourses)
+    .filter(c => c.courseLevel === +studentUser.level)
 
-  if (Platform.OS === 'android' && Platform.Version >= 21) {
-    TouchableCmp = TouchableNativeFeedback;
-  }
+  const dispatch = useDispatch();
 
-  const Item = ({ content: { courseTitle, courseCode }, onSelect }) => (
-    <TouchCard
-      onTouch={onSelect}
-      style={styles.itemCard}
-    >
-      <View style={styles.courseInfoContainer}>
-        <Text style={styles.courseTitle}>{courseTitle}</Text>
-        <Text style={styles.courseCode}>{courseCode}</Text>
-      </View>
-    </TouchCard>
-  );
+  const loadData = useCallback(async () => {
+    //   setError(null);
+    //   setIsRefreshing(true)
+    //try {
+    await dispatch(fetchDeptData());
+
+    //catch (err) {
+    //     setError(err.message);
+    //   }
+    //   setIsRefreshing(false);
+  }, [dispatch]);//setIsLoading is handled already by react,
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', loadData);
+
+    //clean up function to run when effect is about to rerun or when component is destroyed or unmounted
+    return (() => {
+      unsubscribe();
+    });
+  }, [loadData]);
+
+
+  useEffect(//will run only when the component loads and not again unless dependencies change
+    //don't use async keyword here, instead, use .then() after the dispatch()
+    () => {
+      //     setIsLoading(true);
+      loadData().then(() => {
+        //       setIsLoading(false);
+      });
+    }
+    , [dispatch, loadData]);
+
+  const {id, regNumber, department, level, faculty, image} = studentUser ? studentUser : {};//presentCourses
+  const details = [
+    ['Reg. No.', regNumber], ['Level', level], ['Faculty', faculty], ['Department', department],
+    ['Session', '2020/2021'],
+  ];
+
   const renderItem = ({ item }) => (//auto gets data in obj form , I deStructured it in params
-    <Item
+    <_Item
       content={item}
       onSelect={() => {
         navigation.navigate(
@@ -66,20 +113,29 @@ const StudentProfileScreen = ({ navigation }) => {
     )
   }
 
+
   return (
     <View style={styles.screen}>
       <ScrollView style={styles.scrollView}>
         <View style={{ ...styles.imageRow, }}>
-          <Text style={styles.rowLabel}>Account</Text>
+          <Text style={styles.rowLabel}>Student Account</Text>
           <View style={{ ...styles.profileImageContainer }}>
-            <TouchableCmp onPress={() => { console.log('working') }} style={styles.touchCard}>
-              {/* showCard ={false}  */}
+            <TouchableCmp onPress={() => { }} style={styles.touchCard}>
 
-              <Image style={styles.profileImage} source={require('../../assets/images/user.png')} />
+              <Image style={styles.profileImage} source={image} />
 
             </TouchableCmp>
           </View>
-
+          <View style={styles.profileDetails}>
+            {details.map((d, i) => {
+              return (
+                <View key={i} style={styles.detailContainer}>
+                  <Text style={styles.titleText}>{d[0]}: </Text>
+                  <Text style={styles.detailsText}>{d[1]}</Text>
+                </View>
+              )
+            })}
+          </View>
         </View>
         <View style={styles.row}>
           <Text style={styles.rowLabel}>My Courses</Text>
@@ -87,13 +143,13 @@ const StudentProfileScreen = ({ navigation }) => {
             showsHorizontalScrollIndicator={false}
             //initialNumToRender, refreshing
             keyExtractor={(item, index) => item.id}
-            data={userCourses}
+            data={presentCourses}
             renderItem={renderItem}
             horizontal={true}
             contentContainerStyle={styles.listContainer}
           />
         </View>
-        <View style={styles.row}>
+        <View style={{...styles.row, ...styles.courseActionsRow}}>
           <Text style={styles.rowLabel}>Course Applications</Text>
           <View style={styles.courseActions}>
             <View style={styles.courseActionContainer}>
@@ -101,7 +157,7 @@ const StudentProfileScreen = ({ navigation }) => {
                 disableCard
                 onTouch={
                   selectOptionHandler.bind(this, 'CourseApplications', {
-                    title: 'Register', studentId: 'userStudentId'
+                    title: 'Register', studentId: id
                   })
                 }
 
@@ -116,14 +172,14 @@ const StudentProfileScreen = ({ navigation }) => {
               </TouchCard>
               <Text style={styles.actionLabel}>Register</Text>
             </View>
-            
+
 
             <View style={styles.courseActionContainer}>
               <TouchCard
                 disableCard
                 onTouch={
                   selectOptionHandler.bind(this, 'CourseApplications', {
-                    title: 'Registered', studentId: 'userStudentId'
+                    title: 'Registered', studentId: id
                   })
                 }
                 style={styles.touchCard}>
@@ -143,7 +199,7 @@ const StudentProfileScreen = ({ navigation }) => {
                 disableCard
                 onTouch={
                   selectOptionHandler.bind(this, 'CourseApplications', {
-                    title: 'Add/Drop', studentId: 'userStudentId'
+                    title: 'Add/Drop', studentId: id
                   })
                 }
                 style={styles.touchCard}>
@@ -163,15 +219,15 @@ const StudentProfileScreen = ({ navigation }) => {
 
 
 
-          
+
           <View style={styles.courseActions}>
-         
+
             <View style={styles.courseActionContainer}>
               <TouchCard
                 disableCard
                 onTouch={
                   selectOptionHandler.bind(this, 'CourseApplications', {
-                    title: 'Apply For Excess', studentId: 'userStudentId'
+                    title: 'Apply For Excess', studentId: id
                   })
                 }
                 style={styles.touchCard}>
@@ -191,7 +247,7 @@ const StudentProfileScreen = ({ navigation }) => {
                 disableCard
                 onTouch={
                   selectOptionHandler.bind(this, 'CourseApplications', {
-                    title: 'Pending', studentId: 'userStudentId'
+                    title: 'Pending', studentId: id
                   })
                 }
                 style={styles.touchCard}>
@@ -211,7 +267,7 @@ const StudentProfileScreen = ({ navigation }) => {
                 disableCard
                 onTouch={
                   selectOptionHandler.bind(this, 'CourseApplications', {
-                    title: 'Approved', studentId: 'userStudentId'
+                    title: 'Approved', studentId: id
                   })
                 }
                 style={styles.touchCard}>
@@ -225,13 +281,13 @@ const StudentProfileScreen = ({ navigation }) => {
               </TouchCard>
               <Text style={styles.actionLabel}>Approved</Text>
             </View>
-            
+
 
           </View>
 
         </View>
 
-        <View style={{ ...styles.row, }}>
+        <View style={{ ...styles.row, ...styles.courseActionsRow, borderBottomWidth:0, }}>
           <Text style={styles.rowLabel}>Reports</Text>
           <View style={{
             ...styles.courseActions, paddingHorizontal: '3%', marginTop: 10,
@@ -240,13 +296,13 @@ const StudentProfileScreen = ({ navigation }) => {
               style={styles.selectOption}
               data={resultOptions[0]} icon='analytics'
               color={'#ffdd15'} onSelect={selectOptionHandler.bind(this, 'StudentReports', {
-                title: 'Results', studentId: 'userStudentId'
+                title: 'Results', studentId: id
               })} />
             <SelectOption
               style={styles.selectOption}
               data={resultOptions[1]} icon='stats'
               color={'#44ffb0'} onSelect={selectOptionHandler.bind(this, 'StudentReports', {
-                title: 'Assessments', studentId: 'userStudentId'
+                title: 'Assessments', studentId: id
               })} />
           </View>
 
@@ -257,13 +313,13 @@ const StudentProfileScreen = ({ navigation }) => {
               style={styles.selectOption}
               data={resultOptions[2]} icon='pie'
               color={'#ff55dd'} onSelect={selectOptionHandler.bind(this, 'StudentReports', {
-                title: 'General Attendance', studentId: 'userStudentId'
+                title: 'General Attendance', studentId: id
               })} />
             <SelectOption
               style={styles.selectOption}
               data={resultOptions[3]} icon='calculator'
               color={'#55a5ff'} onSelect={selectOptionHandler.bind(this, 'StudentReports', {
-                title: 'CGPA Tracker', studentId: 'userStudentId'
+                title: 'CGPA Tracker', studentId: id
               })} />
           </View>
         </View>
@@ -327,13 +383,13 @@ const styles = StyleSheet.create({
   },
   imageRow: {
     flex: 1,
-    height: 250,
+    //height: 250,
     // borderTopColor: '#fff',
     borderBottomColor: '#cacccf',
     // borderTopWidth: 3,
     borderBottomWidth: 1,
-    backgroundColor: '#ebeeef',
-    paddingVertical: 10,
+    backgroundColor: '#fff',
+    paddingTop: 10,
 
   },
   row: {
@@ -357,10 +413,14 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     color: "#222",
   },
+
   profileImageContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 20,
+    borderBottomColor: '#fdffff',
+    borderBottomWidth: 1,
   },
 
   profileImage: {
@@ -369,6 +429,35 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     borderColor: 'white',
     borderWidth: 2,
+  },
+  profileDetails: {
+    width: '100%',
+    padding: 20,
+    paddingVertical: 15,
+    paddingTop: 30,
+    borderTopRightRadius: 70,//please set this wrt screen dimensions
+    borderTopLeftRadius: 70,//please set this wrt screen dimensions
+    backgroundColor: '#f3f6f7',
+  },
+  detailContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#fff',
+    padding: 20,
+    marginBottom: 7,
+    borderRadius: 10,
+  },
+  titleText: {
+    flex: 1,
+    fontFamily: 'OpenSansBold',
+    fontSize: 16,
+    color: Colors.primary,
+  },
+  detailsText: {
+    flex: 1,
+    fontFamily: 'OpenSansBold',
+    fontSize: 14,
+    color: '#333'
   },
   listContainer: {
     paddingVertical: 15,
@@ -412,6 +501,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     //backgroundColor: 'blue',
   },
+  courseActionsRow:{
+    paddingBottom: 20,
+  },
   courseActions: {
     flex: 1,
     marginTop: 20,
@@ -419,6 +511,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
+
     //backgroundColor: 'red',
     maxWidth: 600,
     //alignItems: 'center',
@@ -434,7 +527,6 @@ const styles = StyleSheet.create({
   },
   touchCard: {
     borderRadius: 20,
-
     width: '100%'
   },
   actionIconContainer: {

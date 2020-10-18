@@ -134,37 +134,39 @@ const SectionItem = ({ onCollapse, courses, title, Register, showingSection }) =
         <View style={{
           ...styles.sectionHeaderWrap,
         }}>
-        {Register &&
-          <View style={{ marginLeft: 10, alignItems: 'flex-start' }}>
-            <TouchIcon
-              onTouch={() => { setIsMarked(p => !p); setIsClicked(p => true) }}
-              touched={() => isMarked} //|| courses.every(course => markedCourses.includes(course))}
-              name={Ionicons}
-              size={24}
-              color={Colors.switchWhite}
-              toggleIcons={['square-outline', 'checkbox-outline']}
-            >
-            </TouchIcon>
-          </View>}
-        <Text style={styles.sectionHeaderLabel}>{title}</Text>
-        <TouchIcon
-          onTouch={showSectionHandler.bind(this,title)}//setIsCollapsed(p => !p); setIsTapped(p => true) }}
-          touched={() => !showSection} //hiddenSections.includes(title)}
-          name={Ionicons}
-          size={23}
-          color={Colors.switchWhite}
-          toggleIcons={['arrow-dropdown-circle', 'arrow-dropright-circle']}
-        >
-        </TouchIcon>
-      </View>
-        
+          {Register &&
+            <View style={{ marginLeft: 10, alignItems: 'flex-start' }}>
+              <TouchIcon
+                onTouch={() => { setIsMarked(p => !p); setIsClicked(p => true) }}
+                touched={() => isMarked} //|| courses.every(course => markedCourses.includes(course))}
+                name={Ionicons}
+                size={24}
+                color={Colors.switchWhite}
+                toggleIcons={['square-outline', 'checkbox-outline']}
+              >
+              </TouchIcon>
+            </View>}
+          <Text
+            onPress={showSectionHandler.bind(this, title)}
+            style={styles.sectionHeaderLabel}>{title}</Text>
+          <TouchIcon
+            onTouch={showSectionHandler.bind(this, title)}//setIsCollapsed(p => !p); setIsTapped(p => true) }}
+            touched={() => !showSection} //hiddenSections.includes(title)}
+            name={Ionicons}
+            size={23}
+            color={Colors.switchWhite}
+            toggleIcons={['arrow-dropdown-circle', 'arrow-dropright-circle']}
+          >
+          </TouchIcon>
+        </View>
+
       </View>
       {showSection //(!hiddenSections.includes(title) && courses.length !== 0)
         && <View style={{ backgroundColor: '#f3f6f7', borderTopLeftRadius: 50, height: 50, width: '100%' }}></View>}
       {showSection && courses.length === 0// && !hiddenSections.includes(title)
         &&
         <View style={{
-        backgroundColor: '#f3f6f7',
+          backgroundColor: '#f3f6f7',
           width: '100%',
           padding: 20,
           alignItems: 'center',
@@ -228,7 +230,7 @@ const CoursesScreen = ({ navig, source, submitCourses }) => {
     }
     , [dispatch, loadCourses]);
 
-    
+
   const title = source ? source.title : null;
   const studentId = source ? source.studentId : '';
   const registeredCourses = useSelector(state => state.courseAppReducer.registeredCourses);
@@ -363,13 +365,13 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     backgroundColor: Colors.switchPrimary,
-   paddingHorizontal:20,
-    
+    paddingHorizontal: 20,
+
     // borderBottomWidth: 0.1,
 
   },
-  sectionHeaderWrap:{ 
-    width:'100%',
+  sectionHeaderWrap: {
+    width: '100%',
     paddingVertical: 30,
     flexDirection: 'row',
     justifyContent: 'space-between',

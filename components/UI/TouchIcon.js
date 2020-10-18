@@ -22,9 +22,9 @@ const TouchIcon = ({ disabled, useIos, onTouch, touched, toggleIcons, size, name
   // }
   return (
     <View style={{
-      ...styles.container, ...style,
+      ...styles.container, 
       borderColor: borderColor,
-      borderWidth: borderColor ? 1 : 0,
+      borderWidth: borderColor ? 1 : 0,...style,
     }}>
       <Touch
         disabled={disabled}

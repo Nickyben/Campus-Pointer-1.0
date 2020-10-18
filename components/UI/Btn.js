@@ -42,6 +42,7 @@ const Btn = ({ type, onPress, disabled, style, children, bgColor, textColor, bor
         borderColor ? borderColor :
           'transparent',
       borderWidth: (borderColor || bgColor === 'white') ? 1 : 0,
+      width: 'auto',
       ...style,
     }}>
       <BtnComponent onPress={onPress}
@@ -57,7 +58,7 @@ const Btn = ({ type, onPress, disabled, style, children, bgColor, textColor, bor
           <Text
             style={{
               ...styles.btnText,
-              fontSize: 14,
+              fontSize: 13,
               color: textColor ?
                 textColor :
                 (bgColor === 'white' || bgColor == '#fff') ?
@@ -113,7 +114,6 @@ const styles = StyleSheet.create({
   btnText: {
     color: 'white',
     fontFamily: 'OpenSansBold',
-    fontSize: 16,
     textAlign: 'center'
   }
 

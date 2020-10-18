@@ -8,9 +8,13 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 import HeaderBtn from '../../components/UI/HeaderBtn';
 import Colors from '../../constants/Colors';
-import { fetchHomeData, likePost, sharePost } from '../../store/actions/homeActions';
+import { fetchHomeData, likePost, sharePost, commentPost } from '../../store/actions/homeActions';
 import TouchIcon from '../../components/UI/TouchIcon';
 import { TabRouter } from '@react-navigation/native';
+import { rand, shuffle, getSince } from '../../constants/MyFunctions';
+import Btn from '../../components/UI/Btn';
+import Touch from '../../components/UI/Touch';
+
 
 let TouchableCmp = TouchableOpacity;
 
@@ -18,30 +22,59 @@ if (Platform.OS === 'android' && Platform.Version >= 21) {
   TouchableCmp = TouchableNativeFeedback;
 }
 
-const _Item = ({ content: { id, title, type, author:
-  { name, office, post }, text, image, likes, shares }, onSelect }) => {
-  const initiallyLiked = useSelector(state => state.homeReducer.availableLikes).includes(id);
-  const [isLiked, setIsLiked] = useState(initiallyLiked);
-  const [isClicked, setIsClicked] = useState(false);
+
+
+const _Item = ({ content: { id, title, date, type, responses,
+  author: { name, office, post }, text, image, shares },
+  onSelect, replyingPostId, hideOtherRepliesFunc, navig }) => {
+
   const _dispatch = useDispatch();
 
-  // const likeHandler = (postId) => {
-  //   _dispatch(likePost(postId));
-  // };
+  const isStudent = true;//for now  
+  const commentAuthorType = isStudent ? 'student' : rand(['staff', 'admin', 'postAuthor']);
+  const theUser = isStudent ?
+    useSelector(state => state.dataReducer.availableStudents.
+      find(s => s.id === 'studentUserId')) :
+    useSelector(state => state.dataReducer.availableStudents.
+      find(s => s.id === 'staffUserId'));
+  const isLiked = useSelector(state => state.homeReducer.availableLikes).includes(id);
+  const numOfLikes = useSelector(state => state.homeReducer.availableGeneralLikes.
+    filter(l => l.postId === id)).length
+  const postComments = useSelector(state => state.homeReducer.availableComments.
+    filter(c => c.ownPostId === id));
+  const isCommented = !!postComments.find(c => c.author.id === theUser.id && c.ownPostId === id);
+
+  const [isReplyingPost, setIsReplyingPost] = useState(false);
+  const [suggestedComments, setSuggestedComments] = useState(shuffle(responses));
+
+
+
   useEffect(() => {
-    if (isLiked && isClicked) {
-      _dispatch(likePost(id, isLiked));
-    }
+    setSuggestedComments(shuffle(responses));
+  }, [isReplyingPost]);
 
-  }, [isLiked, isClicked]);
 
   useEffect(() => {
-    if (!isLiked && isClicked) {
-      _dispatch(likePost(id, isLiked));
-    }
+    setIsReplyingPost(p => replyingPostId === id);
+  }, [replyingPostId]);
 
-  }, [isLiked, isClicked]);
+  const showResponsesHandler = (id) => {
+    isReplyingPost === true ?
+      hideOtherRepliesFunc('') :
+      hideOtherRepliesFunc(id);
+  };
 
+  const commentHandler = (postId, commentPerson, commentPersonType, comment) => {
+    _dispatch(commentPost(postId, commentPerson, commentPersonType, comment))
+  }
+
+  const likeHandler = (postId, likePerson) => {
+    _dispatch(likePost(postId, likePerson))
+  };
+
+  const viewReactionsHandler = (type, postId) => {
+    navig.navigate('HomeReactions', { reactionType: type, postId })
+  };
 
 
   return (
@@ -49,71 +82,91 @@ const _Item = ({ content: { id, title, type, author:
       <View style={styles.postContainer}>
         <View style={styles.authorContent}>
           <View style={styles.authorImageContainer}>
-            <TouchableCmp
-              onPress={() => { console.log('working') }} style={{
-                width: 100, height: 100,
-                borderRadius: 50,
-                backgroundColor: Colors.primary
+            <Touch
+              onTouch={() => { console.log('touched author\'s image') }} style={{
+                
               }}>
               <Image
                 source={image}
                 style={styles.authorImage} />
-            </TouchableCmp>
+            </Touch>
           </View>
 
-          <View style={styles.authorDetails}>
-            {name && <Text style={{ ...styles.authorDetailsText, color: '#00a7e7' }}>{name}</Text>}
-            {office && <Text style={styles.authorDetailsText2}>{office}</Text>}
-            {post && <Text style={styles.authorDetailsText2}>{post}</Text>}
+
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', flex:1,}}>
+            <View style={{ flexDirection: 'row' }}>
+              <View style={{ ...styles.authorDetails, }}>
+              <View style={{flexDirection: 'row'}}>
+                  {name && <Text style={{ ...styles.authorDetailsText, color: '#00a7e7' }}>{name}</Text>}
+                <Text style={{ ...styles.authorDetailsText2,marginLeft:10 }}>
+                  ~{getSince(date)[2]}
+                </Text>
+              </View>
+                {office && <Text style={styles.authorDetailsText2}>{office}</Text>}
+                {post && <Text style={styles.authorDetailsText2}>{post}</Text>}
+              </View>
+              
+            </View>
+
+            <View style={styles.actionContainer}>
+              <TouchIcon
+                name={'more'}
+                size={22}
+                color={'#789'}
+              />
+            </View>
           </View>
 
-          <View style={styles.actionContainer}>
-            <TouchIcon
-              name={'more'}
-              size={22}
-              color={'#789'}
-            />
-            <Text style={styles.actionText}>{shares}</Text>
-          </View>
+
+
+
 
         </View>
 
         <View style={styles.infoContent}>
           <View style={styles.infoTextContainer}>
-            <View style={{ width: '100%', }}>
-              {/* alignItems: 'center', */}
-              <Text style={{ ...styles.infoText, fontSize: 14 }}>{title}</Text>
-              <Text style={{ ...styles.infoText, color: '#678', marginBottom: 10 }}>[{type}]</Text>
+            <View style={{ marginRight: 10, paddingRight: 2, flex: 1, borderRightColor: '#f3f3f3', borderRightWidth: 1 }}>
+              <Text style={{ ...styles.infoText, fontSize: 14 }}>{title}: </Text>
+              <Text style={{ ...styles.infoText, color: '#789', marginBottom: 0 }}>[{type}]</Text>
             </View>
 
-            <Text style={{ ...styles.infoText }}>{text}</Text>
+            <Text style={{
+              ...styles.infoText, fontFamily: 'OpenSansRegular',
+              fontSize: 13, color: '#333', flex: 3
+            }}>{text}</Text>
           </View>
 
           {image &&
             <View style={styles.postImageContainer}>
-              <Image style={styles.postImage} source={image} />
+              <Image style={styles.postImage} source={image}
+              //defaultSource={}
+              />
             </View>
           }
 
           <View style={styles.infoActions}>
-            <View style={styles.actionContainer}>
-              <TouchIcon
+            <View style={{ ...styles.actionContainer, }}>
+              <View style={{ paddingHorizontal: 2, }}>
+                <TouchIcon
 
-                onTouch={() => { setIsLiked(prev => !prev); setIsClicked(p => true) }}
-                name={'thumbs-up'}
-                size={22}
-                color={isLiked ? Colors.primary : '#bcd'} //'#ff3355' : '#bcd'}
-              />
-              {<Text style={styles.actionText}>{likes}</Text>}
+                  onTouch={likeHandler.bind(this, id, theUser)}
+                  name={'heart'}
+                  size={22}
+                  color={isLiked ? '#ee4444' : '#bcd'}
+
+                />
+              </View>
+
             </View>
 
             <View style={styles.actionContainer}>
               <TouchIcon
+                onTouch={showResponsesHandler.bind(this, id)}
                 name={'chatboxes'}
                 size={22}
-                color={'#bcd'}
+                color={isReplyingPost ? Colors.primary : '#bcd'}
               />
-              <Text style={styles.actionText}>{shares}</Text>
+
             </View>
 
             <View style={styles.actionContainer}>
@@ -125,6 +178,66 @@ const _Item = ({ content: { id, title, type, author:
               <Text style={styles.actionText}>{shares}</Text>
             </View>
           </View>
+
+          <View style={{
+            ...styles.actionActivities,
+            justifyContent: (numOfLikes === 0 && postComments.length > 0) ? 'flex-end' : 'space-between',
+          }}>
+            {numOfLikes > 0 &&
+              <View
+                style={{ flexDirection: 'row', }}>
+                <Text style={{ ...styles.actionText, color: isLiked ? '#ee4444' : '#456' }}
+                >{numOfLikes}</Text>
+                <Text style={{ ...styles.actionText, color: isLiked ? '#ee4444' : '#678' }}
+                  onPress={viewReactionsHandler.bind(this, 'likes', id)}
+                > Like{numOfLikes === 1 ? '' : 's'}</Text>
+              </View>}
+
+            {postComments.length > 0 &&
+              <View style={{ flexDirection: 'row', }}>
+                <Text style={{ ...styles.actionText, color: isCommented ? Colors.primary : '#456' }}
+                >{postComments.length}</Text>
+                <Text style={{ ...styles.actionText, color: isCommented ? Colors.primary : '#678' }}
+                  onPress={viewReactionsHandler.bind(this, 'comments', id)}
+                > Comment{postComments.length === 1 ? '' : 's'}</Text>
+              </View>
+            }
+          </View>
+
+          {isReplyingPost &&
+            <View style={styles.msgsListContainer}>
+              <View style={styles.commentRow}>
+                {suggestedComments.filter((r, i) => i < 3).map((r, i) => {
+                  return (
+                    <Btn bgColor={'#fff'} borderColor={Colors.primary} key={i}
+                      onPress={commentHandler.bind(this, id, theUser, commentAuthorType, r)}
+                      style={{
+                        width: '32%',
+                        borderRadius: 8,
+                      }}>
+                      <Text>{r}</Text>
+                    </Btn>
+                  );
+                })}
+              </View>
+              <View style={styles.commentRow}>
+                {suggestedComments.filter((r, i) => i > 2).map((r, i) => {
+                  return (
+                    <Btn bgColor={'#fff'} borderColor={Colors.primary}
+                      key={i}
+                      onPress={commentHandler.bind(this, id, theUser, commentAuthorType, r)}
+                      style={{
+                        width: '32%',
+                        borderRadius: 8,
+                      }}>
+                      <Text>{r}</Text>
+                    </Btn>
+                  );
+                })}
+              </View>
+
+
+            </View>}
         </View>
 
 
@@ -136,9 +249,14 @@ const _Item = ({ content: { id, title, type, author:
 
 const HomeScreen = ({ navigation }) => {
   const homePosts = useSelector(state => state.homeReducer.availablePosts);
-  const [showHeader, setShowHeader] = useState(false);
+  // const [showHeader, setShowHeader] = useState(false);
+  const [replyingPost, setReplyingPost] = useState('');
+
+  const hideOtherRepliesHandler = (post) => {
+    setReplyingPost(p => post);
+  }
   const dispatch = useDispatch();
-  
+
   const loadData = useCallback(async () => {
     //   setError(null);
     //   setIsRefreshing(true)
@@ -171,16 +289,16 @@ const HomeScreen = ({ navigation }) => {
     }
     , [dispatch, loadData]);
 
-// useEffect(()=>{
-//   navigation.setOptions({
-//     //headerShown: ()=> showHeader,
-//    // header:({})=>null
-//    // headerTransparent: ()=>true
-//    headerStyle:{
-//      backgroundColor: 'transparent'
-//    }
-//   });  
-// }, []);
+  // useEffect(()=>{
+  //   navigation.setOptions({
+  //     //headerShown: ()=> showHeader,
+  //    // header:({})=>null
+  //    // headerTransparent: ()=>true
+  //    headerStyle:{
+  //      backgroundColor: 'transparent'
+  //    }
+  //   });  
+  // }, []);
 
 
   const shareHandler = (postId) => {
@@ -188,8 +306,15 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const renderItem = ({ item }) => (//auto gets data in obj form , I deStructured it in params
-    <_Item content={item} onSelect={() => { }} />
+    <_Item content={item}
+      onSelect={() => { }}
+      hideOtherRepliesFunc={hideOtherRepliesHandler}
+      replyingPostId={replyingPost}
+      navig={navigation}
+    />
   );
+
+
 
   return (
     <View style={styles.screen}>
@@ -253,12 +378,14 @@ export const screenOptions = (navProps) => {
     }
   );
 };
+
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f3f6f7',
   },
   listContainer: {
+    paddingBottom:10,
   },
   row: {
     //borderTopColor: '#fbfeff',
@@ -267,14 +394,15 @@ const styles = StyleSheet.create({
     //borderBottomWidth: 1,
     backgroundColor: '#f3f6f7',//'#f5f5f5',
     //backgroundColor: 'blue',
-    paddingVertical: 7,
-    paddingHorizontal: 15,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
 
   },
   postContainer: {
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 10,
+    //paddingHorizontal: 
     paddingBottom: 5,
     overflow: 'hidden',
   },
@@ -284,7 +412,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 5,
     paddingHorizontal: 10,
-    marginBottom: 5,
+    //marginBottom: 2,
     alignItems: 'center',
   },
 
@@ -293,6 +421,8 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
+    overflow: 'hidden',
+
   },
   authorImage: {
     width: 50, height: 50,
@@ -303,10 +433,8 @@ const styles = StyleSheet.create({
   authorDetails: {
     //alignItems: 'flex-end',
     padding: 5,
-    paddingHorizontal: 15,
-    borderRadius: 15,
+    paddingHorizontal: 5,
     //backgroundColor: 'blue',
-    flex: 1,
   },
   authorDetailsText: {
     fontFamily: 'OpenSansBold',
@@ -315,14 +443,15 @@ const styles = StyleSheet.create({
   },
   authorDetailsText2: {
     fontFamily: 'OpenSansBold',
-    fontSize: 13,
+    fontSize: 12,
     color: '#678',
   },
   infoContent: {
+    padding: 2
   },
   infoTextContainer: {
-    //backgroundColor: 'red',
-    marginBottom: 10,
+    flexDirection: 'row',
+    marginBottom: 2,
     borderColor: '#f7f7f7',
     borderBottomWidth: 2,
     paddingHorizontal: 5,
@@ -331,7 +460,7 @@ const styles = StyleSheet.create({
   infoText: {
     fontFamily: 'OpenSansBold',
     fontSize: 13,
-    color: '#333',
+    color: '#222',
     //textAlign: 'justify',
   },
   postImage: {
@@ -341,19 +470,38 @@ const styles = StyleSheet.create({
   },
   infoActions: {
     flexDirection: 'row',
-    padding: 5,
-    justifyContent: 'space-evenly'
+    paddingTop: 10,
+    paddingHorizontal: 5,
+    justifyContent: 'space-evenly',
   },
 
   actionContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center'
   },
   actionText: {
     fontFamily: 'OpenSansBold',
-    fontSize: 13,
+    fontSize: 12,
     color: '#678',
+  },
+  msgsListContainer: {
+    padding: 5,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: '#f7f7f7'
+  },
+  commentRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  actionActivities: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    //alignItems: 'flex-end',
+    padding: 5,
+    paddingHorizontal: 10,
   }
 });
 

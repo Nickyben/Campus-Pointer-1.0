@@ -40,6 +40,10 @@ import CourseDetailsScreen, {
 import HomeScreen, {
   screenOptions as homeScreenOpts
 } from '../screens/pointerApp/HomeScreen';
+import HomeReactionsScreen, {
+  screenOptions as homeReactionsScreenOpts
+} from '../screens/pointerApp/HomeReactionsScreen';
+
 
 import AssocOverviewScreen, {
   screenOptions as assocScreenOpts
@@ -227,16 +231,20 @@ const HomeStackNavigator = () => {
           //  headerShown: true
         }
       />
-      {/* <HomeStackNav.Screen
-        name='Search'
-        component={SearchScreen}
-        options={searchScreenOpts}
-      />
       <HomeStackNav.Screen
-        name='Cart'
-        component={CartScreen}
-        options={cartScreenOptions}
-      /> */}
+        name='HomeReactions'
+        component={HomeReactionsScreen}
+        options={
+         homeReactionsScreenOpts
+        }
+      />
+
+      <HomeStackNav.Screen
+        name='DeptDetails'
+        component={DeptDetailScreen}
+        options={deptDetailScreenOpts}
+      />
+    
     </HomeStackNav.Navigator>
   );
 };

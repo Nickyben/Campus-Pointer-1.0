@@ -12,43 +12,43 @@ import TouchCard from '../../components/UI/TouchCard';
 import Btn from '../../components/UI/Btn';
 
 
+const _Item = ({ content: { id, fullName, image, designation, office, level, capacity }, onSelect }) => (
 
+  <TouchCard
 
-const OfficesScreen = ({ navig }) => {
-  const studentOffices = useSelector(state => state.dataReducer.availableStudents)
-    .filter(student => student.office && student.department === 'Computer Engineering');
+    onTouch={onSelect}
+    style={{ ...styles.itemCard, }}>
 
-  const Item = ({ content: { id, fullName, image, designation, office, level, capacity }, onSelect }) => (
-
-    <TouchCard
-
-      onTouch={onSelect}
-      style={{ ...styles.itemCard, }}>
-
-      <View style={styles.itemContainer}>
-        <ImageBackground
-          style={styles.ImageBackground}
-          source={require('../../assets/images/assoc5.jpg')}
-          imageStyle={{ }}
-        >
-        <View style={{...styles.ImageBackground, backgroundColor: '#ffffffe0'}}>
-           <View style={styles.imageContainer}>
+    <View style={styles.itemContainer}>
+      <ImageBackground
+        style={styles.ImageBackground}
+        source={require('../../assets/images/assoc5.jpg')}
+        imageStyle={{}}
+      >
+        <View style={{ ...styles.ImageBackground, backgroundColor: '#ffffffe0' }}>
+          <View style={styles.imageContainer}>
             <Image style={{
               ...styles.listImage,
 
             }} source={image} />
           </View>
         </View>
-         
-        </ImageBackground>
-        <View style={styles.infoContainer}>
-          <View style={styles.titleContainer}>
-            {fullName && <Text style={styles.title} numberOfLines={2}>{
-              fullName} </Text>}
-            {office && <Text style={styles.title} numberOfLines={2}> Office of the {
-              office} </Text>}
-          </View>
 
+      </ImageBackground>
+      <View style={styles.infoContainer}>
+        <View style={styles.titleContainer}>
+          {fullName && <Text style={styles.title} numberOfLines={2}>{
+            fullName} </Text>}
+          {office && <Text style={styles.title} numberOfLines={2}> Office of the {
+            office} </Text>}
+        </View>
+
+        <View style={{
+          width: '100%',
+          paddingHorizontal: 20,
+          alignItems:'flex-end'
+          //backgroundColor: 'red'
+        }}>
           <Btn
             style={styles.btn}
             bgColor={'transparent'}
@@ -58,18 +58,27 @@ const OfficesScreen = ({ navig }) => {
           >
             View
           </Btn>
-
         </View>
+
+
 
       </View>
 
+    </View>
 
-    </TouchCard>
 
-  );
+  </TouchCard>
+
+);
+
+const OfficesScreen = ({ navig }) => {
+  const studentOffices = useSelector(state => state.dataReducer.availableStudents)
+    .filter(student => student.office && student.department === 'Computer Engineering');
+
+
   const renderItem = ({ item }) => (//auto gets data in obj form , I deStructured it in params
-    <Item content={item} onSelect={() => {
-      navig.navigate('DeptDetails', { item: item, itemId: item.id, title: item.constructor.name  })
+    <_Item content={item} onSelect={() => {
+      navig.navigate('DeptDetails', { item: item, itemId: item.id, title: item.constructor.name })
     }} />
   );
 
@@ -98,7 +107,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',//'#e3e6e7',
   },
 
- 
+
   ImageBackground: {
     width: '100%',
     alignItems: 'center',

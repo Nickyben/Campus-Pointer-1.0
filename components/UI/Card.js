@@ -6,6 +6,13 @@ import {
 } from 'react-native';
 
 const Card = props => {
+ if (props.disableCard ){
+   return(
+     <View style={{ ...myStyles.noCard, ...props.style }} >
+       {props.children}
+     </View>
+   );
+ }
   return (
     <View style={{ ...myStyles.card, ...props.style }} >
       {props.children}
@@ -22,9 +29,16 @@ const myStyles = StyleSheet.create({
     elevation: 2,
     backgroundColor: 'white',
     padding: 20,
-    borderRadius: 5
+    borderRadius: 5,
+    
 
   },
+  noCard:{
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 5,
+
+  }
 });
 
 export default Card;

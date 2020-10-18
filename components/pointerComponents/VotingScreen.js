@@ -154,10 +154,13 @@ const SectionItem = ({ onCollapse, title, showingOffice, candidates }) => {
             >
             </TouchIcon>
           </View>
-          <Text style={styles.sectionHeaderLabel}>{title}</Text>
+          <Text
+            onPress={showCandidatesHandler.bind(this, title)}
+            style={styles.sectionHeaderLabel}
+          >{title}</Text>
           <TouchIcon
             onTouch={showCandidatesHandler.bind(this, title)}
-            touched={() => !showCandidates} //hiddenSections.includes(title)}
+            touched={() => !showCandidates}
             name={Ionicons}
             size={23}
             color={Colors.switchWhite}
@@ -254,7 +257,7 @@ const VotingScreen = ({ navig, }) => {
       showingOffice !== title ?
         <></> :
         <MyItem content={item} onClickVote={voteHandler} onSelect={() => {
-          navig.navigate('DeptDetails', { item: {},candidateId: item.applicantId, title: item.constructor.name })
+          navig.navigate('DeptDetails', { item: {}, candidateId: item.applicantId, title: item.constructor.name })
         }} office={title} />
     )
   };
@@ -429,8 +432,10 @@ const styles = StyleSheet.create({
     fontSize: 17,
     padding: 15,
     width: '100%',
-    backgroundColor: Colors.primary,
-    color: '#fff',
+    backgroundColor: Colors.switchPrimary,
+    color: Colors.switchWhite,
+    borderBottomColor: '#e3e6e7',
+    borderBottomWidth: 1,
   },
   noteText: {
     textAlign: 'center',

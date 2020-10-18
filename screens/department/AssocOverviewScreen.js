@@ -30,6 +30,8 @@ const AssocOverviewScreen = ({ navigation }) => {
     { id: Math.random().toString(), title: 'Dues and Payments' },
     { id: Math.random().toString(), title: 'Souvenir and Uniforms' },
     { id: Math.random().toString(), title: 'Projects' },
+    { id: Math.random().toString(), title: 'Competitions' },
+
 
   ];
 
@@ -111,7 +113,7 @@ const AssocOverviewScreen = ({ navigation }) => {
               data={assocOptions[6]} icon='analytics'
               color={'#ff11b0'} onSelect={selectOptionHandler} />
             <SelectOption
-              data={assocOptions[4]} icon='analytics'
+              data={assocOptions[7]} icon='ribbon'
               color={'#44ffb0'} onSelect={selectOptionHandler} />
           </View>
         </View>

@@ -7,7 +7,7 @@ class Result {
     this.session = session;
     this.department = department;
     this.faculty = faculty;
-    this.isDegree = (this.type === 'Degree_Exam'); // &&(this.type === 'Exam Result') // bool
+    this.isDegree = (this.type === 'Degree_Exam'); //true if level and semester is last// &&(this.type === 'Exam Result') // bool
     this.students = students;
     this.courses = courses; //? courses : this.level.courses; //array or 
     this.resultData = resultData; //an arr containing course properties as arrays(courses) of
@@ -20,18 +20,36 @@ class Result {
 };
 
 export class Assessment {
-  constructor(id, type, level, semester, session, department, students, course, data) {
+  constructor(id, type, level, semester, session, department, faculty, students, courses, CA_Data) {
     this.id = id;
-    this.type = type; //eg Quiz_Assessment, Test_Assessment, Attendance_Assessment, 
+    this.type = type;
     this.level = level;
     this.semester = semester;
     this.session = session;
     this.department = department;
+    this.faculty = faculty;
     this.isDegree = (this.type === 'Degree_Exam'); // &&(this.type === 'Exam Result') // bool
     this.students = students;
-    this.course = course
-    this.assessmentData = data;
+    this.courses = courses
+    this.assessmentData = CA_Data;
   }
 };
+
+export class Attendance {
+  constructor(id, type, level, semester, session, department, faculty, students, courses, ATD_Data) {
+    this.id = id;
+    this.type = type; 
+    this.level = level;
+    this.semester = semester;
+    this.session = session;
+    this.department = department;
+    this.faculty = faculty;
+    this.isDegree = (this.type === 'Degree_Exam'); // &&(this.type === 'Exam Result') // bool
+    this.students = students;
+    this.courses = courses
+    this.attendanceData = ATD_Data;
+  }
+};
+
 
 export default Result;

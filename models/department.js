@@ -1,12 +1,12 @@
 class Department {
   constructor(
     id, name, deptCode, levels, hod, offices, courses,
-    staff, courseReps, students, halls, assoc, faculty,welcome, timetable
+    staff, courseReps, students, halls, assoc, faculty, currSection, currSem, welcome, timetable
   ) {
     this.id = id;
     this.name = name;
     this.departmentCode = deptCode; //CME
-    this.levels= levels;//array of levels with objs containing courses for each level
+    this.levels = levels;//array of levels with objs containing courses for each level
     this.courses = courses; //eg array
     this.HOD = hod;
     this.offices = offices;//hod, staffAdviser,etc
@@ -18,6 +18,8 @@ class Department {
     this.faculty = faculty;
     this.welcomeMessage = welcome;
     this.timetable = timetable;
+    this.currentSession = currSection;
+    this.currentSemester = currSem;
   };
 }
 

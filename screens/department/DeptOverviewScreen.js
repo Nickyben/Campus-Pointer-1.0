@@ -17,18 +17,19 @@ import { fetchDeptData } from '../../store/actions/dataActions';
 
 
 
-const _Item = ({ content: { id, fullName, image, designation, office, level, capacity }, onSelect }) => (
+const _Item = ({ content: { id, fullName, image, designation, office, level, capacity }, disableCard, onSelect, style, imageStyle }) => (
   <TouchCard
+    disableCard={disableCard}
     useIos
     onTouch={onSelect}
-    style={{ ...styles.itemCard, }}>
+    style={{ ...styles.itemCard, ...style }}>
     <View style={styles.itemContainer}>
 
       <View style={styles.imageContainer}>
         <Image style={{
           ...styles.listImage,
           width: styles.listImage.width + !!capacity * 100,
-          borderRadius: !capacity * 20 + !!capacity * 10,
+          borderRadius: !capacity * 20 + !!capacity * 10, ...imageStyle
         }} source={image} />
       </View>
       <View style={styles.infoContainer}>
@@ -91,9 +92,9 @@ const DeptOverviewScreen = ({ navigation }) => {
     }
     , [dispatch, loadData]);
 
-
   const deptStaff = useSelector(state => state.dataReducer.availableStaff)
     .filter(s => s.department === 'Computer Engineering');
+  const hod = deptStaff.find(s => s.office === 'HOD');
   const deptCourseReps = useSelector(state => state.dataReducer.availableStudents)
     .filter(s => s.department === 'Computer Engineering' && !!s.post)
   const deptHalls = useSelector(state => state.dataReducer.availableHalls)
@@ -116,6 +117,40 @@ const DeptOverviewScreen = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
 
       >
+{hod &&
+          <View style={{
+            ...styles.row, alignItems: 'center', backgroundColor: '#fff',
+
+          }}>
+            <Text
+              style={{
+                ...styles.rowLabel,
+                marginLeft: 0,
+                textAlign: 'center',
+                color: Colors.primary,
+                fontSize: 18,
+              }}>
+              Head of Department</Text>
+            <View
+              style={{
+                width: '100%',
+                paddingVertical: 15,
+                alignItems: 'center',
+              }}
+            >
+              <_Item
+              disableCard={true}
+                imageStyle={{ width: 180, height: 180 }}
+                style={{ marginRight: 0 }}
+                content={hod}
+                onSelect={() => {
+                  navigation.navigate('DeptDetails', { item: hod, itemId: hod.id, title: hod.constructor.name })
+                }} />
+            </View>
+
+
+          </View>
+        }
 
         <View style={styles.welcomeItemContainer}>
           <Card style={styles.welcomeMsgCard}>
@@ -144,9 +179,10 @@ const DeptOverviewScreen = ({ navigation }) => {
           </Card>
 
         </View>
+        
         {deptStaff.length !== 0 &&
           <View style={styles.row}>
-            <Text style={styles.rowLabel}>Staff</Text>
+            <Text style={styles.rowLabel}>Department Staff</Text>
 
             <FlatList
               showsHorizontalScrollIndicator={false}
@@ -159,6 +195,7 @@ const DeptOverviewScreen = ({ navigation }) => {
             />
           </View>
         }
+
         {deptCourseReps.length !== 0 &&
           <View style={styles.row}>
             <Text style={styles.rowLabel}>Course Reps</Text>
@@ -251,7 +288,7 @@ const styles = StyleSheet.create({
     //maxHeight: 350,
     // marginBottom: 20,
     backgroundColor: '#f3f6f7',//'#f5f5f5',
-    borderBottomColor: '#cacccf',
+    borderBottomColor: '#cacccf',//'#ddd',//
     borderBottomWidth: 1,
     padding: 20,
 
