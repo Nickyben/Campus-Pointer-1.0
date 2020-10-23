@@ -5,10 +5,10 @@ import {
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-
+import Colors from '../../constants/Colors';
 import Touch from './Touch';
 
-const TouchIcon = ({ disabled, useIos, onTouch, touched, toggleIcons, size, name, color, style, borderColor }) => {
+const TouchIcon = ({ disabled, useIos, onTouch, touched, toggleIcons, size, name, color, style, bgColor,borderColor }) => {
   //const [icon, setIcon] = useState(Platform.OS === 'android' ? `md-${toggleIcons[0]}` : `ios-${toggleIcons[0]}`);
 
   // const changeIconHandler = () => {
@@ -25,6 +25,8 @@ const TouchIcon = ({ disabled, useIos, onTouch, touched, toggleIcons, size, name
       ...styles.container, 
       borderColor: borderColor,
       borderWidth: borderColor ? 1 : 0,...style,
+            backgroundColor: bgColor ? bgColor : 'transparent',
+
     }}>
       <Touch
         disabled={disabled}

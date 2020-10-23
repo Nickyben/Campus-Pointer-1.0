@@ -150,7 +150,7 @@ const SectionItem = ({ onCollapse, title, showingOffice, candidates }) => {
               name={Ionicons}
               size={24}
               color={Colors.switchWhite}
-              toggleIcons={['square-outline', 'checkbox-outline']}
+              toggleIcons={['square-outline', 'checkbox']}
             >
             </TouchIcon>
           </View>
@@ -163,8 +163,11 @@ const SectionItem = ({ onCollapse, title, showingOffice, candidates }) => {
             touched={() => !showCandidates}
             name={Ionicons}
             size={23}
+            bgColor={Colors.switchWhite + '33'}
             color={Colors.switchWhite}
-            toggleIcons={['arrow-dropdown-circle', 'arrow-dropright-circle']}
+            toggleIcons={['arrow-dropdown', 'arrow-dropright']}
+            // color={Colors.switchWhite}
+            // toggleIcons={['arrow-dropdown-circle', 'arrow-dropright-circle']}
           >
           </TouchIcon>
         </View>

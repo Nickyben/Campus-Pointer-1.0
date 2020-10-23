@@ -52,7 +52,7 @@ const MyItem = ({ Register, content, content: { id, courseTitle, courseCode, cre
           <View style={{ flex: styles.listText.flex / 1.5, marginLeft: 0, alignItems: 'flex-start' }}>
             <TouchIcon
               onTouch={() => { setIsMarked(prev => !prev); setIsClicked(p => true) }}
-              touched={() => isMarked}// || markedCourses.includes(content)}
+              touched={() => isMarked}
               name={Ionicons}
               size={22}
               color={Colors.accent2}
@@ -70,7 +70,7 @@ const MyItem = ({ Register, content, content: { id, courseTitle, courseCode, cre
   )
 };
 
-const SectionItem = ({ onCollapse, courses, title, Register, showingSection }) => {//hiddenSections
+const SectionItem = ({ onCollapse, courses, title, Register, showingSection }) => {
   const [isMarked, setIsMarked] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   // const [isCollapsed, setIsCollapsed] = useState(hiddenSections.includes(title));
@@ -142,20 +142,24 @@ const SectionItem = ({ onCollapse, courses, title, Register, showingSection }) =
                 name={Ionicons}
                 size={24}
                 color={Colors.switchWhite}
-                toggleIcons={['square-outline', 'checkbox-outline']}
+                toggleIcons={['square-outline', 'checkbox']}
               >
               </TouchIcon>
             </View>}
           <Text
             onPress={showSectionHandler.bind(this, title)}
             style={styles.sectionHeaderLabel}>{title}</Text>
+        
+
+
           <TouchIcon
             onTouch={showSectionHandler.bind(this, title)}//setIsCollapsed(p => !p); setIsTapped(p => true) }}
             touched={() => !showSection} //hiddenSections.includes(title)}
             name={Ionicons}
             size={23}
+            bgColor={Colors.switchWhite+'33'}
             color={Colors.switchWhite}
-            toggleIcons={['arrow-dropdown-circle', 'arrow-dropright-circle']}
+            toggleIcons={['arrow-dropdown', 'arrow-dropright']}
           >
           </TouchIcon>
         </View>

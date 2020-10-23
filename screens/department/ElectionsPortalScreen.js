@@ -254,7 +254,7 @@ const ElectionsPortalScreen = ({ navig }) => {
       );
     case 'contesting':
       return (
-        <ApplicantScreen changeScreen={portalScreenHandler} />
+        <ApplicantScreen changeScreen={portalScreenHandler} navig={navig} />
       )
   }
 

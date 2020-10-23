@@ -37,6 +37,7 @@ const CourseAppScreen = ({ navigation, route: { params: { title, studentId } } }
             onPress={submitCourseHandler}//function to upload the selected(register) courses array...get this from main component
             bgColor={Colors.switchPrimary}
             borderColor={Colors.switchWhite}
+            // textColor={ Colors.switchWhite}
           >Submit</Btn>
         </View> :
         title === 'Registered'?

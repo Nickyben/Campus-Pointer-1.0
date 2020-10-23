@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 
 
-const Btn = ({ type, onPress, disabled, style, children, bgColor, textColor, borderColor, icon, }) => {
+const Btn = ({ type, onPress, disabled, style, children, bgColor, textColor, borderColor, icon, innerStyle }) => {
 
   let BtnComponent = TouchableOpacity;
 
@@ -41,7 +41,7 @@ const Btn = ({ type, onPress, disabled, style, children, bgColor, textColor, bor
         Colors.primary :
         borderColor ? borderColor :
           'transparent',
-      borderWidth: (borderColor || bgColor === 'white') ? 1 : 0,
+      borderWidth: (borderColor || bgColor === 'white' || bgColor == '#fff' || bgColor === '#ffffff') ? 1 : 0,
       width: 'auto',
       ...style,
     }}>
@@ -52,7 +52,7 @@ const Btn = ({ type, onPress, disabled, style, children, bgColor, textColor, bor
 
         <View style={{
           ...styles.button,
-
+          ...innerStyle,
 
         }} >
           <Text
@@ -61,7 +61,7 @@ const Btn = ({ type, onPress, disabled, style, children, bgColor, textColor, bor
               fontSize: 13,
               color: textColor ?
                 textColor :
-                (bgColor === 'white' || bgColor == '#fff') ?
+                (bgColor === 'white' || bgColor === '#fff' || bgColor === '#ffffff') ?
                   Colors.primary :
                   styles.btnText.color
             }}>
@@ -76,7 +76,7 @@ const Btn = ({ type, onPress, disabled, style, children, bgColor, textColor, bor
                 size={23}
                 color={textColor ?
                   textColor :
-                  (bgColor === 'white' || bgColor == '#fff') ?
+                  (bgColor === 'white' || bgColor === '#fff' || bgColor === '#ffffff') ?
                     Colors.primary :
                     styles.btnText.color}
               />

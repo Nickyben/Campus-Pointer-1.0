@@ -209,8 +209,12 @@ const SectionHeaderItem = ({ onCollapse, reportTitle, courses, title, showingSec
             touched={() => !showSection}
             name={Ionicons}
             size={23}
+
+            bgColor={Colors.switchWhite + '33'}
             color={Colors.switchWhite}
-            toggleIcons={['arrow-dropdown-circle', 'arrow-dropright-circle']}
+            toggleIcons={['arrow-dropdown', 'arrow-dropright']}
+            // color={Colors.switchWhite}
+            // toggleIcons={['arrow-dropdown-circle', 'arrow-dropright-circle']}
           />
         </View>
 
@@ -317,7 +321,6 @@ const SectionFooterItem = ({ onCollapse, reportTitle, studentData, courses, titl
       labelColor: rd.courseColor
     }));
 
-  console.log(totalATDPie);
 
   const showSectionHandler = (title) => {
     // showSection === true ?

@@ -1,4 +1,4 @@
-import { StatusBar} from 'expo-status-bar';
+import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, YellowBox, SafeAreaView, } from 'react-native';
 import { enableScreens } from 'react-native-screens';
@@ -18,6 +18,7 @@ import dataReducer from './store/reducers/dataReducer';
 import homeReducer from './store/reducers/homeReducer';
 import electionPortalReducer from './store/reducers/electionPortalReducer';
 import reportsReducer from './store/reducers/reportsReducer';
+import settingsReducer from './store/reducers/settingsReducer';
 
 enableScreens(); //useScreens(); is for lower versions of expo and react-native
 
@@ -26,11 +27,12 @@ const rootReducer = combineReducers({
   studentRed: () => {
     return null;
   },
-    courseAppReducer: courseAppReducer,
-    dataReducer: dataReducer,
-    homeReducer: homeReducer,
-    electionPortalReducer: electionPortalReducer,
-    reportsReducer: reportsReducer,
+  courseAppReducer: courseAppReducer,
+  dataReducer: dataReducer,
+  homeReducer: homeReducer,
+  electionPortalReducer: electionPortalReducer,
+  reportsReducer: reportsReducer,
+  settingsReducer: settingsReducer,
 });
 
 //creates the store with the rootReducer as arg
@@ -68,8 +70,5 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+
 });

@@ -64,9 +64,13 @@ import ReportsScreen, {
 
 import SettingsScreen, {
   screenOptions as settingsScreenOpts
-} from '../screens/student/SettingsScreen';
+} from '../screens/pointerApp/SettingsScreen';
+import SettingsDetailsScreen, {
+  screenOptions as settingsDetailsScreenOpts
+} from '../screens/pointerApp/SettingsDetailsScreen';
 
 import Colors from '../constants/Colors';
+
 import { FacultyTabNavigator, facultyTabNavScreenOptions } from './MaterialTopTabNav';
 
 
@@ -318,20 +322,17 @@ const SettingsStackNavigator = () => {
   return (
     <SettingsStackNav.Navigator screenOptions={defaultNavOptions}>
       <SettingsStackNav.Screen
-        name='StudentProfile'
+        name='SettingsOverview'
         component={SettingsScreen}
         options={settingsScreenOpts}
       />
-      {/* <SettingsStackNav.Screen
-        name='ProductDetail'
-        component={ProductDetailScreen}
-        options={prodDetailScreenOptions}
-      />
+
       <SettingsStackNav.Screen
-        name='Cart'
-        component={CartScreen}
-        options={cartScreenOptions}
-      /> */}
+        name='SettingsDetails'
+        component={SettingsDetailsScreen}
+        options={settingsDetailsScreenOpts}
+      />
+    
     </SettingsStackNav.Navigator>
   );
 };
@@ -431,7 +432,8 @@ export const PointerDrawerNavigator = () => {
         (props) => {
           return (
 
-            <DrawerContentScrollView {...props} style={{ flex: 1, height: '100%', backgroundColor: Colors.switchPrimary }}
+            <DrawerContentScrollView {...props} 
+            style={{ flex: 1, height: '100%', backgroundColor: Colors.switchPrimary }}
               contentContainerStyle={{ height: '100%', }}>
               <ImageBackground
                 style={{ width: '100%', height: '100%' }}
