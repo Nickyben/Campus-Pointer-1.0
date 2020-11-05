@@ -83,7 +83,9 @@ const content = (department = null) => {
 
             require('../assets/images/maleStudent.png'),
 
-            honours
+            honours,
+
+            {}
 
           ),
         )
@@ -130,7 +132,9 @@ const content = (department = null) => {
 
         i % 10 === 0 ? require('../assets/images/femaleStudent.png') : require('../assets/images/maleStudent.png'),
 
-        i % 55 === 0 ? honours : null
+        i % 55 === 0 ? honours : null,
+
+        {}
 
       )
     )

@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     //justifyContent: 'center',
   },
   pieIndicator: {
-    borderRadius: 5,
+    borderRadius: 10,
     width: 20,
     height: 20,
     borderColor: '#f3f6f7',

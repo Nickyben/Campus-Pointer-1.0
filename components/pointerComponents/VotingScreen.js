@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
   confirmBox: {
 
     backgroundColor: '#fff',
-    width: '70%',
+    width: '80%',
     minHeight: 200,
     borderRadius: 10,
 

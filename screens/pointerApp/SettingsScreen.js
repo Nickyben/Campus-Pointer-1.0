@@ -14,7 +14,11 @@ const sections = [
     title: 'Privacy and Security',
     items: [
       { title: 'Change Password', iconName: 'lock', rightBtn: 'arrow-dropright' },
-      { title: 'Change Username', iconName: 'person', rightBtn: 'arrow-dropright' },
+      { title: 'Change Email', iconName: 'at', rightBtn: 'arrow-dropright' },
+      { title: 'Change Phone Number', iconName: 'call', rightBtn: 'arrow-dropright' },
+      { title: 'Visibility', iconName: 'person', rightBtn: 'arrow-dropright' },
+
+
     ],
   },
   {
@@ -23,6 +27,8 @@ const sections = [
       { title: 'Notifications', iconName: 'notifications', rightBtn: 'arrow-dropright' },
       { title: 'Sound', iconName: 'musical-note', rightBtn: 'arrow-dropright' },
       { title: 'Languages', iconName: 'flag', rightBtn: 'arrow-dropright' },
+      { title: 'Help center', iconName: 'help-circle', rightBtn: 'arrow-dropright' },
+
 
     ],
   },
@@ -55,7 +61,7 @@ const SettingsScreen = ({ navigation }) => {
   let image;
 
   const viewSettingHandler = (title) => {
-    navigation.navigate('SettingsDetails', {settingTitle: title})
+    navigation.navigate('SettingsDetails', { settingTitle: title });
   };
 
   return (
@@ -127,7 +133,8 @@ const SettingsScreen = ({ navigation }) => {
                             bgColor={Colors.primary + '22'}
                             name={rightBtn}
                             color={Colors.primary}
-                          />}
+                          />
+                        }
 
                         {
                           modes &&

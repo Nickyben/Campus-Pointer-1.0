@@ -49,11 +49,23 @@ const inputItems = [
 
 
 const ApplicantScreen = ({ changeScreen, navig }) => {
+  const [formState, setFormState] = useState({});
+
+  const getFormState = (state) => {
+    setFormState(p => state)
+  };
+
+  const checkValidity = () => {
+   
+    return formState.formValidity;
+  }
 
   return (
     <View style={styles.screen}>
-      <View style={{ backgroundColor: '#fdfeff' ,
-      flexDirection: 'row', alignItems: 'center', padding: 15, paddingHorizontal:20 }}>
+      <View style={{
+        backgroundColor: '#fdfeff',
+        flexDirection: 'row', alignItems: 'center', padding: 15, paddingHorizontal: 20
+      }}>
         <TouchIcon
           onTouch={changeScreen.bind(this, 'overview')}
           name={'arrow-dropleft-circle'}
@@ -64,8 +76,16 @@ const ApplicantScreen = ({ changeScreen, navig }) => {
           style={styles.navigText}
         >Description/Overview</Text>
       </View>
-      <Form navig={navig} id={'electionContestForm' + Math.random().toString()}
-        title={'Contestant Form'} submitTitle={'Register'} items={inputItems}
+      <Form
+        navig={navig}
+        id={'electionContestForm'}
+        formStateGetter={getFormState}
+        title={'Contestant Form'}
+        submitTitle={'Register'}
+        items={inputItems}
+        onSubmit={checkValidity}        
+        formErrorMsg={'Please ensure that all entries are valid!'}
+        onFormSubmitted={changeScreen.bind(this, 'overview')}
       >
         {/* <Input  id={inputItems[0]}/>
         <Input  id={inputItems[1]}/>
@@ -83,7 +103,7 @@ const ApplicantScreen = ({ changeScreen, navig }) => {
 };
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#f3f6f7', paddingBottom:50 },
+  screen: { flex: 1, backgroundColor: '#f3f6f7', paddingBottom: 50 },
   navigText: {
     fontFamily: 'OpenSansBold',
     fontSize: 16,

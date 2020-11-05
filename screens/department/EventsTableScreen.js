@@ -42,7 +42,7 @@ const _Item = ({ addCalendar, calenderHandler, content: { id, title, date, time,
               name={'calendar'}
               size={25}
               borderColor={Colors.accent}
-              style={{backgroundColor: '#f3f6f7'}}
+              style={{ backgroundColor: '#f3f6f7' }}
               color={Colors.accent}
               onTouch={() => { calenderHandler(date) }}
             />
@@ -86,7 +86,7 @@ const EventsTableScreen = ({ navig, source: { option } }) => {
     //console.log(dateDashForm)
     setEventDate(() => dateDashForm);
     setShowModal(() => true);
-    
+
   };
 
   const loadData = useCallback(async () => {

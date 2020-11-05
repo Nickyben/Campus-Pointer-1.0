@@ -190,7 +190,7 @@ const ElectionsPortalScreen = ({ navig }) => {
 
     case 'voting':
       const denominator = (voteSummary.length - 1) <= 0 ? 1 : (voteSummary.length - 1)
-      const goodVoteStatus = (availableOffices.length /denominator) <= 2;
+      const goodVoteStatus = (availableOffices.length / denominator) <= 2;
       return (
         <>
           <VotingScreen navig={navig} changeScreen={portalScreenHandler} />
@@ -213,10 +213,10 @@ const ElectionsPortalScreen = ({ navig }) => {
                           <View
                             key={i}
                             style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text style={{ ...styles.summaryTextTitle, color: '#00a7e7' ,flex:1}}>
+                            <Text style={{ ...styles.summaryTextTitle, color: '#00a7e7', flex: 1 }}>
                               {office}:{'  '}
                             </Text>
-                            <Text style={{ ...styles.summaryText, color: '#555' ,flex:1.2}}>
+                            <Text style={{ ...styles.summaryText, color: '#555', flex: 1.2 }}>
                               {v[office]}
                             </Text>
 
@@ -227,10 +227,15 @@ const ElectionsPortalScreen = ({ navig }) => {
                       }
                     })}
 
-                    <View style={{ padding: 15, borderRadius: 10, marginTop:15,
-                    backgroundColor: goodVoteStatus? Colors.success: Colors.error}}>
-                      <Text style={{ ...styles.summaryText, color: '#555' }}>
-                        You have voted for {voteSummary.length} office{voteSummary.length!==1?'s':''} out of {availableOffices.length}
+                    <View style={{
+                      padding: 15, borderRadius: 10, marginTop: 15,
+                      backgroundColor: goodVoteStatus ? Colors.success : Colors.error
+                    }}>
+                      <Text style={{
+                        ...styles.summaryText,
+                        textAlign: 'center', color: goodVoteStatus ? '#77ff77' : '#ff7777'
+                      }}>
+                        {!goodVoteStatus ? 'Ouch! ' : 'Doing great!'} You have {!goodVoteStatus ? 'only ' : ''}voted for {voteSummary.length} office{voteSummary.length !== 1 ? 's' : ''} out of {availableOffices.length}
                       </Text>
                     </View>
 
@@ -334,7 +339,7 @@ const styles = StyleSheet.create({
   summaryBox: {
 
     backgroundColor: '#fff',
-    width: '70%',
+    width: '80%',
     minHeight: 150,
     borderRadius: 10,
     paddingTop: 0,

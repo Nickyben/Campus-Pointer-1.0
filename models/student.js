@@ -1,6 +1,6 @@
 class Student {
-  constructor(id, name, regNumber, gender, adminYear, level, dept,
-    faculty, post, office, phoneNumber, mostRecentResult,image, honours) {
+  constructor(id,name, regNumber, gender, adminYear, level, dept,
+    faculty, post, office, phoneNumber, mostRecentResult, image, honours, bioData) {
 
     //const levelIsValid = this.department.levels.some(deptLevel => (deptLevel === level));
 
@@ -20,10 +20,22 @@ class Student {
     this.department = dept;
     this.faculty = faculty;
     this.phoneNumber = phoneNumber;
-    this.image= image;
+    this.image = image;
 
+    this.jambNumber = bioData && bioData.jambNumber;
+    this.entryMode = bioData && bioData.entryMode;
+    this.email = bioData && bioData.email;
+    this.middleName= bioData && bioData.middleName;
+    this.DOB = bioData && bioData.dateOfBirth;
+    this.maritalStatus = bioData && bioData.maritalStatus;
+    this.residentAddress = bioData && bioData.residentAddress;
+    this.stateOfOrigin = bioData && bioData.stateOfOrigin;
+    this.LGA = bioData && bioData.LGA;
+    this.sponsorName = bioData && bioData.sponsorName;
+    this.sponsorEmail = bioData && bioData.sponsorEmailAddress;
+    this.sponsorPhoneNumber = bioData && bioData.sponsorPhoneNumber;
 
-   //this.courses = this.department.courses;//arr containing all courses for that department
+    //this.courses = this.department.courses;//arr containing all courses for that department
 
 
     // this.result = mostRecentResult; //obj containing both assessment, exams scores and grades, prev,curr,cumulative
@@ -39,7 +51,7 @@ class Student {
     // this.presentCourses = this.result.courses.filter(resultCourse => {
     //   return (resultCourse.grade === 'F');
     // }).concat(this.presentLevelCourses);
-    
+
 
 
 

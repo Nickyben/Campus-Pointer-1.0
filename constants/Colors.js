@@ -27,8 +27,8 @@ const dark = (lightColor) => {
 
 
 export const lightTheme = {
-  primary: ['#00a7e7', '#ee0942', '#e75224', '#ee2499', '#9004df', '#04df90'],
-  accent: ['#7097d7', '#de7932', '#d74294', '#de9489', '#8074cf', '#74cf80'],
+  primary: ['#00a7e7', '#e75224', '#ee2499', '#04df90', '#ee0942', '#9004df'],
+  accent: ['#7097d7', '#d74294', '#de9489', '#74cf80', '#de7932', '#8074cf'],
   accent2: '#ef7f0a',
 
   mainViews: '#ffffff',
@@ -60,8 +60,8 @@ export const darkTheme = {
 
 
 
-primary = lightTheme.primary[0]; //0,2,3,5
-accent = lightTheme.accent[0];//0,2,3,5
+primary = lightTheme.primary[1]; //0,2,3,5
+accent = lightTheme.accent[1];//0,2,3,5
 accent2 = '#ef7f0a';
 white = '#ffffff';
 black = '#000000';

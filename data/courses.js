@@ -1,11 +1,14 @@
 import Course from '../models/course';
 import staff from '../data/staff';
+import {rand} from '../constants/MyFunctions';
 
 const templateCoordinator = staff.find(s => (s.designation === 'Senior Staff' && s.department === 'Computer Engineering'));
 
 const templateLecturers = staff.filter(s => s.department === 'Computer Engineering' && s.isAcademic === true);
 export const content = (level) => {
   const contentArr = [];
+  const courseType = ['university', 'faculty', 'faculty', 'department', 'department', 'department', 'department',
+    'department', 'department', 'department', 'department', 'department', 'department', 'department']
 
   for (let s = 1; s <= 9; s++) {
     contentArr.push(
@@ -26,7 +29,9 @@ export const content = (level) => {
         ).find(s => (s.designation === 'Senior Staff' || s.designation === 'Junior Staff')),
         templateLecturers.map((s, i) =>
           templateLecturers[+(Math.random() * (templateLecturers.length - 2)).toFixed(0)]
-        ).filter((s, i) => i <= 5 && s)
+        ).filter((s, i) => i <= 5 && s),
+        'department', //rand(courseTypes)
+        
       )
     );
   }
@@ -50,7 +55,8 @@ export const content = (level) => {
         ).find(s => (s.designation === 'Senior Staff' || s.designation === 'Junior Staff')),
         templateLecturers.map((s, i) =>
           templateLecturers[+(Math.random() * (templateLecturers.length - 2)).toFixed(0)]
-        ).filter((s, i) => i <= 5 && s)
+        ).filter((s, i) => i <= 5 && s),
+        'department', //rand(courseTypes)
       )
     );
   }

@@ -69,9 +69,16 @@ import SettingsDetailsScreen, {
   screenOptions as settingsDetailsScreenOpts
 } from '../screens/pointerApp/SettingsDetailsScreen';
 
+import HelpOverviewScreen, {
+  screenOptions as helpOverviewScreenOpts
+} from '../screens/pointerApp/HelpCenterScreen';
+
+
 import Colors from '../constants/Colors';
 
 import { FacultyTabNavigator, facultyTabNavScreenOptions } from './MaterialTopTabNav';
+
+
 
 
 let TouchableCmp = TouchableOpacity;
@@ -188,6 +195,30 @@ const FacultyStackNavigator = () => {
   );
 };
 
+const UniversityStackNav = createStackNavigator();
+
+const UniversityStackNavigator = () => {
+  return (
+    <UniversityStackNav.Navigator screenOptions={defaultNavOptions}>
+      <UniversityStackNav.Screen
+        name='UniversityOverview'
+        component={FacultyTabNavigator}
+        options={facultyTabNavScreenOptions}
+      />
+      {/* <FacultyStackNav.Screen
+        name='ProductDetail'
+        component={ProductDetailScreen}
+        options={prodDetailScreenOptions}
+      />
+      <FacultyStackNav.Screen
+        name='Cart'
+        component={CartScreen}
+        options={cartScreenOptions}
+      /> */}
+    </UniversityStackNav.Navigator>
+  );
+};
+
 
 const SchoolStackNav = createStackNavigator();
 
@@ -239,7 +270,7 @@ const HomeStackNavigator = () => {
         name='HomeReactions'
         component={HomeReactionsScreen}
         options={
-         homeReactionsScreenOpts
+          homeReactionsScreenOpts
         }
       />
 
@@ -248,7 +279,7 @@ const HomeStackNavigator = () => {
         component={DeptDetailScreen}
         options={deptDetailScreenOpts}
       />
-    
+
     </HomeStackNav.Navigator>
   );
 };
@@ -332,8 +363,30 @@ const SettingsStackNavigator = () => {
         component={SettingsDetailsScreen}
         options={settingsDetailsScreenOpts}
       />
-    
+
     </SettingsStackNav.Navigator>
+  );
+};
+
+
+const HelpCenterStackNav = createStackNavigator();
+
+const HelpCenterStackNavigator = () => {
+  return (
+    <HelpCenterStackNav.Navigator screenOptions={defaultNavOptions}>
+      <HelpCenterStackNav.Screen
+        name='HelpOverview'
+        component={HelpOverviewScreen}
+        options={helpOverviewScreenOpts}
+      />
+
+      {/* <HelpCenterStackNav.Screen
+        name='SettingsDetails'
+        component={SettingsDetailsScreen}
+        options={settingsDetailsScreenOpts}
+      /> */}
+
+    </HelpCenterStackNav.Navigator>
   );
 };
 
@@ -432,8 +485,8 @@ export const PointerDrawerNavigator = () => {
         (props) => {
           return (
 
-            <DrawerContentScrollView {...props} 
-            style={{ flex: 1, height: '100%', backgroundColor: Colors.switchPrimary }}
+            <DrawerContentScrollView {...props}
+              style={{ flex: 1, height: '100%', backgroundColor: Colors.switchPrimary }}
               contentContainerStyle={{ height: '100%', }}>
               <ImageBackground
                 style={{ width: '100%', height: '100%' }}
@@ -581,6 +634,23 @@ export const PointerDrawerNavigator = () => {
       />
 
       <PointerDrawerNav.Screen
+        name='University'
+        component={UniversityStackNavigator}
+        options={
+          {//can also be set in the 2nd arg of this stack' s create func
+            drawerLabel: 'University',
+            drawerIcon: props => (
+              <Ionicons
+                name={Platform.OS === 'android' ? 'md-podium' : 'ios-podium'}
+                size={23}
+                color={props.color}
+              />
+            )
+          }
+        }
+      />
+
+      <PointerDrawerNav.Screen
         name='Settings'
         component={SettingsStackNavigator}
         options={
@@ -589,6 +659,23 @@ export const PointerDrawerNavigator = () => {
             drawerIcon: props => (
               <Ionicons
                 name={Platform.OS === 'android' ? 'md-settings' : 'ios-settings'}
+                size={23}
+                color={props.color}
+              />
+            )
+          }
+        }
+      />
+
+      <PointerDrawerNav.Screen
+        name='HelpCenter'
+        component={HelpCenterStackNavigator}
+        options={
+          {//can also be set in the 2nd arg of this stack' s create func
+            drawerLabel: 'Help Center',
+            drawerIcon: props => (
+              <Ionicons
+                name={Platform.OS === 'android' ? 'md-help-circle' : 'ios-help-circle'}
                 size={23}
                 color={props.color}
               />

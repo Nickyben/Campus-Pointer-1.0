@@ -185,6 +185,8 @@ const SectionHeaderItem = ({ onCollapse, reportTitle, courses, title, showingSec
   const isResult = reportTitle === 'Results';
   const isAssessment = reportTitle === 'Assessments';
   const isAttendance = !(isResult || isAssessment);
+const resultType= isResult? 'result': isAssessment? 'assessment': 'record'
+
   useEffect(() => {
     setShowSection(p => showingSection === title);
   }, [showingSection]);
@@ -281,7 +283,7 @@ const SectionHeaderItem = ({ onCollapse, reportTitle, courses, title, showingSec
             color: '#555',
             textAlign: 'center',
           }}>
-            It appears you have no result for: {title}.
+            It appears you have no {resultType} for: {title}.
           </Text>
         </View>
       }

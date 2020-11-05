@@ -1,5 +1,6 @@
 class Course {
-  constructor(id, courseTitle, courseCode, courseOutline, creditUnits, courseLevel,dept,  semester, courseCoordinator, memberLecturers) {
+  constructor(id, courseTitle, courseCode, courseOutline, creditUnits,
+    courseLevel, dept, semester, courseCoordinator, memberLecturers, courseType) {
     this.id = id;
     this.courseTitle = courseTitle;
     this.courseCode = courseCode;
@@ -10,6 +11,7 @@ class Course {
     this.semester = semester;
     this.courseCoordinator = courseCoordinator;
     this.memberLecturers = memberLecturers;
+    this.courseType = courseType;//eg university,faculty, department
   };
 }
 

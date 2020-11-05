@@ -16,6 +16,7 @@ const inputReducer = (state, action) => {
       return ({
         ...state,
         gainedFocus: true,
+        lostFocus:false,
         //alignText: 'justify'
       });
 
@@ -25,6 +26,7 @@ const inputReducer = (state, action) => {
           ...state,
           value: action.value,
           validity: action.validity,
+          lostFocus:false,
           hasFocus: true,//action.hasFocus,//isTouched: action.isTouched
           // alignText: 'justify',
         }
@@ -34,6 +36,7 @@ const inputReducer = (state, action) => {
       return ({
         ...state,
         hasFocus: false,
+        gainedFocus: false,
         lostFocus: true,
         //alignText: state.value.length > 0 ? 'center' : 'justify',
       });
@@ -46,32 +49,36 @@ const inputReducer = (state, action) => {
 
 
 const Input = (props) => {
-  const { id, initialValue, initialValidity, onInputChange = () => { }, required, email, password,
-    min, max, textType, minLength, maxLength, style, label, errorMsg, successMsg, textInputProps, secureText, formState,
-    icon, inputContainerStyle, floatingLabel, placeholder } = props;
-
+  const { id, initialValue, initialValidity, onInputChange, required, email, password, phoneNumber,
+    min, max, textType, minLength, maxLength, style, label,hideLabel, errorMsg, successMsg, textInputProps, secureText, formState,
+    hideIcon, icon, inputContainerStyle, floatingLabel, hideFloatingLabel, placeholder, showErrorMsg,
+  } = props;
   const [inputState, dispatchAction] = useReducer(inputReducer, {
     value: initialValue ? initialValue : '',
-    validity: initialValidity ? initialValidity : true,
+    validity: initialValidity ? initialValidity : false,
     hasFocus: false,
     lostFocus: false,
     gainedFocus: false,
     // alignText: 'justify'
   });
 
+//console.warn(id, inputState.validity)
 
 
   useEffect(() => {
-    if (inputState.hasFocus) {
-      onInputChange(id, inputState.value, inputState.validity)
+    if (inputState.hasFocus || inputState.gainedFocus || inputState.lostFocus || initialValidity===true) {
+      onInputChange(id, inputState.value, inputState.validity, inputState.gainedFocus, inputState.lostFocus)
     }
-  }, [inputState, onInputChange, id]);
+  }, [inputState, onInputChange, id, initialValidity]);
+
 
 
   const textChangeHandler = text => {
     //console.log(text);
     const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const emailText = text.toLowerCase();
+
+    const phoneNumberRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
     let isValid = true;
 
     //for requirements
@@ -89,7 +96,11 @@ const Input = (props) => {
       isValid = false;
     }
 
-    //for numbers
+    if (phoneNumber && (!phoneNumberRegex.test(text))) {
+      isValid = false;
+    }
+
+    //for numerical data
     if (min != null && +text < min) {
       isValid = false;
     }
@@ -113,21 +124,25 @@ const Input = (props) => {
   };
 
   const gainedFocusHandler = () => {
-    dispatchAction({ type: INPUT_FOCUS })
+    dispatchAction({ type: INPUT_FOCUS , })
   };
 
   return (//REMINDER: Edit inputs are not working properly when you submit with first input Empty
     <View style={{ ...styles.formControl, ...style, paddingTop: floatingLabel ? 5 : 0 }}>
-      {true && !(inputState.value.length > 0 && inputState.hasFocus && true) &&
+      {!hideLabel && !(inputState.value.length > 0 && inputState.hasFocus && true) &&
         <Text style={styles.label}>{label ? label : 'Input Label'}</Text>}
-      {inputState.value.length > 0 && inputState.hasFocus && true &&
+      {inputState.value.length > 0 && inputState.hasFocus && !hideFloatingLabel &&
         <Text style={{ ...styles.floatingLabel, }}>
           {floatingLabel ? floatingLabel : placeholder ? placeholder : 'Placeholder'}</Text>
       }
 
 
-      <View style={{ ...styles.inputContainer, ...inputContainerStyle }}>
-        {true &&
+      <View style={{
+        ...styles.inputContainer,
+        borderBottomColor: inputState.gainedFocus ? Colors.primary : '#bbb',
+        ...inputContainerStyle
+      }}>
+        {!hideIcon &&
           <View style={{ marginLeft: 10, }}>
             <ItemIcon
               bgColor={Colors.primary + '22'}
@@ -143,8 +158,13 @@ const Input = (props) => {
 
         <TextInput
           {...props}
+          keyboardType={
+            email ? "email-address":
+            phoneNumber? "phone-pad": 'default'
+          }
+          secureTextEntry={!!password}
           placeholder={placeholder ? placeholder : 'placeholder'}
-          style={{ ...styles.input, }} // textAlign: inputState.alignText }}
+          style={{ ...styles.input, }}
           value={inputState.value}
           onChangeText={textChangeHandler}
           onBlur={lostFocusHandler}
@@ -152,14 +172,17 @@ const Input = (props) => {
 
         />
       </View>
-
-      {!inputState.validity && inputState.hasFocus && inputState.value.length > 1 &&
-        <View style={styles.errorMsgWrap}><Text style={styles.errorMsg}>
-          {errorMsg ? errorMsg : 'Error message'}</Text></View>
-      }
-      {inputState.validity && inputState.hasFocus && inputState.value.length > 1 &&
-        <View style={styles.errorMsgWrap}><Text style={styles.successMsg}>
-          {successMsg ? successMsg : 'Valid input'}</Text></View>
+      {showErrorMsg !== false &&
+        <>
+          {!inputState.validity && inputState.hasFocus && inputState.value.length > 1 &&
+            <View style={styles.errorMsgWrap}><Text style={styles.errorMsg}>
+              {errorMsg ? errorMsg : 'Invalid field'}</Text></View>
+          }
+          {inputState.validity && inputState.hasFocus && inputState.value.length > 1 &&
+            <View style={styles.errorMsgWrap}><Text style={styles.successMsg}>
+              {successMsg ? successMsg : 'Valid input'}</Text></View>
+          }
+        </>
       }
     </View>
 
@@ -204,6 +227,7 @@ const styles = StyleSheet.create({
     //width: '100%',
     flex: 1,
     paddingHorizontal: 10,
+
     fontFamily: 'OpenSansRegular',
     fontSize: 18,
   },

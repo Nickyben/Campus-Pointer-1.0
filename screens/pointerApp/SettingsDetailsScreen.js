@@ -7,6 +7,8 @@ import Colors from '../../constants/Colors';
 import ItemIcon from '../../components/UI/ItemIcon';
 import TouchIcon from '../../components/UI/TouchIcon';
 import Touch from '../../components/UI/Touch';
+import ChangeDetailsScreen from './ChangeDetailsScreen';
+import HelpCenterScreen from './HelpCenterScreen';
 
 const SettingsDetailsScreen = ({ navigation, route: { params } }) => {
   const { settingTitle } = params;
@@ -19,9 +21,9 @@ const SettingsDetailsScreen = ({ navigation, route: { params } }) => {
       <Text style={styles.screenText2}>Please update the App to the latest version.</Text>
     </View>
   );
-  const Temp2 = ({ source: { option } }) => (
+  const Temp2 = ({  }) => (
     <View style={styles.screen2}>
-      <Text style={styles.screenText}>{option}</Text>
+      <Text style={styles.screenText}>temp</Text>
     </View>
   );
 
@@ -29,10 +31,16 @@ const SettingsDetailsScreen = ({ navigation, route: { params } }) => {
 
   switch (settingTitle) {
     case 'Change Password':
-      Screen = Temp2;
+      Screen = ({ }) => <ChangeDetailsScreen navig={navigation} changeDetail={settingTitle} />
       break;
-    case 'Change Username':
-      Screen = Temp2;
+    case 'Change Email':
+      Screen = ({ }) => <ChangeDetailsScreen navig={navigation} changeDetail={settingTitle} />
+      break;
+    case 'Change Phone Number':
+      Screen = ({ }) => <ChangeDetailsScreen navig={navigation} changeDetail={settingTitle} />
+      break;
+    case 'Visibility':
+      Screen = ({ }) => <ChangeDetailsScreen navig={navigation} changeDetail={settingTitle} />
       break;
     case 'Notifications':
       Screen = Temp;
@@ -43,6 +51,9 @@ const SettingsDetailsScreen = ({ navigation, route: { params } }) => {
     case 'Languages':
       Screen = Temp;
       break;
+    case 'Help center':
+      Screen = ({ }) => <HelpCenterScreen/>;
+      break;
 
     default:
       Screen = Temp;
@@ -50,10 +61,11 @@ const SettingsDetailsScreen = ({ navigation, route: { params } }) => {
   }
   return (
     <View style={styles.screen}>
-      <Screen
+      <Screen />
+      {/* <Screen
         navig={navigation}
         source={{ option: settingTitle, }}
-      />
+      /> */}
     </View>
   );
 
