@@ -17,7 +17,9 @@ const MyModal = ({ children, showModal, handleRequestClose, modalType, headerTex
       transparent
       onRequestClose={handleRequestClose}
     >
-      <TouchCard disableCard onTouch={handleRequestClose} style={{flex:1}}>
+      <TouchCard
+        activeOpacity={1}  
+        useIos disableCard onTouch={handleRequestClose} style={{ flex: 1 }}>
         <View style={styles.modal}>
           <View style={styles.contentBox}>
             {headerText && <Text style={styles.contentBoxHeader}>{headerText}</Text>}

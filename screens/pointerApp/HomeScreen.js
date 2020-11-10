@@ -84,7 +84,7 @@ const _Item = ({ content: { id, title, date, type, responses,
           <View style={styles.authorImageContainer}>
             <Touch
               onTouch={() => { console.log('touched author\'s image') }} style={{
-                
+
               }}>
               <Image
                 source={image}
@@ -93,19 +93,19 @@ const _Item = ({ content: { id, title, date, type, responses,
           </View>
 
 
-          <View style={{flexDirection: 'row', justifyContent: 'space-between', flex:1,}}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, }}>
             <View style={{ flexDirection: 'row' }}>
               <View style={{ ...styles.authorDetails, }}>
-              <View style={{flexDirection: 'row'}}>
+                <View style={{ flexDirection: 'row' }}>
                   {name && <Text style={{ ...styles.authorDetailsText, color: '#00a7e7' }}>{name}</Text>}
-                <Text style={{ ...styles.authorDetailsText2,marginLeft:10 }}>
-                  ~{getSince(date)[2]}
-                </Text>
-              </View>
+                  <Text style={{ ...styles.authorDetailsText2, marginLeft: 10 }}>
+                    ~{getSince(date)[2]}
+                  </Text>
+                </View>
                 {office && <Text style={styles.authorDetailsText2}>{office}</Text>}
                 {post && <Text style={styles.authorDetailsText2}>{post}</Text>}
               </View>
-              
+
             </View>
 
             <View style={styles.actionContainer}>
@@ -322,7 +322,6 @@ const HomeScreen = ({ navigation }) => {
       <FlatList
         showsHorizontalScrollIndicator={false}
         //initialNumToRender, refreshing
-        initialNumToRender={5}
         keyExtractor={(item, index) => item.id}
         data={homePosts}
         renderItem={renderItem}
@@ -334,7 +333,9 @@ const HomeScreen = ({ navigation }) => {
 };
 
 export const screenOptions = (navProps) => {
+  const {navigation} = navProps;
   const searchIcon = Platform.OS == 'android' ? 'md-search' : 'ios-search';
+  const msgIcon = Platform.OS == 'android' ? 'md-mail' : 'ios-mail';
   const notificationIcon = Platform.OS == 'android' ? 'md-notifications' : 'ios-notifications';
   const menuIcon = Platform.OS == 'android' ? 'md-menu' : 'ios-menu';
   const homeIcon = Platform.OS == 'android' ? 'md-home' : 'ios-home';
@@ -357,7 +358,17 @@ export const screenOptions = (navProps) => {
             tile='Search'
             iconName={searchIcon}
             onPress={() => {
+            }}
+          />
 
+          <Item
+            tile='Messages'
+            iconName={msgIcon}
+            onPress={() => {
+              navigation.navigate('MessageStack', {
+                screen: 'MessagesOverview',
+                params: { source: 'Home' },
+              });
             }}
           />
 
@@ -385,7 +396,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f3f6f7',
   },
   listContainer: {
-    paddingBottom:10,
+    paddingBottom: 10,
   },
   row: {
     //borderTopColor: '#fbfeff',

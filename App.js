@@ -1,3 +1,6 @@
+
+
+
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, YellowBox, SafeAreaView, } from 'react-native';
@@ -19,6 +22,7 @@ import homeReducer from './store/reducers/homeReducer';
 import electionPortalReducer from './store/reducers/electionPortalReducer';
 import reportsReducer from './store/reducers/reportsReducer';
 import settingsReducer from './store/reducers/settingsReducer';
+import messageReducer from './store/reducers/messageReducer';
 
 enableScreens(); //useScreens(); is for lower versions of expo and react-native
 
@@ -33,6 +37,7 @@ const rootReducer = combineReducers({
   electionPortalReducer: electionPortalReducer,
   reportsReducer: reportsReducer,
   settingsReducer: settingsReducer,
+  messageReducer: messageReducer,
 });
 
 //creates the store with the rootReducer as arg

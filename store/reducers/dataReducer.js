@@ -14,6 +14,7 @@ import halls from '../../data/halls';
 import timetables from '../../data/timetables';
 
 const initialState = {//!!remember that students etc should be from departments[department ] depending on app owners
+  //userId: students.find(s => s.id === 'studentUserId').id,
   availableStudents: students,// [], 
   availableDepartments: [],
   availableFaculties: [], 

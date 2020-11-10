@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 //import { CheckBox } from 'react-native-elements'
 
 import {
-  StyleSheet, ScrollView, Text,
+  StyleSheet, ScrollView, Text,Switch,
   View, StatusBar, Platform, TouchableOpacity, TouchableNativeFeedback, Image, useWindowDimensions, Button
 } from 'react-native';
 import Form from '../../components/UI/Form';
@@ -11,12 +11,17 @@ import TouchIcon from '../../components/UI/TouchIcon';
 import Colors from '../../constants/Colors';
 import MyModal from '../../components/pointerComponents/MyModal';
 import CheckBox from '../../components/UI/CheckBox';
-import { setVisibility } from '../../store/actions/settingsActions';
+import { setVisibility, setNotifications, enableNotifications } from '../../store/actions/settingsActions';
 import { arrToObj } from '../../constants/MyFunctions';
-import {changeVisibilityItems as visibilityItems} from '../../data/generalData';
+import {
+  changeVisibilityItems as visibilityItems,
+  setNotificationItems as notificationItems
+} from '../../data/generalData';
 
 
+const changeVisibilityItems = visibilityItems;
 
+const setNotificationsItems = notificationItems;
 
 const changePWInputItems = [
   {
@@ -66,21 +71,26 @@ const changePhoneInputItems = [
 ];
 
 
-const changeVisibilityItems = visibilityItems;
+
 
 const ChangeDetailsScreen = ({ navig, changeDetail }) => {
   const dispatch = useDispatch();
-  const [showVisibilityOptions, setShowVisibilityOptions] = useState([false,'', '', []]);
+  const [showVisibilityOptions, setShowVisibilityOptions] = useState([false, '', '', []]);
   const [formState, setFormState] = useState({});
   const { inputValues, inputValidities, formValidity } = formState;
   const isChangePassword = changeDetail === 'Change Password';
   const isChangeEmail = changeDetail === 'Change Email';
   const isChangePhone = changeDetail === 'Change Phone Number';
   const isChangeVisibility = changeDetail === 'Visibility';
+  const isSetNotifications = changeDetail === 'Notifications';
+
   const inputItems = isChangePassword ? changePWInputItems :
     isChangeEmail ? changeEmailInputItems :
-      isChangePhone ? changePhoneInputItems : changeVisibilityItems;
-  const currentVisibilitySettings   = useSelector(s => s.settingsReducer.currentVisibilitySettings);
+      isChangePhone ? changePhoneInputItems : [];
+  const currentVisibilitySettings = useSelector(s => s.settingsReducer.currentVisibilitySettings);
+  const currentNotification_On_Off = useSelector(s => s.settingsReducer.enableNotificationSettings);
+  const currentNotificationsSettings = useSelector(s => s.settingsReducer.currentNotificationsSettings);
+
 
 
   const getFormState = (state) => {
@@ -112,7 +122,7 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
   //inputValidities && console.warn(inputValidities['oldPassword'] + 'see')//.inputValues['oldPassword'])
 
   const visibilityChoiceHandler = (id, label, options) => {
-    setShowVisibilityOptions(p => [true,id, label, options])
+    setShowVisibilityOptions(p => [true, id, label, options])
   };
 
   const setVisibilityHandler = (visibilityData) => {
@@ -120,11 +130,20 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
     setShowVisibilityOptions(() => [false, '', '', []])
   };
 
+  const setNotificationsHandler = (notificationsData) => {
+    dispatch(setNotifications(notificationsData));
+
+  };
+
+  const enableNotificationsHandler = (newValue) => {
+    dispatch(enableNotifications('notificationsSwitch', newValue))
+  }
+
   return (
     <View style={styles.screen}>
       {
-        !isChangeVisibility &&
-        <>
+        !isChangeVisibility && !isSetNotifications &&
+        <ScrollView>
           <View style={{
             backgroundColor: '#fdfeff',
             flexDirection: 'row', alignItems: 'center', padding: 15, paddingHorizontal: 20
@@ -146,11 +165,11 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
             onSubmit={checkValidity}
           >
           </Form>
-        </>
+        </ScrollView>
       }
       {
         isChangeVisibility &&
-        <View style={styles.visibilitySection}>
+        <ScrollView style={styles.visibilitySection}>
           {
             changeVisibilityItems.map((item, index) => {
               const { id, label, choiceLabels, rightBtn } = item;
@@ -177,22 +196,87 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
               )
             })
           }
-        </View>
+        </ScrollView>
       }
+
+      {
+        isSetNotifications &&
+        <ScrollView >
+          <View style={{ padding: 20,flexDirection: 'row', justifyContent: 'space-between'}}>
+            <Text style={styles.enableText}>Enable Notifications</Text>
+            <Switch
+
+              value={currentNotification_On_Off}
+              onValueChange={(enableNotificationsHandler)}
+              trackColor={{
+                true: Colors.switchWhite + '88',
+                false: '#ccc',//Colors.switchWhite + '33',
+              }}
+              thumbColor={ Colors.switchWhite}
+            />
+          </View>
+          {
+            setNotificationsItems.map((section, index) => {
+              const { id, header, settings } = section;
+
+
+              return (
+                <View key={index}>
+                  <Text style={styles.settingsHeader}>{header}</Text>
+                  <View style={{ paddingHorizontal: 10 }}>
+                    {
+                      settings.map((setting, index) => {
+                        const thisSection = currentNotificationsSettings.find(sec => sec.id === id);
+                        const thisSetting = thisSection && thisSection.settings.
+                          find(s => s.label === setting);
+                          const isChecked = thisSetting && thisSetting.choice
+                        return (
+                          <CheckBox
+                            key={index}
+                            disabled= {!currentNotification_On_Off}
+                            useIos
+                            type={'right'}
+                            title={setting}
+                            checked={isChecked}
+                            checkedColor={Colors.primary}
+                            onCheck={setNotificationsHandler.bind(this,
+                              { sectionId:id, label:setting, })}
+                            textStyle={styles.settingText}
+                            itemStyle={{
+                              borderBottomWidth: index !== settings.length - 1 ? 1 : 0,
+                              borderColor: '#e7e7e7'
+
+                            }}
+                          />
+                        );
+                      })
+                    }
+
+                  </View>
+                </View>
+              );
+            })
+          }
+        </ScrollView>
+
+      }
+
+
       <MyModal
         showModal={showVisibilityOptions[0]}
         handleRequestClose={() => {
-          setShowVisibilityOptions(() => [false,'', '', []])
+          setShowVisibilityOptions(() => [false, '', '', []])
         }} headerText={showVisibilityOptions[2]}>
         {currentVisibilitySettings &&
           showVisibilityOptions[3].map((option, index) => {
             //const allFalse = arrToObj(showVisibilityOptions[3].map((option, index) => ([option, false])), '_2D_Arr')
             const settingId = showVisibilityOptions[1];
-            const currentSetting = currentVisibilitySettings.find(s => s.id === settingId) 
+            const currentSetting = currentVisibilitySettings.find(s => s.id === settingId)
             const isChecked = currentSetting && currentSetting.choice === option;
             return (
               <CheckBox
                 key={index}
+                shape='circle'
                 title={option}
                 checked={isChecked}
                 checkedColor={Colors.primary}
@@ -213,6 +297,8 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
 
   );
 };
+
+
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#fff', paddingBottom: 50 },
@@ -244,8 +330,28 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSansRegular',
     fontSize: 15,
     color: '#111',
-  }
+  },
+  enableText:{
+    fontFamily: 'OpenSansBold',
+    fontSize: 18,
+    color: '#333', //Colors.primary,
+  },
+  settingsHeader: {
+    width: '100%',
+    backgroundColor: '#f3f6f7',//Colors.primary + '06',// 
+    padding: 20,
+    //paddingLeft: 25,
+    fontFamily: 'OpenSansBold',
+    fontSize: 17,
+    color: Colors.primary,
+  },
+  settingText: {
+    paddingVertical: 20,
+    fontFamily: 'OpenSansRegular',
+    fontSize: 16,
+    borderColor: '#e7e7e7',
 
+  },
 
 });
 

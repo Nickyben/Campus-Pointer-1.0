@@ -25,47 +25,7 @@ const CourseAppScreen = ({ navigation, route: { params: { title, studentId } } }
     dispatch(registerCourses(markedCourses));
   });
 
-  useEffect(() => {
-    const notificationIcon = Platform.OS == 'android' ? 'md-notifications' : 'ios-notifications';
-    const printIcon = Platform.OS == 'android' ? 'md-print' : 'ios-print';
-
-    navigation.setOptions({
-      headerRight: () => title === 'Register' ?
-        <View style={{ paddingRight: 10 }}>
-          <Btn
-          icon={{iconName: 'cloud-upload'}}
-            onPress={submitCourseHandler}//function to upload the selected(register) courses array...get this from main component
-            bgColor={Colors.switchPrimary}
-            borderColor={Colors.switchWhite}
-            // textColor={ Colors.switchWhite}
-          >Submit</Btn>
-        </View> :
-        title === 'Registered'?
-        (
-          <HeaderButtons HeaderButtonComponent={HeaderBtn}>
-            <Item
-              tile='Print'
-              iconName={printIcon}
-              onPress={() => {
-              }}
-            />
-          </HeaderButtons>
-        ):
-          (
-            <HeaderButtons HeaderButtonComponent={HeaderBtn}>
-              <Item
-                tile='Notifications'
-                iconName={notificationIcon}
-                onPress={() => {
-                }}
-              />
-            </HeaderButtons>
-          ),
-
-      // formSubmit: formSubmitHandler
-    });
-  });
-
+  
 
   const Temp = () => (
     <View style={styles.screen2}>
@@ -99,6 +59,49 @@ const CourseAppScreen = ({ navigation, route: { params: { title, studentId } } }
       break;
 
   }
+
+  useEffect(() => {
+    const notificationIcon = Platform.OS == 'android' ? 'md-notifications' : 'ios-notifications';
+    const printIcon = Platform.OS == 'android' ? 'md-print' : 'ios-print';
+
+    navigation.setOptions({
+      headerRight: () => title === 'Register' ?
+        <View style={{ paddingRight: 10 }}>
+          <Btn
+            icon={{ iconName: 'cloud-upload' }}
+            onPress={submitCourseHandler}//function to upload the selected(register) courses array...get this from main component
+            bgColor={Colors.switchPrimary}
+            borderColor={Colors.switchWhite}
+          // textColor={ Colors.switchWhite}
+          >Submit</Btn>
+        </View> :
+        title === 'Registered' ?
+          (
+            <HeaderButtons HeaderButtonComponent={HeaderBtn}>
+              <Item
+                tile='Print'
+                iconName={printIcon}
+                onPress={() => {
+                }}
+              />
+            </HeaderButtons>
+          ) :
+          (
+            <HeaderButtons HeaderButtonComponent={HeaderBtn}>
+              <Item
+                tile='Notifications'
+                iconName={notificationIcon}
+                onPress={() => {
+                }}
+              />
+            </HeaderButtons>
+          ),
+
+      // formSubmit: formSubmitHandler
+    });
+  }, [submitCourseHandler]);
+
+
   return (
     <View style={styles.screen}>
       <Screen

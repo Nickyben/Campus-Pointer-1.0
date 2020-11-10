@@ -231,7 +231,7 @@ const DeptOverviewScreen = ({ navigation }) => {
 };
 
 export const screenOptions = ({ navigation, route }) => {
-  const msgIcon = Platform.OS == 'android' ? 'md-mail' : 'ios-mail';
+  const notificationIcon = Platform.OS == 'android' ? 'md-notifications' : 'ios-notifications';
   const menuIcon = Platform.OS == 'android' ? 'md-menu' : 'ios-menu';
 
   return (
@@ -241,7 +241,7 @@ export const screenOptions = ({ navigation, route }) => {
         <HeaderButtons HeaderButtonComponent={HeaderBtn}>
           <Item
             tile='Notifications'
-            iconName={msgIcon}
+            iconName={notificationIcon}
             onPress={() => {
               // navigation.navigate(
               //   {

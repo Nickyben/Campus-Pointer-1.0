@@ -3,25 +3,27 @@ import {
   StyleSheet,
   Text,
   View, TouchableOpacity, Platform,
-TouchableNativeFeedback
+  TouchableNativeFeedback
 } from 'react-native';
 import Card from './Card';
 
 const TouchCard = props => {
+  const { activeOpacity} = props;
   let TouchableCmp = TouchableOpacity;
 
-  if ((Platform.OS === 'android' && Platform.Version >= 21) && !!props.useIos !== true ){
+  if ((Platform.OS === 'android' && Platform.Version >= 21) && !!props.useIos !== true) {
     TouchableCmp = TouchableNativeFeedback;
   }
 
-  let CardDynamic = props.disableCard? View: Card; 
+  let CardDynamic = props.disableCard ? View : Card;
 
   return (
-    <CardDynamic style={{ ...styles.touchCard, ...props.style 
-    
+    <CardDynamic style={{
+      ...styles.touchCard, ...props.style
+
     }}>
       <TouchableCmp
-      activeOpacity={0.6}
+        activeOpacity={activeOpacity ? activeOpacity : 0.6}
         style={styles.touchable}
         onPress={props.onTouch}
       >
@@ -36,8 +38,8 @@ const styles = StyleSheet.create({
     flex: 1,
 
   },
-  touchCard:{
-    padding:0,
+  touchCard: {
+    padding: 0,
     overflow: (Platform.OS === 'android' && Platform.Version >= 21)
       ? 'hidden'
       : 'visible',

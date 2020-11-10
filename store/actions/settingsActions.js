@@ -5,6 +5,7 @@ export const CHANGE_PASSWORD = 'CHANGE_PASSWORD';
 export const CHANGE_EMAIL = 'CHANGE_EMAIL';
 export const CHANGE_PHONE_NUMBER = 'CHANGE_PHONE_NUMBER';
 export const SET_VISIBILITY = 'SET_VISIBILITY';
+export const ENABLE_NOTIFICATIONS = 'ENABLE_NOTIFICATIONS';
 export const SET_NOTIFICATIONS = 'SET_NOTIFICATIONS';
 export const SET_SOUNDS = 'SET_SOUNDS';
 export const SET_LANGUAGE = 'SET_LANGUAGE';
@@ -14,7 +15,7 @@ export const GIVE_FEEDBACK = 'GIVE_FEEDBACK';
 
 
 export const changePassword = (passwordData) => {
-  const {idToken, userId} = passwordData;
+  const { idToken, userId } = passwordData;
 
   //http request etc;
   return ({
@@ -38,14 +39,25 @@ export const changePhoneNumber = (phoneNumberData) => {
 };
 
 export const setVisibility = (visibilityData) => {
-  console.log(visibilityData)
   return ({
     type: SET_VISIBILITY,
     visibilityData,
   });
 };
 
+export const enableNotifications = (notificationsData, enableNotifications) => {
+  if (notificationsData === 'notificationsSwitch') {
+    return ({
+      type: ENABLE_NOTIFICATIONS,
+      enable: enableNotifications,
+    });
+  }
+
+  
+};
+
 export const setNotifications = (notificationsData) => {
+  
   return ({
     type: SET_NOTIFICATIONS,
     notificationsData,

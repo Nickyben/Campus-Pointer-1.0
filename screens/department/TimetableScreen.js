@@ -224,8 +224,9 @@ const TableComponent = ({ day, periods, navig }) => {
 
 const TimetableScreen = ({ navig }) => {
 
-  const lecturesTimetable = useSelector(s => s.dataReducer.availableTimetables)
-    .find(t => (t.timetableType === 'Lectures') && (t.department === 'Computer Engineering'));
+  const lecturesTimetable = useSelector(s => s.dataReducer.availableTimetables
+    .find(t => (t.timetableType === 'Lectures') && (t.department === 'Computer Engineering')));
+    
 
   const daysRowsArr = lecturesTimetable?lecturesTimetable.dayRows :[]; //an obj
 

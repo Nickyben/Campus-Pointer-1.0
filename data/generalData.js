@@ -1,3 +1,7 @@
+
+
+//SETTINGS SCREEN ITEMS *************************************************
+
 export const changeVisibilityItems = [
   {
     id: 'emailVisibility',
@@ -21,14 +25,6 @@ export const changeVisibilityItems = [
 ];
 
 
-
-export const currentVisibilitySettings = changeVisibilityItems.map((setting, i) =>
-  ({ id: setting.id,
-    choice: setting.choiceLabels[2]
-  })
-)
-
-
 export const setNotificationItems = [
   {
     id: 'calendarAndEventNotifications',
@@ -49,7 +45,7 @@ export const setNotificationItems = [
   {
     id: 'directMessagesNotifications',
     header: 'Direct Messages',
-    settings: ['Direct messages '],
+    settings: ['Direct messages'],
   },
 
   {
@@ -61,6 +57,27 @@ export const setNotificationItems = [
   {
     id: 'emergencyNotifications',
     header: 'Emergency',
-    settings: ['Emergency and crisis ',],
+    settings: ['Emergency and crisis',],
   },
 ];
+
+
+
+// INITIAL SETTINGS *** implement with phone storage and database!!!!!
+export const initialVisibilitySettings = changeVisibilityItems.map((setting, i) =>
+  ({
+    id: setting.id,
+    choice: setting.choiceLabels[2]
+  })
+)
+
+
+export const initialNotificationSettings = setNotificationItems.map((section, i) =>
+  ({
+    id: section.id,
+    settings: section.settings.map(setting=> 
+      ({label: setting, choice: true})),
+  })
+)
+
+export const initialNotificationsIsEnabled = true;

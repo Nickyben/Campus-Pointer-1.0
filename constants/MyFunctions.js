@@ -36,9 +36,52 @@ export const getSince = (when) => {
     postTime = (postTime / (60)).toFixed(0);
     timeUnit = 'm';
   }
-  return ([postTime.toString(), timeUnit.toString(), postTime.toString() + timeUnit.toString()])
+  return ([postTime, timeUnit, postTime + timeUnit])
 
 };
+
+export const getWhen = (when) => {
+  let postTime = ((new Date().getTime() - when.getTime()) / (1000)).toFixed(0);
+  let timeUnit = 's';
+  let moment,extra='';
+  const test = new Date().getUTCDate;
+  const now = new Date()
+  const hours = when.getUTCHours();
+  const mins = when.getUTCMinutes();
+  const weekNum = when.getUTCDay(); //sun==0
+  const monthNum = when.getUTCMonth();//jan===0
+  const dayOfMonthNum = when.getUTCDate();
+  const year = when.getUTCFullYear();
+
+
+  const minTime = mins > 9 ? mins : '0' + mins;
+  const hourTime = hours > 12 ? hours - 12 : hours == 0 ? 12 : hours < 12 ? hours : hours;
+  const hourMeridian = hours >= 12 ? 'pm' : hours == 0 ? 'am' : hours < 12 ? 'am' : 'am';
+  const day = dayOfMonthNum > 9 ? dayOfMonthNum : '0' + dayOfMonthNum;
+  const fullTime = hourTime + ':' + minTime + ' ' + hourMeridian;
+  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const dateMoment = day + ' ' + months[monthNum];
+
+  if (now.getUTCFullYear() !== year) {
+    moment = dateMoment + ', ' + year;
+    extra=fullTime;
+  } else if (postTime >= (60 * 60 * 24)) {
+    moment = dateMoment;
+      extra=fullTime;
+  } else if (postTime >= (60 * 60)) {
+    moment = now.getUTCDay() !== weekNum ? 'Yesterday' : fullTime;
+    extra = now.getUTCDay() !== weekNum ? fullTime: '';
+  } else if (postTime >= (60)) {
+    moment = fullTime;
+  }
+
+
+  return ([postTime, extra, moment])
+
+};
+
+
 
 
 
@@ -73,10 +116,16 @@ export const arrToObj = (arr, arrType = '_1D_Arr') => {
       break;
     case '_1D_Arr':
       for (let index in arr) {
-        obj[(+index+1).toString()] = arr[index]
+        obj[(+index + 1).toString()] = arr[index]
       }
       break;
   }
 
   return (obj);
+}
+
+
+export const uniqueArray = (arr) => {
+  //note thisArr and arr are the same
+  return (arr.filter((val, i, thisArr) => arr.indexOf(val) === i))
 }

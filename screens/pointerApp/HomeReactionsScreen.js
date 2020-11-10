@@ -21,7 +21,6 @@ import Touch from '../../components/UI/Touch';
 
 const _Item = ({ content: { postId, liker, id, date, ownPostId, author, authorType, text, type },
   onSelect, navig, reactionType }) => {
-
   const isComments = reactionType === 'comments'
   const isLikes = reactionType === 'likes';
 
@@ -124,7 +123,6 @@ const HomeReactionsScreen = ({ navigation, route: { params: { postId, reactionTy
       <FlatList
         showsHorizontalScrollIndicator={false}
         //initialNumToRender, refreshing
-        initialNumToRender={5}
         keyExtractor={(item, index) => item.id}
         data={reactionItems}
         renderItem={renderItem}
@@ -150,7 +148,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   itemContainer: {
-    padding: 15,
+    padding: 10,
     paddingHorizontal: 10,
     flexDirection: 'row',
     alignItems: 'center',
@@ -161,13 +159,13 @@ const styles = StyleSheet.create({
 
   imageContainer: {
     backgroundColor: '#efefef',
-    width: 70,
-    height: 70,
+    width: 65,
+    height: 65,
     borderRadius: 35,
     overflow: 'hidden',
   },
   image: {
-    width: 70, height: 70,
+    width: 65, height: 65,
     borderRadius: 35,
     borderColor: '#fff',
     borderWidth: 3,

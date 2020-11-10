@@ -43,6 +43,15 @@ import HomeScreen, {
 import HomeReactionsScreen, {
   screenOptions as homeReactionsScreenOpts
 } from '../screens/pointerApp/HomeReactionsScreen';
+import MessagesScreen, {
+  screenOptions as msgsScreenOpts
+} from '../screens/pointerApp/MessagesScreen';
+import ChatScreen, {
+  screenOptions as chatScreenOpts
+} from '../screens/pointerApp/ChatScreen';
+import CreateMsgScreen, {
+  screenOptions as createMsgScreenOpts
+} from '../screens/pointerApp/CreateMsgScreen';
 
 
 import AssocOverviewScreen, {
@@ -76,7 +85,9 @@ import HelpOverviewScreen, {
 
 import Colors from '../constants/Colors';
 
-import { FacultyTabNavigator, facultyTabNavScreenOptions } from './MaterialTopTabNav';
+import {
+  FacultyTabNavigator, facultyTabNavScreenOptions
+} from './MaterialTopTabNav';
 
 
 
@@ -146,6 +157,10 @@ const defaultTabStacksOpts = ({ route }) => ({
   },
 
 })
+
+
+
+//STACK NAVIGATORS ***************************************************
 
 const DeptStackNav = createStackNavigator();
 
@@ -280,10 +295,62 @@ const HomeStackNavigator = () => {
         options={deptDetailScreenOpts}
       />
 
+      <HomeStackNav.Screen
+        name='MessagesOverview'
+        component={MessagesScreen}
+        options={msgsScreenOpts}
+      />
+
+      <HomeStackNav.Screen
+        name='MsgChatDetail'
+        component={ChatScreen}
+        options={chatScreenOpts}
+      />
+
+      <HomeStackNav.Screen
+        name='CreateMessage'
+        component={CreateMsgScreen}
+        options={createMsgScreenOpts}
+      />
+
     </HomeStackNav.Navigator>
   );
 };
 
+const MsgStackNav = createStackNavigator();
+
+const MsgStackNavigator = () => {
+  return (
+    <MsgStackNav.Navigator screenOptions={defaultNavOptions}>
+      
+
+      <MsgStackNav.Screen
+        name='DeptDetails'
+        component={DeptDetailScreen}
+        options={deptDetailScreenOpts}
+      />
+
+      <MsgStackNav.Screen
+        name='MessagesOverview'
+        component={MessagesScreen}
+        options={msgsScreenOpts}
+      />
+
+      <MsgStackNav.Screen
+        name='MsgChatDetail'
+        component={ChatScreen}
+        options={chatScreenOpts}
+      />
+
+      <MsgStackNav.Screen
+        name='CreateMessage'
+        component={CreateMsgScreen}
+        options={createMsgScreenOpts}
+      />
+
+    </MsgStackNav.Navigator>
+  );
+};
 
 const AssocStackNav = createStackNavigator();
 
@@ -397,8 +464,6 @@ const HelpCenterStackNavigator = () => {
 
 
 
-
-
 //TABS NAVIGATION****************************************************
 
 const DeptTabNav = createBottomTabNavigator();
@@ -460,8 +525,27 @@ export const DeptTabNavigator = () => {
 
 
 
+//TAB IN STACK NAVIGATION++++++++++++++++++++++++++++++++++++++++++++++++++++++
+const StackOfTabNav = createStackNavigator();
 
+const StackOfTabNavigator = () => {
+  return (
+    <StackOfTabNav.Navigator screenOptions={{headerShown:false}}>
+      <StackOfTabNav.Screen
+        name='DepartmentTabNav'
+        component={DeptTabNavigator}
+        //options={helpOverviewScreenOpts}
+      />
 
+      <StackOfTabNav.Screen
+        name='MessageStack'
+        component={MsgStackNavigator}
+      //options={helpOverviewScreenOpts}
+      />
+
+    </StackOfTabNav.Navigator>
+  );
+};
 
 
 
@@ -599,8 +683,11 @@ export const PointerDrawerNavigator = () => {
       }
     >
       <PointerDrawerNav.Screen
-        name='DepartmentTabNav'
-        component={DeptTabNavigator}
+       // name='DepartmentTabNav'
+        //component={DeptTabNavigator}
+
+        name='StackOfTabNav'
+        component={StackOfTabNavigator}
         options={
           {//can also be set in the 2nd arg of this stack' s create func
             drawerLabel: 'Department',
@@ -615,6 +702,8 @@ export const PointerDrawerNavigator = () => {
           }
         }
       />
+
+
       {/* CHECK WHY STACK NAVIGATOR ROTATES FASTER ON DEVICE ROTATE */}
       <PointerDrawerNav.Screen
         name='Faculty'
