@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 //import { CheckBox } from 'react-native-elements'
 
 import {
-  StyleSheet, ScrollView, Text,Switch,
+  StyleSheet, ScrollView, Text, Switch,
   View, StatusBar, Platform, TouchableOpacity, TouchableNativeFeedback, Image, useWindowDimensions, Button
 } from 'react-native';
 import Form from '../../components/UI/Form';
@@ -90,7 +90,7 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
   const currentVisibilitySettings = useSelector(s => s.settingsReducer.currentVisibilitySettings);
   const currentNotification_On_Off = useSelector(s => s.settingsReducer.enableNotificationSettings);
   const currentNotificationsSettings = useSelector(s => s.settingsReducer.currentNotificationsSettings);
-
+  const [switchOnNotify, setSwitchOnNotify] = useState(currentNotification_On_Off)
 
 
   const getFormState = (state) => {
@@ -136,8 +136,17 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
   };
 
   const enableNotificationsHandler = (newValue) => {
-    dispatch(enableNotifications('notificationsSwitch', newValue))
+    setSwitchOnNotify(p => newValue)
+    //dispatch(enableNotifications('notificationsSwitch', newValue))
   }
+
+  useEffect(() => {
+    isSetNotifications && dispatch(enableNotifications('notificationsSwitch', switchOnNotify))
+  }, [switchOnNotify, isSetNotifications])
+
+  
+
+  //console.log(currentNotification_On_Off)
 
   return (
     <View style={styles.screen}>
@@ -202,17 +211,17 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
       {
         isSetNotifications &&
         <ScrollView >
-          <View style={{ padding: 20,flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View style={{ padding: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={styles.enableText}>Enable Notifications</Text>
             <Switch
 
-              value={currentNotification_On_Off}
+              value={switchOnNotify} // currentNotification_On_Off}
               onValueChange={(enableNotificationsHandler)}
               trackColor={{
                 true: Colors.switchWhite + '88',
                 false: '#ccc',//Colors.switchWhite + '33',
               }}
-              thumbColor={ Colors.switchWhite}
+              thumbColor={switchOnNotify ? Colors.switchWhite : '#fff'}
             />
           </View>
           {
@@ -229,18 +238,18 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
                         const thisSection = currentNotificationsSettings.find(sec => sec.id === id);
                         const thisSetting = thisSection && thisSection.settings.
                           find(s => s.label === setting);
-                          const isChecked = thisSetting && thisSetting.choice
+                        const isChecked = thisSetting && thisSetting.choice
                         return (
                           <CheckBox
                             key={index}
-                            disabled= {!currentNotification_On_Off}
+                            disabled={!switchOnNotify}//!currentNotification_On_Off}
                             useIos
                             type={'right'}
                             title={setting}
                             checked={isChecked}
                             checkedColor={Colors.primary}
                             onCheck={setNotificationsHandler.bind(this,
-                              { sectionId:id, label:setting, })}
+                              { sectionId: id, label: setting, })}
                             textStyle={styles.settingText}
                             itemStyle={{
                               borderBottomWidth: index !== settings.length - 1 ? 1 : 0,
@@ -331,7 +340,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#111',
   },
-  enableText:{
+  enableText: {
     fontFamily: 'OpenSansBold',
     fontSize: 18,
     color: '#333', //Colors.primary,

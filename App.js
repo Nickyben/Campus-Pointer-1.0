@@ -64,7 +64,8 @@ export default function App() {
       <AppLoading
         startAsync={fetchFonts}
         onFinish={() => setFontIsLoaded(true)}
-      />);
+      />
+    );
   }
 
   return (

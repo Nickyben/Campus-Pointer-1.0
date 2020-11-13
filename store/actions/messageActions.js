@@ -1,3 +1,4 @@
+import Message from "../../models/message";
 
 
 
@@ -8,11 +9,33 @@ export const SEARCH_MESSAGE = 'SEARCH_MESSAGE';
 export const SEARCH_MSG_PERSON = 'SEARCH_MSG_PERSON';
 export const CREATE_MESSAGE = 'CREATE_MESSAGE';
 export const READ_MESSAGE = 'READ_MESSAGE';
+export const SEND_MESSAGE = 'SEND_MESSAGE';
+
 
 
 export const fetchMessages = () => {
   return ({
     type: FETCH_MESSAGES,
     //,//from server
+  });
+}
+
+export const sendChatMessage = (msg) => {//(chatId, senderId, receiverId, text) => {
+  return({
+    type: SEND_MESSAGE,
+    chatId: msg.receiverId,
+    message: msg,
+    //  new Message(
+    //   senderId + receiverId + new Date().toLocaleDateString() + Math.random(),
+    //   'individual',
+    //   new Date(),
+    //   senderId,
+    //   receiverId,
+    //   {
+    //     text,
+    //     image: null,
+    //   },
+    //   null
+    // )
   });
 }

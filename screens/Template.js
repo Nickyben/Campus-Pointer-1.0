@@ -24,3 +24,15 @@ const styles = StyleSheet.create({
 });
 
 export default Template;
+
+
+
+navigation.navigate('Root', {
+  screen: 'Settings',
+  params: {
+    screen: 'Sound',
+    params: {
+      screen: 'Media',
+    },
+  },
+});

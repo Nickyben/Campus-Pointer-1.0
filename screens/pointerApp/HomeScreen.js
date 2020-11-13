@@ -84,7 +84,6 @@ const _Item = ({ content: { id, title, date, type, responses,
           <View style={styles.authorImageContainer}>
             <Touch
               onTouch={() => { console.log('touched author\'s image') }} style={{
-
               }}>
               <Image
                 source={image}
@@ -148,15 +147,12 @@ const _Item = ({ content: { id, title, date, type, responses,
             <View style={{ ...styles.actionContainer, }}>
               <View style={{ paddingHorizontal: 2, }}>
                 <TouchIcon
-
                   onTouch={likeHandler.bind(this, id, theUser)}
                   name={'heart'}
                   size={22}
                   color={isLiked ? '#ee4444' : '#bcd'}
-
                 />
               </View>
-
             </View>
 
             <View style={styles.actionContainer}>

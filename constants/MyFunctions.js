@@ -20,7 +20,7 @@ export const shuffle = (arr) => {
 };
 
 export const getSince = (when) => {
-  let postTime = ((new Date().getTime() - when.getTime()) / (1000)).toFixed(0);
+  let postTime = +((new Date().getTime() - when.getTime()) / (1000)).toFixed(0);
   let timeUnit = 's';
 
   if (postTime >= (60 * 60 * 24 * 7)) {
@@ -41,17 +41,17 @@ export const getSince = (when) => {
 };
 
 export const getWhen = (when) => {
-  let postTime = ((new Date().getTime() - when.getTime()) / (1000)).toFixed(0);
+  let postTime = +((new Date().getTime() - when.getTime()) / (1000)).toFixed(0);
   let timeUnit = 's';
-  let moment,extra='';
+  let moment, extra = '';
   const test = new Date().getUTCDate;
   const now = new Date()
-  const hours = when.getUTCHours();
-  const mins = when.getUTCMinutes();
-  const weekNum = when.getUTCDay(); //sun==0
-  const monthNum = when.getUTCMonth();//jan===0
-  const dayOfMonthNum = when.getUTCDate();
-  const year = when.getUTCFullYear();
+  const hours = when.getHours();
+  const mins = when.getMinutes();
+  const weekNum = when.getDay(); //sun==0
+  const monthNum = when.getMonth();//jan===0
+  const dayOfMonthNum = when.getDate();
+  const year = when.getFullYear();
 
 
   const minTime = mins > 9 ? mins : '0' + mins;
@@ -63,69 +63,74 @@ export const getWhen = (when) => {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const dateMoment = day + ' ' + months[monthNum];
 
-  if (now.getUTCFullYear() !== year) {
+  if (now.getFullYear() !== year) {
     moment = dateMoment + ', ' + year;
-    extra=fullTime;
+    extra = fullTime;
   } else if (postTime >= (60 * 60 * 24)) {
     moment = dateMoment;
-      extra=fullTime;
+    extra = fullTime;
   } else if (postTime >= (60 * 60)) {
-    moment = now.getUTCDay() !== weekNum ? 'Yesterday' : fullTime;
-    extra = now.getUTCDay() !== weekNum ? fullTime: '';
-  } else if (postTime >= (60)) {
+    moment = now.getDay() !== weekNum ? 'Yesterday' : fullTime;
+    extra = now.getDay() !== weekNum ? fullTime : '';
+  } else {//if (postTime >= (60))
     moment = fullTime;
+  } 
+  // } else if (postTime >= (10)){
+    //   moment = postTime+ ' secs ago'
+    // }else {
+    //   moment = 'now'
+    // }
+
+
+    return ([postTime, extra, moment])
+
+  };
+
+
+
+
+
+  export const randomColor = () => ('#' + ((Math.random() * 0xffffff) << 0).toString(16) + '000000').slice(0, 7)
+
+
+  export const objToArr = (obj, arrType = '_1D_Arr') => {
+    let arr = [];
+    switch (arrType) {
+      case '_2D_Arr':
+        for (let prop in obj) {
+          arr.push([prop, obj[prop]])
+        }
+        break;
+      case '_1D_Arr':
+        for (let prop in obj) {
+          arr.push(obj[prop])
+        }
+        break;
+    }
+
+    return (arr);
+  }
+
+  export const arrToObj = (arr, arrType = '_1D_Arr') => {
+    let obj = {};
+    switch (arrType) {
+      case '_2D_Arr':
+        for (let index in arr) {
+          obj[arr[index][0]] = arr[index][1]
+        }
+        break;
+      case '_1D_Arr':
+        for (let index in arr) {
+          obj[(+index + 1).toString()] = arr[index]
+        }
+        break;
+    }
+
+    return (obj);
   }
 
 
-  return ([postTime, extra, moment])
-
-};
-
-
-
-
-
-export const randomColor = () => ('#' + ((Math.random() * 0xffffff) << 0).toString(16) + '000000').slice(0, 7)
-
-
-export const objToArr = (obj, arrType = '_1D_Arr') => {
-  let arr = [];
-  switch (arrType) {
-    case '_2D_Arr':
-      for (let prop in obj) {
-        arr.push([prop, obj[prop]])
-      }
-      break;
-    case '_1D_Arr':
-      for (let prop in obj) {
-        arr.push(obj[prop])
-      }
-      break;
+  export const uniqueArray = (arr) => {
+    //note thisArr and arr are the same
+    return (arr.filter((val, i, thisArr) => arr.indexOf(val) === i))
   }
-
-  return (arr);
-}
-
-export const arrToObj = (arr, arrType = '_1D_Arr') => {
-  let obj = {};
-  switch (arrType) {
-    case '_2D_Arr':
-      for (let index in arr) {
-        obj[arr[index][0]] = arr[index][1]
-      }
-      break;
-    case '_1D_Arr':
-      for (let index in arr) {
-        obj[(+index + 1).toString()] = arr[index]
-      }
-      break;
-  }
-
-  return (obj);
-}
-
-
-export const uniqueArray = (arr) => {
-  //note thisArr and arr are the same
-  return (arr.filter((val, i, thisArr) => arr.indexOf(val) === i))
-}

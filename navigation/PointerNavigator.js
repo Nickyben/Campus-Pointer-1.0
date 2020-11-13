@@ -3,7 +3,7 @@ import {
   Platform, SafeAreaView, Button, View,
   TouchableOpacity, TouchableNativeFeedback, Text, Image, ImageBackground
 } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 //react navigation version 5
 import { createStackNavigator } from '@react-navigation/stack';
@@ -52,7 +52,9 @@ import ChatScreen, {
 import CreateMsgScreen, {
   screenOptions as createMsgScreenOpts
 } from '../screens/pointerApp/CreateMsgScreen';
-
+import MsgSettingsScreen, {
+  screenOptions as msgSettingsScreenOpts
+} from '../screens/pointerApp/MsgSettingsScreen';
 
 import AssocOverviewScreen, {
   screenOptions as assocScreenOpts
@@ -322,7 +324,7 @@ const MsgStackNav = createStackNavigator();
 const MsgStackNavigator = () => {
   return (
     <MsgStackNav.Navigator screenOptions={defaultNavOptions}>
-      
+
 
       <MsgStackNav.Screen
         name='DeptDetails'
@@ -346,6 +348,12 @@ const MsgStackNavigator = () => {
         name='CreateMessage'
         component={CreateMsgScreen}
         options={createMsgScreenOpts}
+      />
+
+      <MsgStackNav.Screen
+        name='MessageSettings'
+        component={MsgSettingsScreen}
+        options={msgSettingsScreenOpts}
       />
 
     </MsgStackNav.Navigator>
@@ -530,11 +538,11 @@ const StackOfTabNav = createStackNavigator();
 
 const StackOfTabNavigator = () => {
   return (
-    <StackOfTabNav.Navigator screenOptions={{headerShown:false}}>
+    <StackOfTabNav.Navigator screenOptions={{ headerShown: false }}>
       <StackOfTabNav.Screen
         name='DepartmentTabNav'
         component={DeptTabNavigator}
-        //options={helpOverviewScreenOpts}
+      //options={helpOverviewScreenOpts}
       />
 
       <StackOfTabNav.Screen
@@ -562,11 +570,14 @@ const PointerDrawerNav = createDrawerNavigator();
 
 export const PointerDrawerNavigator = () => {
   const dispatch = useDispatch();
+  const user = useSelector(s => s.dataReducer.availableStudents.find(s => s.id === 'studentUserId'));
+  const { image } = user && user;
 
   return (
     <PointerDrawerNav.Navigator drawerLabel='Menu'
       drawerContent={
         (props) => {
+          const { navigation } = props;
           return (
 
             <DrawerContentScrollView {...props}
@@ -590,14 +601,24 @@ export const PointerDrawerNavigator = () => {
                     }}>
                       {/* <TouchableCmp > */}
                       <TouchableCmp
-                        onPress={() => { console.log('working') }} style={{
+                        onPress={() => {
+                          navigation.navigate(
+                            'StackOfTabNav', {
+                            screen: 'DepartmentTabNav',
+                            params: {
+                              screen: 'Profile',
+                              param: {}
+                            },
+                          });
+                        }}
+                        style={{
                           width: 100, height: 100,
                           borderRadius: 50,
                           //borderRadius: 50,
                           backgroundColor: Colors.primary
                         }}>
                         <Image
-                          source={require('../assets/images/user.png')}
+                          source={image}
                           style={{
                             width: 100, height: 100,
                             borderRadius: 50,
@@ -614,7 +635,9 @@ export const PointerDrawerNavigator = () => {
                     </View>
 
 
-                    <DrawerItemList {...props} itemStyle={{
+                    <DrawerItemList {...props} 
+                    
+                    itemStyle={{
                       // marginHorizontal: 0, 
                       //borderRadius: 0 
                     }} />
@@ -683,7 +706,7 @@ export const PointerDrawerNavigator = () => {
       }
     >
       <PointerDrawerNav.Screen
-       // name='DepartmentTabNav'
+        // name='DepartmentTabNav'
         //component={DeptTabNavigator}
 
         name='StackOfTabNav'
@@ -740,10 +763,12 @@ export const PointerDrawerNavigator = () => {
       />
 
       <PointerDrawerNav.Screen
+
         name='Settings'
         component={SettingsStackNavigator}
         options={
           {//can also be set in the 2nd arg of this stack' s create func
+
             drawerLabel: 'Settings',
             drawerIcon: props => (
               <Ionicons

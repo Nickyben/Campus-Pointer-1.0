@@ -13,28 +13,29 @@ import TouchIcon from '../../components/UI/TouchIcon';
 import { rand, shuffle, getSince, getWhen } from '../../constants/MyFunctions';
 import Btn from '../../components/UI/Btn';
 import Touch from '../../components/UI/Touch';
+import Card from '../../components/UI/Card';
 
 
 
 
 
 
-const _Item = ({ content: { id, messages }, onSelect, navig, }) => {
+const _Item = ({ content: { id, messages }, onSelect, navig, index }) => {
 
 
-  const { type, date, senderId, receiverId, text, groupId } = messages[messages.length - 1];
+  const { type, date, senderId, receiverId, text, groupId } = messages[0];
 
   const sender = useSelector(s => s.dataReducer.availableStudents.
     find(s => s.id === senderId));
   const receiver = useSelector(s => s.dataReducer.availableStudents.
     find(s => s.id === receiverId))
-
+  const unreadMsgs = rand([0, 0, 0, 1, 2, 3, 4, 5, 6]);// for now
 
   const { image, fullName, level, office, post } = (sender && receiver) &&
     senderId === 'studentUserId' ? receiver : sender;
 
   const viewChatHandler = () => {
-    navig.navigate('MsgChatDetail', { chatId: id, fullName,})
+    navig.navigate('MsgChatDetail', { chatId: id, fullName, image})
   };
   return (
     <Touch
@@ -59,31 +60,38 @@ const _Item = ({ content: { id, messages }, onSelect, navig, }) => {
           </Touch>
         </View>
 
-
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, }}>
           <View style={{}}>
             <View style={{ ...styles.details, }}>
               <View style={{ flexDirection: 'row' }}>
-                {fullName && <Text style={{ ...styles.detailsText,}}>{fullName}</Text>}
-
+                {fullName && <Text style={{ ...styles.detailsText, }}>{fullName}</Text>}
               </View>
               {office && <Text style={styles.detailsText2}>{office}</Text>}
               {post && <Text style={styles.detailsText2}>{post}</Text>}
               {level && <Text style={styles.detailsText2}>{level}</Text>}
-
             </View>
             <View style={{ padding: 5 }}>
-              {text && <Text style={{ ...styles.detailsText2, color: '#567' }}>{text}</Text>}
+              {text &&
+                <Text
+                  numberOfLines={2}
+                  style={{
+                    ...styles.detailsText2, color: '#567'
+                  }}>{text}
+                </Text>
+              }
             </View>
           </View>
           <View style={styles.timeContainer}>
-            <Text style={{ ...styles.detailsText2, }}>
-              {getWhen(date)[2]}
-            </Text>
-            <View style={styles.unreadBadgeContainer}>
-              <Text style={styles.unreadBadgeCount}>{4}</Text>
-            </View>
-            
+            {date &&
+              <Text style={{ ...styles.detailsText2, }}>
+                {getWhen(date)[2]}
+              </Text>
+            }
+            {(unreadMsgs > 0) &&
+              <View style={styles.unreadBadgeContainer}>
+                <Text style={styles.unreadBadgeCount}>{unreadMsgs}</Text>
+              </View>
+            }
           </View>
         </View>
       </View>
@@ -101,24 +109,13 @@ const MessagesScreen = ({ navigation, route: { params: { } } }) => {
   const userMsgs = useSelector(s => s.messageReducer.availableMessages);
   const chatPersonIds = useSelector(s => s.messageReducer.availableChatPersonsId);
   const chatMsgs = useSelector(s => s.messageReducer.availableChatMsgs);
+  //FETCH MESSAGES, REFRESH ETC
 
-  // const reactionItems = reactionType === 'likes' ?
-  //   useSelector(state => state.homeReducer.availableGeneralLikes.
-  //     filter(l => l.postId === postId)) :
-  //   useSelector(state => state.homeReducer.availableComments.
-  //     filter(c => c.ownPostId === postId))
-  // const headerTitle = reactionType === 'likes' ? 'Liked by' : 'Comments'
-
-  // useEffect(() => {
-  //   navigation.setOptions({
-  //     headerTitle: headerTitle,
-  //   });
-  // }, [headerTitle]);
-
-  const renderItem = ({ item }) => (//auto gets data in obj form , I deStructured it in params
+  const renderItem = ({ item, index }) => (//auto gets data in obj form , I deStructured it in params
     <_Item content={item}
       onSelect={() => { }}
       navig={navigation}
+      index={index}
     />
   );
 
@@ -129,19 +126,32 @@ const MessagesScreen = ({ navigation, route: { params: { } } }) => {
       <FlatList
         showsHorizontalScrollIndicator={false}
         //initialNumToRender, refreshing
+        //remember to render num according to screen dimensions
         initialNumToRender={30}
         keyExtractor={(item, index) => item.id}
         data={chatMsgs}
         renderItem={renderItem}
         contentContainerStyle={styles.listContainer}
       />
+      <TouchIcon
+        style={{ bottom: 20, right: 20, position: 'absolute' }}
+        onTouch={() => {navigation.navigate('CreateMessage', {})}}
+        bgColor={Colors.primary}
+        borderColor={Colors.primary}
+        largeBg
+        elevated
+        name={'chatbubbles'}
+        size={26}
+        color={'#fff'}
+      />
+
 
     </View>
   );
 };
 
-export const screenOptions = () => {
-  const createIcon = Platform.OS == 'android' ? 'md-chatbubbles' : 'ios - chatbubbles';
+export const screenOptions = ({navigation}) => {
+  const settingsIcon = Platform.OS == 'android' ? 'md-settings' : 'ios - settings';
 
   return ({
     headerTitle: 'Messages',
@@ -149,8 +159,9 @@ export const screenOptions = () => {
       <HeaderButtons HeaderButtonComponent={HeaderBtn}>
         <Item
           tile='New Message'
-          iconName={createIcon}
+          iconName={settingsIcon}
           onPress={() => {
+            navigation.navigate('MessageSettings',{})
           }}
         />
 
@@ -214,8 +225,8 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     //backgroundColor:'red',
   },
-  unreadBadgeContainer:{
-     borderRadius: 15,
+  unreadBadgeContainer: {
+    borderRadius: 15,
     marginTop: 5,
     backgroundColor: '#fff',
   },
@@ -224,7 +235,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: 'center',
     textAlignVertical: 'center',
-    backgroundColor: Colors.primary+ 'dd',//'#22ff99',
+    backgroundColor: Colors.primary + 'dd',//'#22ff99',
     width: 25,
     height: 25,
     borderRadius: 15,

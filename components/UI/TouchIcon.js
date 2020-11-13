@@ -8,7 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 import Touch from './Touch';
 
-const TouchIcon = ({ disabled, useIos, onTouch, touched, toggleIcons, size, name, color, style, bgColor,borderColor }) => {
+const TouchIcon = ({ disabled, useIos, onTouch, touched, toggleIcons, size, bigBg,
+  largeBg, name, color, style, bgColor, borderColor, elevated,activeOpacity }) => {
   //const [icon, setIcon] = useState(Platform.OS === 'android' ? `md-${toggleIcons[0]}` : `ios-${toggleIcons[0]}`);
 
   // const changeIconHandler = () => {
@@ -20,21 +21,33 @@ const TouchIcon = ({ disabled, useIos, onTouch, touched, toggleIcons, size, name
   //   );
   //   onTouch();
   // }
+  const elevateStyle = elevated ? {
+    shadowColor: 'black',
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.26,
+    elevation: 5,
+  } : {}
+
   return (
     <View style={{
-      ...styles.container, 
+      ...styles.container,
+      borderRadius: size + 20,
       borderColor: borderColor,
-      borderWidth: borderColor ? 1 : 0,...style,
-            backgroundColor: bgColor ? bgColor : 'transparent',
+      borderWidth: borderColor ? 1 : 0, ...style,
+      backgroundColor: bgColor ? bgColor : 'transparent',
+      ...elevateStyle
+
 
     }}>
       <Touch
         disabled={disabled}
         onTouch={onTouch}//{changeIconHandler}
         useIos={useIos}
+        activeOpacity={activeOpacity}
         style={{
-          width: size + 10,
-          height: size + 10,
+          width: largeBg ? size + 30 : bigBg ? size + 20 : size + 10,
+          height: largeBg ? size + 30 : bigBg ? size + 20 : size + 10,
           alignItems: 'center',
           justifyContent: 'center'
         }}>
@@ -58,8 +71,8 @@ const TouchIcon = ({ disabled, useIos, onTouch, touched, toggleIcons, size, name
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 20,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    alignSelf: 'center' //remove or check this if positioning problem show up
   }
 });
 

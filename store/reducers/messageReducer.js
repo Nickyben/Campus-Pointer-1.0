@@ -1,9 +1,10 @@
-import messages, { userMsgs, chatIds, chatMsgs } from "../../data/messages";
-import { FETCH_MESSAGES } from "../actions/messageActions";
+import messages, { userMsgs, chatIds, chatMsgs, getChatIds, getChatMsgs } from "../../data/messages";
+import { FETCH_MESSAGES, SEND_MESSAGE } from "../actions/messageActions";
 import { uniqueArray } from "../../constants/MyFunctions";
 
 
 const initialState = {
+  //networked sourced msg missing!!!!
   availableMessages: userMsgs,
   availableChatPersonsId: chatIds,
   availableChatMsgs: chatMsgs,
@@ -18,6 +19,16 @@ export default (state = initialState, action) => {
         availableMessages: state.availableMessages
 
       })
+    }
+    case SEND_MESSAGE: {
+      const updatedUserMsgs = [...state.availableMessages].concat(action.message)
+      return ({
+        ...state,
+        availableMessages: updatedUserMsgs,
+        availableChatPersonsId: getChatIds(updatedUserMsgs),
+        availableChatMsgs: getChatMsgs(updatedUserMsgs, getChatIds(updatedUserMsgs)),
+        readMessages: []
+      });
     }
   }
 

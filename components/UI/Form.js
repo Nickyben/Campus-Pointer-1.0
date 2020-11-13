@@ -11,6 +11,7 @@ import Colors from '../../constants/Colors';
 import Btn from './Btn';
 import { submitForm } from '../../store/actions/formActions';
 import { objToArr, arrToObj } from '../../constants/MyFunctions';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 const FORM_SUBMIT_CHECK = 'FORM_SUBMIT_CHECK';
@@ -63,7 +64,7 @@ const formReducer = (state, action) => {//the state is initially the initial sta
         formHasFocus: updatedFormFocus,
         formLostFocus: updatedFormBlur,
         showFormStatus: false,
-
+        formIsSubmitted: action.formIsSubmitted,
       }
     case FORM_SUBMIT_CHECK:
 
@@ -137,6 +138,7 @@ const Form = ({ id, title, navig, items, children, onSubmit,
         input: inputNameOrId,
         inputHasFocus: hasFocus,
         inputLostFocus: lostFocus,
+        formIsSubmitted: false,
       }
     )
   }, [dispatchFormAction]);//inputName,text, validity
@@ -169,7 +171,7 @@ const Form = ({ id, title, navig, items, children, onSubmit,
           formIsSubmitted: true,
         });
 
-        onFormSubmitted ? onFormSubmitted() : navig.goBack();
+        //onFormSubmitted ? onFormSubmitted() : navig.goBack();
       } catch (err) {
         // setError(err.message)
       }
@@ -196,12 +198,8 @@ const Form = ({ id, title, navig, items, children, onSubmit,
   }, [formState]);
 
   return (
-    <KeyboardAvoidingView
-    // style={{ flex: 1 }}
-    // behavior='padding' check why this is not working well
-    // keyboardVerticalOffset={100}
-    >
-      <ScrollView style={styles.scroll}>
+    
+      <KeyboardAwareScrollView style={styles.scroll}>
         {/* <Card style={styles.form}> */}
         {title &&
           <Text style={styles.formTitle}>
@@ -220,7 +218,8 @@ const Form = ({ id, title, navig, items, children, onSubmit,
                   {...input}
                   onInputChange={formInputHandler}
                   onFocus={formInputHandler}
-                //autoCorrect={false}
+                  newValue={formState.formIsSubmitted ? '' : formState.inputValues[input.id] }
+                  submitted={formState.formIsSubmitted}
                 />
               );
             })
@@ -265,8 +264,7 @@ const Form = ({ id, title, navig, items, children, onSubmit,
 
 
         {/* </Card> */}
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
   );
 };
 

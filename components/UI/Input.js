@@ -10,13 +10,15 @@ import ItemIcon from './ItemIcon';
 const INPUT_FOCUS = 'INPUT_FOCUS';
 const INPUT_CHANGE = 'INPUT_CHANGE';
 const INPUT_BLUR = 'INPUT_BLUR';
+const INPUT_SUBMIT = 'INPUT_SUBMIT';
+
 const inputReducer = (state, action) => {
   switch (action.type) {
     case INPUT_FOCUS:
       return ({
         ...state,
         gainedFocus: true,
-        lostFocus:false,
+        lostFocus: false,
         //alignText: 'justify'
       });
 
@@ -26,7 +28,7 @@ const inputReducer = (state, action) => {
           ...state,
           value: action.value,
           validity: action.validity,
-          lostFocus:false,
+          lostFocus: false,
           hasFocus: true,//action.hasFocus,//isTouched: action.isTouched
           // alignText: 'justify',
         }
@@ -40,7 +42,13 @@ const inputReducer = (state, action) => {
         lostFocus: true,
         //alignText: state.value.length > 0 ? 'center' : 'justify',
       });
-
+    case INPUT_SUBMIT: {
+      return ({
+        ...state,
+        value: '',
+        validity: false,
+      });
+    }
     default:
       return state;
   }
@@ -48,11 +56,29 @@ const inputReducer = (state, action) => {
 };
 
 
-const Input = (props) => {
-  const { id, initialValue, initialValidity, onInputChange, required, email, password, phoneNumber,
-    min, max, textType, minLength, maxLength, style, label,hideLabel, errorMsg, successMsg, textInputProps, secureText, formState,
-    hideIcon, icon, inputContainerStyle, floatingLabel, hideFloatingLabel, placeholder, showErrorMsg,
-  } = props;
+const Input = ({
+  id, initialValue, initialValidity, onInputChange, required, email, password, phoneNumber,
+  min, max, textType, minLength, maxLength, style, inputContainerStyle, inputStyle, label, hideLabel,
+  errorMsg, successMsg, textInputProps, submitted, submitAction,
+  secureText, formState, singleInput, rectInput, clear, newValue,
+  hideIcon, icon, touchableIcon, floatingLabel, hideFloatingLabel, placeholder, showErrorMsg, ...others
+}) => {
+  // const { id, initialValue, initialValidity, onInputChange, required, email, password, phoneNumber,
+  //   min, max, textType, minLength, maxLength, style, inputContainerStyle, inputStyle, label, hideLabel,
+  //    errorMsg, successMsg, textInputProps,
+  //   secureText, formState, singleInput, rectInput,
+  //   hideIcon, icon, touchableIcon, floatingLabel, hideFloatingLabel, placeholder, showErrorMsg,
+  // } = props;
+
+  const props = {
+    id, initialValue, initialValidity, onInputChange, required, email, password, phoneNumber,
+    min, max, textType, minLength, maxLength, style, inputContainerStyle, inputStyle, label, hideLabel,
+    errorMsg, successMsg, textInputProps, submitted, submitAction,
+    secureText, formState, singleInput, rectInput, clear, newValue,
+    hideIcon, icon, touchableIcon, floatingLabel, hideFloatingLabel, placeholder, showErrorMsg, ...others
+  }
+
+
   const [inputState, dispatchAction] = useReducer(inputReducer, {
     value: initialValue ? initialValue : '',
     validity: initialValidity ? initialValidity : false,
@@ -62,14 +88,8 @@ const Input = (props) => {
     // alignText: 'justify'
   });
 
-//console.warn(id, inputState.validity)
+  //console.warn(id, inputState.validity)
 
-
-  useEffect(() => {
-    if (inputState.hasFocus || inputState.gainedFocus || inputState.lostFocus || initialValidity===true) {
-      onInputChange(id, inputState.value, inputState.validity, inputState.gainedFocus, inputState.lostFocus)
-    }
-  }, [inputState, onInputChange, id, initialValidity]);
 
 
 
@@ -119,16 +139,36 @@ const Input = (props) => {
     dispatchAction({ type: INPUT_CHANGE, value: text, validity: isValid, hasFocus: true })
   };
 
+
+
   const lostFocusHandler = () => {
     dispatchAction({ type: INPUT_BLUR })
   };
 
   const gainedFocusHandler = () => {
-    dispatchAction({ type: INPUT_FOCUS , })
+    dispatchAction({ type: INPUT_FOCUS, })
   };
 
+  useEffect(() => {
+    if (inputState.hasFocus || inputState.gainedFocus || inputState.lostFocus || initialValidity === true) {
+      onInputChange && onInputChange(id, inputState.value, inputState.validity, inputState.gainedFocus, inputState.lostFocus)
+
+    }
+  }, [inputState, onInputChange, id, initialValidity]);
+
+  useEffect(() => {
+    if (submitted) {
+      dispatchAction({ type: INPUT_SUBMIT, })
+    }
+  }, [submitted]);
+
+
   return (//REMINDER: Edit inputs are not working properly when you submit with first input Empty
-    <View style={{ ...styles.formControl, ...style, paddingTop: floatingLabel ? 5 : 0 }}>
+    <View style={{
+      ...styles.formControl, ...style, paddingTop: floatingLabel ? 5 : 0,
+      marginBottom: singleInput ? 0 : styles.formControl.marginBottom,
+
+    }}>
       {!hideLabel && !(inputState.value.length > 0 && inputState.hasFocus && true) &&
         <Text style={styles.label}>{label ? label : 'Input Label'}</Text>}
       {inputState.value.length > 0 && inputState.hasFocus && !hideFloatingLabel &&
@@ -140,35 +180,42 @@ const Input = (props) => {
       <View style={{
         ...styles.inputContainer,
         borderBottomColor: inputState.gainedFocus ? Colors.primary : '#bbb',
+        paddingBottom: rectInput ? 0 : styles.inputContainer.paddingBottom,
         ...inputContainerStyle
       }}>
         {!hideIcon &&
           <View style={{ marginLeft: 10, }}>
-            <ItemIcon
-              bgColor={Colors.primary + '22'}
-              name={
-                icon ? icon.iconName : 'clipboard'
-              }
-              size={23}
-              color={icon && icon.iconColor ?
-                iconColor : Colors.primary}
-            />
+            {!touchableIcon &&
+              <ItemIcon
+
+                bgColor={Colors.primary + '22'}
+                name={
+                  icon ? icon.iconName : 'clipboard'
+                }
+                size={23}
+                color={icon && icon.iconColor ?
+                  iconColor : Colors.primary}
+              />
+            }
+
+
           </View>
         }
 
         <TextInput
           {...props}
           keyboardType={
-            email ? "email-address":
-            phoneNumber? "phone-pad": 'default'
+            email ? "email-address" :
+              phoneNumber ? "phone-pad" : 'default'
           }
           secureTextEntry={!!password}
           placeholder={placeholder ? placeholder : 'placeholder'}
-          style={{ ...styles.input, }}
-          value={inputState.value}
+          style={{ ...styles.input, ...inputStyle }}
+          value={newValue}
           onChangeText={textChangeHandler}
           onBlur={lostFocusHandler}
           onFocus={gainedFocusHandler}
+          onEndEditing={() => { }}
 
         />
       </View>
