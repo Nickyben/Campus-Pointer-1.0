@@ -4,7 +4,7 @@ import students from '../data/students';
 
 let messages = [];
 
-const testStudents = students.filter((s, i) => i < 21);
+const testStudents = students.filter((s, i) => (i===1 )|| (i%200 ===0));
 const commIds = () => {
   let senderId = rand(testStudents).id;
   let receiverId = rand(testStudents).id;
@@ -50,7 +50,7 @@ export const getChatIds = (userMsgs) => {
 export const getChatMsgs = (userMsgs, chatIds) => {
   return chatIds.map((id, i) => ({
     id: id,
-    messages: userMsgs.filter(m => m.senderId === id || m.receiverId === id).reverse(),
+    messages: userMsgs.filter(m => m.senderId === id || m.receiverId === id),
   })).sort((c1, c2) => {
     return c2.messages[0].date - c1.messages[0].date;
   });

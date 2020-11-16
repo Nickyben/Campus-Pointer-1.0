@@ -199,7 +199,7 @@ const Form = ({ id, title, navig, items, children, onSubmit,
 
   return (
     
-      <KeyboardAwareScrollView style={styles.scroll}>
+    <KeyboardAwareScrollView style={styles.scroll} enableOnAndroid={true}>
         {/* <Card style={styles.form}> */}
         {title &&
           <Text style={styles.formTitle}>

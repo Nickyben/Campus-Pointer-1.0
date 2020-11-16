@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   StyleSheet, ScrollView, Text,
@@ -67,7 +67,7 @@ const ElectionsPortalScreen = ({ navig }) => {
     , [dispatch, loadElectionData]);
 
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const notificationIcon = Platform.OS == 'android' ? 'md-notifications' : 'ios-notifications';
 
     navig.setOptions({

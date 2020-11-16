@@ -285,7 +285,7 @@ const HomeScreen = ({ navigation }) => {
     }
     , [dispatch, loadData]);
 
-  // useEffect(()=>{
+  // useLayoutEffect(()=>{
   //   navigation.setOptions({
   //     //headerShown: ()=> showHeader,
   //    // header:({})=>null

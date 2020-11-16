@@ -6,7 +6,7 @@ import { uniqueArray } from "../../constants/MyFunctions";
 const initialState = {
   //networked sourced msg missing!!!!
   availableMessages: userMsgs,
-  availableChatPersonsId: chatIds,
+ // availableChatPersonsId: chatIds,
   availableChatMsgs: chatMsgs,
   readMessages: []
 }
@@ -16,7 +16,10 @@ export default (state = initialState, action) => {
     case FETCH_MESSAGES: {
       return ({
         ...state,
-        availableMessages: state.availableMessages
+        // availableMessages: updatedUserMsgs,
+        // availableChatPersonsId: getChatIds(updatedUserMsgs),
+        // availableChatMsgs: getChatMsgs(updatedUserMsgs, getChatIds(updatedUserMsgs)),
+        // readMessages: []
 
       })
     }
@@ -25,7 +28,7 @@ export default (state = initialState, action) => {
       return ({
         ...state,
         availableMessages: updatedUserMsgs,
-        availableChatPersonsId: getChatIds(updatedUserMsgs),
+        //availableChatPersonsId: getChatIds(updatedUserMsgs),
         availableChatMsgs: getChatMsgs(updatedUserMsgs, getChatIds(updatedUserMsgs)),
         readMessages: []
       });

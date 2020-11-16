@@ -48,7 +48,7 @@ const PeriodComponent = ({ day, p, index, onNavigate, showingTitle, hideOthers }
 
   useEffect(() => {
     setShowCourseTitle(p => showingTitle === index);
-  }, [showingTitle]);
+  }, [showingTitle, index]);
 
   const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
   const to_date = new Date().toDateString();

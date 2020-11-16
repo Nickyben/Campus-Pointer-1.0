@@ -1,4 +1,5 @@
 import Student from '../models/student';
+import { rand } from '../constants/MyFunctions';
 
 const content = (department = null) => {
   //you can implement department later
@@ -26,12 +27,16 @@ const content = (department = null) => {
     `Ikechukwu`, 'Iyke', 'Cyriacus', 'Cyril', 'Stark', 'Bernard', 'Shwarzmiller', 'Iyke', 'Nick',
     'Stark', 'Smith', 'Johnson', 'Anthony', 'Clevery', 'Smart', 'Harry', 'Wilson', 'Will', 'Brad',
     'Roberts', 'Griphen', 'Grinder', 'Best', 'George', 'Marcus', 'Martial', 'Greenwood'];
+
   const students = [];
+
   for (let i = 1; i <= 6000; i++) {
     const j = i % 4 === 0 ? 4 : i % 3 === 0 ? 3 : i % 2 === 0 ? 2 : i % 5 == 0 ? 1 : 0;
     const title = titles[+(Math.random() * (titles.length - 2)).toFixed(0)];
     const title2 = titles[+(Math.random() * (titles.length - 2)).toFixed(0)];
-
+    const deptCodes = { 'Electrical': 'EEE', 'Mechanical': 'MEE', 'Civil': 'CIE', 'Chemical': 'CHE', 'Agric and Bio Resource': 'ABE' }
+    const dept = rand(['Electrical', 'Mechanical', 'Civil', 'Chemical', 'Agric and Bio Resource'])
+    const deptCode = deptCodes[dept];
     const honours = [
       {
         title: title[0],
@@ -51,52 +56,52 @@ const content = (department = null) => {
     //   firstName: [`Nicholas${i}`, 'Bernard', 'Tony', 'Max', `Chukwuka${i}`, `Nickyben${i}`, 'Chukwuka'][+(Math.random() * 6).toFixed(0)],
     //     lastName: [`Nick${i}`, 'Stark', 'Bernard', 'Shwarzmiller', 'Iyke', 'Nick', 'Stark'][+(Math.random() * 6).toFixed(0)]
     // }
-      if(i==1){
-        students.push(
-          new Student(
-            'studentUserId',
+    if (i === 1) {
+      students.push(
+        new Student(
+          'studentUserId',
 
-            {
-              firstName: 'StudentUserFirstName',
+          {
+            firstName: 'StudentUserFirstName',
 
-              lastName: 'StudentUserLastName'
-            },
-            'studentUserRegNumber',
+            lastName: 'StudentUserLastName'
+          },
+          'studentUserRegNumber',
 
-            'male',
+          'male',
 
-            '2016',
+          '2016',
 
-            '400',
+          '400',
 
-            'Computer Engineering',
+          'Computer Engineering',
 
-            'CEET',
+          'CEET',
 
-            'Course Rep',
+          'Course Rep',
 
-            'President',
+          'President',
 
-            '08100000000',
+          '08100000000',
 
-            null,
+          null,
 
-            require('../assets/images/maleStudent.png'),
+          require('../assets/images/maleStudent.png'),
 
-            honours,
+          honours,
 
-            {}
+          {}
 
-          ),
-        )
-      }
+        ),
+      )
+    }
 
 
 
 
 
     students.push(
-     
+
       new Student(
         Math.random().toString(),
 
@@ -108,7 +113,7 @@ const content = (department = null) => {
 
         i < 1001 ?
           `MOUAU/CME/${['16', '17', '18', '19', '20'][+(Math.random() * 4).toFixed(0)]}/` + (+(Math.random() * 100000).toFixed(0)).toString() :
-          `MOUAU/${['CIE', 'EEE', 'MEE', 'ABE', 'CHE'][+(Math.random() * 4).toFixed(0)]}/${['16', '17', '18', '19', '20'][+(Math.random() * 4).toFixed(0)]}/` + (+(Math.random() * 100000).toFixed(0)).toString(),
+          `MOUAU/${deptCode}/${['16', '17', '18', '19', '20'][+(Math.random() * 4).toFixed(0)]}/` + (+(Math.random() * 100000).toFixed(0)).toString(),
 
         i % 10 === 0 ? 'female' : 'male',
 
@@ -117,8 +122,8 @@ const content = (department = null) => {
         ['100', '200', '300', '400', '500'][+(Math.random() * 4).toFixed(0)],
 
         i < 1001 ?//this should be an instance of Department
-          'Computer Engineering' :
-          ['Electrical', 'Mechanical', 'Civil', 'Chemical', 'Agric and Bio Resource'][+(Math.random() * 4).toFixed(0)] + ' Engineering',
+        'Computer Engineering' :
+        dept + ' Engineering',
 
         'CEET',
 

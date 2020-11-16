@@ -71,7 +71,7 @@ const SettingsDetailsScreen = ({ navigation, route: { params } }) => {
   //   dispatch(enableNotifications('notificationsSwitch', newValue))
   // },[dispatch]);
 
-  // useEffect(() => {
+  // useLayoutEffect(() => {
   //   settingTitle === 'Notifications' && navigation.setOptions({
   //     headerRight: () =>
   //       (

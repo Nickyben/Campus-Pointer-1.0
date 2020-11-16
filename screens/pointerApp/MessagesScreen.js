@@ -14,6 +14,7 @@ import { rand, shuffle, getSince, getWhen } from '../../constants/MyFunctions';
 import Btn from '../../components/UI/Btn';
 import Touch from '../../components/UI/Touch';
 import Card from '../../components/UI/Card';
+import { fetchChatMessages } from '../../store/actions/messageActions';
 
 
 
@@ -23,7 +24,7 @@ import Card from '../../components/UI/Card';
 const _Item = ({ content: { id, messages }, onSelect, navig, index }) => {
 
 
-  const { type, date, senderId, receiverId, text, groupId } = messages[0];
+  const { type, date, senderId, receiverId, text, groupId } = messages&&messages[messages.length-1];
 
   const sender = useSelector(s => s.dataReducer.availableStudents.
     find(s => s.id === senderId));
@@ -31,11 +32,12 @@ const _Item = ({ content: { id, messages }, onSelect, navig, index }) => {
     find(s => s.id === receiverId))
   const unreadMsgs = rand([0, 0, 0, 1, 2, 3, 4, 5, 6]);// for now
 
-  const { image, fullName, level, office, post } = (sender && receiver) &&
+  const chatPerson = (sender && receiver) &&
     senderId === 'studentUserId' ? receiver : sender;
+  const { image, fullName, level, office, post } = chatPerson;
 
   const viewChatHandler = () => {
-    navig.navigate('MsgChatDetail', { chatId: id, fullName, image})
+    navig.navigate('MsgChatDetail', { chatId: id, fullName })
   };
   return (
     <Touch
@@ -106,11 +108,10 @@ const _Item = ({ content: { id, messages }, onSelect, navig, index }) => {
 
 
 const MessagesScreen = ({ navigation, route: { params: { } } }) => {
-  const userMsgs = useSelector(s => s.messageReducer.availableMessages);
-  const chatPersonIds = useSelector(s => s.messageReducer.availableChatPersonsId);
+  //const userMsgs = useSelector(s => s.messageReducer.availableMessages);
+  //const chatPersonIds = useSelector(s => s.messageReducer.availableChatPersonsId);
   const chatMsgs = useSelector(s => s.messageReducer.availableChatMsgs);
-  //FETCH MESSAGES, REFRESH ETC
-
+  const dispatch = useDispatch();
   const renderItem = ({ item, index }) => (//auto gets data in obj form , I deStructured it in params
     <_Item content={item}
       onSelect={() => { }}
@@ -118,6 +119,38 @@ const MessagesScreen = ({ navigation, route: { params: { } } }) => {
       index={index}
     />
   );
+  const loadChatMessages = useCallback(async () => {
+    //   setError(null);
+    //   setIsRefreshing(true)
+    //try {
+    await dispatch(fetchChatMessages());
+    //   } 
+    //catch (err) {
+    //     setError(err.message);
+    //   }
+    //   setIsRefreshing(false);
+  }, [dispatch]);//setIsLoading is handled already by react,
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', loadChatMessages);
+
+    //clean up function to run when effect is about to rerun or when component is destroyed or unmounted
+    return (() => {
+      unsubscribe();
+    });
+  }, [loadChatMessages]);
+
+
+  useEffect(//will run only when the component loads and not again unless dependencies change
+    //don't use async keyword here, instead, use .then() after the dispatch()
+    () => {
+      //     setIsLoading(true);
+      loadChatMessages().then(() => {
+        //       setIsLoading(false);
+      });
+    }
+    , [ loadChatMessages]);
+
 
 
   //console.log(messages.filter((m, i) => i < 20))
@@ -127,7 +160,7 @@ const MessagesScreen = ({ navigation, route: { params: { } } }) => {
         showsHorizontalScrollIndicator={false}
         //initialNumToRender, refreshing
         //remember to render num according to screen dimensions
-        initialNumToRender={30}
+        initialNumToRender={15}
         keyExtractor={(item, index) => item.id}
         data={chatMsgs}
         renderItem={renderItem}
@@ -135,7 +168,7 @@ const MessagesScreen = ({ navigation, route: { params: { } } }) => {
       />
       <TouchIcon
         style={{ bottom: 20, right: 20, position: 'absolute' }}
-        onTouch={() => {navigation.navigate('CreateMessage', {})}}
+        onTouch={() => { navigation.navigate('CreateMessage', {}) }}
         bgColor={Colors.primary}
         borderColor={Colors.primary}
         largeBg
@@ -150,7 +183,7 @@ const MessagesScreen = ({ navigation, route: { params: { } } }) => {
   );
 };
 
-export const screenOptions = ({navigation}) => {
+export const screenOptions = ({ navigation }) => {
   const settingsIcon = Platform.OS == 'android' ? 'md-settings' : 'ios - settings';
 
   return ({
@@ -161,7 +194,7 @@ export const screenOptions = ({navigation}) => {
           tile='New Message'
           iconName={settingsIcon}
           onPress={() => {
-            navigation.navigate('MessageSettings',{})
+            navigation.navigate('MessageSettings', {})
           }}
         />
 

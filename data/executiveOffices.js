@@ -33,7 +33,7 @@ for (let i = 1; i <= 36; i++) {
   const studentData = studs[+(Math.random()*(studs.length - 2)).toFixed(0)]
   tempRegCandidates.push(
     new ElectoralApplicant(
-      (+(Math.random() * 10000).toFixed(0)).toString() + studentData.regNumber + studentData.firstName + (+(Math.random() * 10000).toFixed(0)).toString(),
+      studentData && (+(Math.random() * 10000).toFixed(0)).toString() + studentData.regNumber + studentData.firstName + (+(Math.random() * 10000).toFixed(0)).toString(),
       studentData,
       executiveOffices[+(Math.random() * (executiveOffices.length - 2)).toFixed(0)],
       'Excellence is perceived by excellent goal setters.',

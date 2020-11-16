@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   StyleSheet, ScrollView, Text,
@@ -60,7 +60,7 @@ const CourseAppScreen = ({ navigation, route: { params: { title, studentId } } }
 
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const notificationIcon = Platform.OS == 'android' ? 'md-notifications' : 'ios-notifications';
     const printIcon = Platform.OS == 'android' ? 'md-print' : 'ios-print';
 
@@ -99,7 +99,7 @@ const CourseAppScreen = ({ navigation, route: { params: { title, studentId } } }
 
       // formSubmit: formSubmitHandler
     });
-  }, [submitCourseHandler]);
+  }, [submitCourseHandler, Colors]);
 
 
   return (

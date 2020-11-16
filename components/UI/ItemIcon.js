@@ -5,12 +5,47 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
+import Touch from './Touch';
 
-const ItemIcon = ({ size, name, color, style, borderColor, bgColor, bigBackground }) => {
+const ItemIcon = ({ size, name, color, style, borderColor, bgColor, bigBackground, onTouch, borderRadius}) => {
+
+  if (onTouch) {
+    return (
+      <View style={{
+        borderRadius: borderRadius || 5,
+        overflow: 'hidden',
+        ...style,
+      }}>
+        <Touch
+          onTouch={onTouch}
+          style={{
+            borderColor: borderColor,
+            borderWidth: borderColor ? 1 : 0,
+            width: bigBackground ? size + 28 : size + 10,
+            height: bigBackground ? size + 25 : size + 10,
+            backgroundColor: bgColor ? bgColor : Colors.primary + '22',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+
+        >
+          <Ionicons
+            name={
+              Platform.OS === 'android' ? `md-${name}` : `ios-${name}`
+            }
+            size={size}
+            color={color}
+          />
+        </Touch>
+      </View>
+
+    );
+  }
 
   return (
     <View style={{
-      ...styles.container,
+      borderRadius: borderRadius || 5,
+      overflow: 'hidden',
       borderColor: borderColor,
       borderWidth: borderColor ? 1 : 0,
       width: bigBackground ? size + 28 : size + 10,
@@ -28,7 +63,6 @@ const ItemIcon = ({ size, name, color, style, borderColor, bgColor, bigBackgroun
         color={color}
       />
     </View>
-
   );
 };
 

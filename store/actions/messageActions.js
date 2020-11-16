@@ -9,16 +9,25 @@ export const SEARCH_MESSAGE = 'SEARCH_MESSAGE';
 export const SEARCH_MSG_PERSON = 'SEARCH_MSG_PERSON';
 export const CREATE_MESSAGE = 'CREATE_MESSAGE';
 export const READ_MESSAGE = 'READ_MESSAGE';
+export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const SEND_MESSAGE = 'SEND_MESSAGE';
 
 
 
-export const fetchMessages = () => {
+export const fetchChatMessages = () => {
   return ({
     type: FETCH_MESSAGES,
     //,//from server
   });
 }
+
+export const addChatMessage = (msg)=>{
+  return({
+    type: ADD_MESSAGE,
+    chatId: msg.receiverId,
+    message: msg,
+  })
+};
 
 export const sendChatMessage = (msg) => {//(chatId, senderId, receiverId, text) => {
   return({

@@ -60,7 +60,7 @@ const Input = ({
   id, initialValue, initialValidity, onInputChange, required, email, password, phoneNumber,
   min, max, textType, minLength, maxLength, style, inputContainerStyle, inputStyle, label, hideLabel,
   errorMsg, successMsg, textInputProps, submitted, submitAction,
-  secureText, formState, singleInput, rectInput, clear, newValue,
+  secureText, formState, singleInput, rectInput, clear, newValue,onTextChanged,
   hideIcon, icon, touchableIcon, floatingLabel, hideFloatingLabel, placeholder, showErrorMsg, ...others
 }) => {
   // const { id, initialValue, initialValidity, onInputChange, required, email, password, phoneNumber,
@@ -74,7 +74,7 @@ const Input = ({
     id, initialValue, initialValidity, onInputChange, required, email, password, phoneNumber,
     min, max, textType, minLength, maxLength, style, inputContainerStyle, inputStyle, label, hideLabel,
     errorMsg, successMsg, textInputProps, submitted, submitAction,
-    secureText, formState, singleInput, rectInput, clear, newValue,
+    secureText, formState, singleInput, rectInput, clear, newValue,onTextChanged,
     hideIcon, icon, touchableIcon, floatingLabel, hideFloatingLabel, placeholder, showErrorMsg, ...others
   }
 
@@ -137,6 +137,7 @@ const Input = ({
     }
 
     dispatchAction({ type: INPUT_CHANGE, value: text, validity: isValid, hasFocus: true })
+    onTextChanged && onTextChanged(text);
   };
 
 
@@ -185,19 +186,17 @@ const Input = ({
       }}>
         {!hideIcon &&
           <View style={{ marginLeft: 10, }}>
-            {!touchableIcon &&
-              <ItemIcon
-
-                bgColor={Colors.primary + '22'}
-                name={
-                  icon ? icon.iconName : 'clipboard'
-                }
-                size={23}
-                color={icon && icon.iconColor ?
-                  iconColor : Colors.primary}
-              />
-            }
-
+            <ItemIcon
+              onTouch={icon && icon.touchable && icon.onTouch}
+              bgColor={icon.bgColor || Colors.primary + '22'}
+              name={
+                icon ? icon.iconName : 'clipboard'
+              }
+              borderRadius ={icon && icon.bgBorderRadius}
+              size={23}
+              color={icon && icon.iconColor ?
+                icon.iconColor : Colors.primary}
+            />
 
           </View>
         }
@@ -215,7 +214,6 @@ const Input = ({
           onChangeText={textChangeHandler}
           onBlur={lostFocusHandler}
           onFocus={gainedFocusHandler}
-          onEndEditing={() => { }}
 
         />
       </View>

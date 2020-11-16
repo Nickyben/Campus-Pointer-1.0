@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   StyleSheet, ScrollView, Text,
@@ -73,11 +73,11 @@ const DeptDetailScreen = ({ navigation, route: { params: { title, itemId, item, 
       }) :
       item;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: fullName ? fullName : studentData ? studentData.fullName : itemObj.title,
     });
-  });
+  },[fullName, studentData, itemObj] );
 
   return (
     <View style={styles.screen}>

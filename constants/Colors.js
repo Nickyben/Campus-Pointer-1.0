@@ -60,8 +60,8 @@ export const darkTheme = {
 
 
 
-primary = lightTheme.primary[1]; //0,2,3,5
-accent = lightTheme.accent[1];//0,2,3,5
+primary = lightTheme.primary[2]; //0,2,3,5
+accent = lightTheme.accent[2];//0,2,3,5
 accent2 = '#ef7f0a';
 white = '#ffffff';
 black = '#000000';

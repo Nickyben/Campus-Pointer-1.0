@@ -1,4 +1,4 @@
-import React, { useState,useCallback, useEffect, useReducer, } from 'react';
+import React, { useState, useCallback, useEffect, useReducer, } from 'react';
 import { TextInput, Text, View, StyleSheet, Platform, SafeAreaView } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -8,28 +8,26 @@ import TouchIcon from './TouchIcon';
 
 
 
-const ChatInput = ({ chatId, onSubmit, elevated}) => {
+const ChatInput = ({ onSubmit, onInputChange, elevated, style, iconLeftName, onLeftIconPress,
+  iconRightName, hideRightIcon, leftIconBgColor, leftIconBgBorderRadius, ...others}) => {
   const [submitted, setSubmitted] = useState(false);
-  const [clear, setClear] = useState(false);
-  const [chatInputState, setChatInputState] = useState({});
+  const [chatInputState, setChatInputState] = useState('');
 
 
-  const dispatch = useDispatch();
 
 
-  const msgInputHandler = useCallback((inputNameOrId, text, validity, hasFocus, lostFocus) => {// 
-    setChatInputState(p => (
-      { inputNameOrId, text, validity, hasFocus, lostFocus, }
-    ))
+  const msgInputHandler = (text) => {// 
     setSubmitted(p => false)
-
-  }, [setChatInputState])//, [dispatchFormAction]);
+    onInputChange && onInputChange(text);
+    setChatInputState(p => text)
+    
+  }//, [setChatInputState])//, [dispatchFormAction]);
 
 
 
   const msgPushHandler = () => {
-    chatInputState.text && onSubmit(chatId, 'studentUserId', chatId, chatInputState.text);
-    chatInputState.text && setSubmitted(p => true)
+    chatInputState && onSubmit(chatInputState);
+    chatInputState && setSubmitted(p => true)
   }
 
   const elevateStyle = elevated ? {
@@ -41,34 +39,44 @@ const ChatInput = ({ chatId, onSubmit, elevated}) => {
   } : {}
 
   return (
-    <SafeAreaView style={{...styles.typingContainer, ...elevateStyle}} >
+    <SafeAreaView style={{ ...styles.typingContainer, ...elevateStyle, ...style }} >
       <View style={styles.typingActions}>
       </View>
 
       <Input
+        {...others}
         id={'chatScreenInput'}
-        onInputChange={msgInputHandler}
-        newValue={submitted ? '' : chatInputState.text}
+        //onInputChange={msgInputHandler}
+        onTextChanged={msgInputHandler}
+        newValue={submitted ? '' : chatInputState}
         hideLabel hideFloatingLabel showErrorMsg={false} singleInput rectInput
         placeholder='Start typing message'
-        icon={{ iconName: 'images', }}
-        style={{ width: '89%' }}
+        icon={{
+          iconName: iconLeftName || 'images', touchable: true,
+          onTouch:(onLeftIconPress && onLeftIconPress.bind(this, chatInputState ) )|| (()=>{}) ,
+          bgColor: leftIconBgColor,
+          bgBorderRadius: leftIconBgBorderRadius,
+        }}
+        style={{ flex: 1, width: '89%' }}
         inputStyle={{ height: '100%' }}
-        multiline={true}
         inputContainerStyle={styles.inputContainerStyle}
         submitted={submitted}
+        onEndEditing={(onLeftIconPress && onLeftIconPress.bind(this, chatInputState)) || (() => { })}
+
       />
-      <View style={styles.submitMsgAction}>
-        <TouchIcon
-          onTouch={msgPushHandler}
-          bgColor={Colors.primary+'22'}
-          borderColor={Colors.primary}
-          bigBg
-          name={'send'}
-          size={22}
-          color={Colors.primary}
-        />
-      </View>
+      {!hideRightIcon &&
+        <View style={styles.submitMsgAction}>
+          <TouchIcon
+            onTouch={msgPushHandler}
+            bgColor={Colors.primary + '22'}
+            borderColor={Colors.primary}
+            bigBg
+            name={iconRightName || 'send'}
+            size={22}
+            color={Colors.primary}
+          />
+        </View>
+      }
     </SafeAreaView>
   );
 }
@@ -78,7 +86,7 @@ const styles = StyleSheet.create({
   typingContainer: {
     alignSelf: 'flex-end',
     backgroundColor: 'white',
-    height: 70,
+    height: 60,
     width: '100%',
     position: 'absolute',
     bottom: 0,
@@ -97,7 +105,7 @@ const styles = StyleSheet.create({
 
   },
   inputContainerStyle: {
-    //backgroundColor: 'blue',
+    backgroundColor: '#f7fafb',
     borderRadius: 20,
     borderBottomWidth: 0,
     height: '100%',
