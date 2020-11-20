@@ -24,6 +24,9 @@ import Message from '../../models/message';
 const _Item = ({ content: { id, text, date, image, senderId, receiverId, type },
   onSelect, navig, index, senderIsPrevious, senderIsNext, isLast }) => {
   const isUser = senderId === 'studentUserId';
+  const shouldHaveCurve = ((isUser && !senderIsNext ? isUser && senderIsNext ? 0 : -10 : 0) !== 0) ||
+    ((isUser && !senderIsNext ? isUser && senderIsNext ? 0 : 10 : 0) !== 0) ||
+    ((isUser && !senderIsNext ? 0 : !isUser && senderIsNext ? 0 : isUser && senderIsNext ? 0 : 10) !== 0)
   return (
     <Touch
       //onLayout={()=>{console.log('touch layout')}}
@@ -34,15 +37,23 @@ const _Item = ({ content: { id, text, date, image, senderId, receiverId, type },
       }}>
       <View style={{
         alignItems: isUser ? 'flex-end' : 'flex-start',
-        width: '80%'
+        width: '80%',
       }}>
         <View style={{
           ...styles.chatBoxContainer,
+          // marginRight: isUser && !senderIsNext ? isUser && senderIsNext ? 0 : -10 : 0,
+          // marginLeft: isUser && !senderIsNext ? 0 : !isUser && senderIsNext ? 0 : -10,
+          // paddingRight: isUser && !senderIsNext ? isUser && senderIsNext ? 0 : 10 : 0,
+          // paddingLeft: isUser && !senderIsNext ? 0 : !isUser && senderIsNext ? 0 : isUser && senderIsNext ? 0 : 10,
+
           borderBottomLeftRadius: !isUser ? 0 : styles.chatBox.borderRadius,
           borderBottomRightRadius: isUser ? 0 : styles.chatBox.borderRadius,
           borderTopLeftRadius: !isUser && senderIsPrevious ? 0 : styles.chatBox.borderRadius,
           borderTopRightRadius: isUser && senderIsPrevious ? 0 : styles.chatBox.borderRadius,
-          backgroundColor: '#fff',
+
+         // borderTopLeftRadius: shouldHaveCurve && !isUser ? 100 : !isUser && senderIsPrevious ? 0 : styles.chatBox.borderRadius,
+         // borderTopRightRadius: shouldHaveCurve && isUser ? 100 : isUser && senderIsPrevious ? 0 : styles.chatBox.borderRadius,
+          backgroundColor: isUser ? Colors.primary : Colors.primary + '33',// '#e3e6e7',
         }}>
           <View style={{
             ...styles.chatBox,
@@ -51,11 +62,13 @@ const _Item = ({ content: { id, text, date, image, senderId, receiverId, type },
             borderBottomRightRadius: isUser ? 0 : styles.chatBox.borderRadius,
             borderTopLeftRadius: !isUser && senderIsPrevious ? 0 : styles.chatBox.borderRadius,
             borderTopRightRadius: isUser && senderIsPrevious ? 0 : styles.chatBox.borderRadius,
-            backgroundColor: isUser ? Colors.primary : Colors.primary + '33',// '#e3e6e7',
+            backgroundColor: isUser ? Colors.primary : Colors.primary + '33', // '#e3e6e7',
+            //backgroundColor: isUser ? Colors.primary : 'transparent'// '#e3e6e7',
+
           }}>
             <Text style={{
               ...styles.chatText,
-              color: isUser ? '#fff' : '#333',
+              color: isUser ? '#fff' : '#111',
             }}>{text}
             </Text>
           </View>
@@ -106,7 +119,7 @@ const ChatScreen = ({ navigation, route: { params } }) => {
         null
       )
     ))
-    scrollToBottom();
+    //scrollToBottom();
   }
   useEffect(() => {
     if (msgs.length !== messages.length) {
@@ -122,7 +135,7 @@ const ChatScreen = ({ navigation, route: { params } }) => {
 
   const scrollToBottom = () => {//(contentWidth, contentHeight) 
     //setScrollViewContentDim(p => ({ contentWidth, contentHeight }))
-    scrollViewRef.current.scrollToEnd({ animated: false,  duration: 0})
+    scrollViewRef.current.scrollToEnd({ animated: false, duration: 0 })
 
   }
 
@@ -202,7 +215,7 @@ const ChatScreen = ({ navigation, route: { params } }) => {
         navig={navigation}
         senderIsPrevious={senderIsPrev}
         senderIsNext={senderIsNext}
-        isLast={index === messages.length-1}
+        isLast={index === messages.length - 1}
       />
     )
   };

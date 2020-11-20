@@ -167,7 +167,7 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
             formStateGetter={getFormState}
             submitTitle={'Save Change'} items={inputItems}
             formErrorMsg={
-              isChangePassword ? 'Hmm, you must have entered wrong or unmatched password(s)' :
+              isChangePassword ? 'Hmm, you must have entered short, wrong or unmatched password(s)' :
                 isChangeEmail ? 'Please ensure that the email field(s) are filled correctly.' :
                   'Please ensure that the  phone number field(s) are filled correctly'
             }
