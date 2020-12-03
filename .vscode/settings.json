@@ -33,5 +33,9 @@
       "shwarzmiller",
       "stephenie",
       "vsix"
-    ]
+    ],
+    "prettier.jsxBracketSameLine": true,
+    "prettier.parser": "flow",
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true
 }

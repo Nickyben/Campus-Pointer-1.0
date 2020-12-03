@@ -1,5 +1,5 @@
 class Staff {
-  constructor(id, name, staffNumber, gender, employYear, department, faculty,
+  constructor(id, name, staffNumber, gender, employYear, department, faculty, university,
     designation, rank,office, phoneNumber, courses, allocatedLevel, image, isAcademic, honours) {
     this.id = id;
     this.name = name;//you should extract first and last name from here
@@ -14,6 +14,7 @@ class Staff {
     this.staffNumber = staffNumber;
     this.department = department;
     this.faculty = faculty;
+    this.university = university;
     this.phoneNumber = phoneNumber;
     this.image = image;
     this.courses = courses; //array  containing course objs which have properties including memberLecturers, coordinator

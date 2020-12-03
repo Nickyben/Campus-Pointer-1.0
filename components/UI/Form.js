@@ -90,7 +90,7 @@ const formReducer = (state, action) => {//the state is initially the initial sta
 
 
 
-const Form = ({ id, title, navig, items, children, onSubmit,
+const Form = ({ id, title, navig, items, children, onSubmit,rectInputs,
   formStateGetter, submitTitle, formErrorMsg, formSuccessMsg, onFormSubmitted }) => {
   const dispatch = useDispatch();
 
@@ -198,56 +198,51 @@ const Form = ({ id, title, navig, items, children, onSubmit,
   }, [formState]);
 
   return (
-    
-    <KeyboardAwareScrollView style={styles.scroll} enableOnAndroid={true}>
-        {/* <Card style={styles.form}> */}
-        {title &&
-          <Text style={styles.formTitle}>
-            {title}
-          </Text>
-        }
-        <View style={{ padding: 20 }}>
+		<View style={{ ...styles.scroll }} enableOnAndroid={true}>
+			{/* <Card style={styles.form}> */}
+			{title && <Text style={styles.formTitle}>{title}</Text>}
+			<View style={{ padding: 20 }}>
+				{children}
+				{inputItems &&
+					inputItems.map((input, index) => {
+						return (
+							<Input
+								key={input.id + index}
+								{...input}
+                rectInput={rectInputs}
+								onInputChange={formInputHandler}
+								onFocus={formInputHandler}
+								newValue={formState.formIsSubmitted ? '' : formState.inputValues[input.id]}
+								submitted={formState.formIsSubmitted}
+							/>
+						);
+					})}
 
+				{formState.formHasError && formState.showFormStatus && (
+					<Text style={styles.formError}>
+						{formErrorMsg ? formErrorMsg : 'Please, ensure that the form is filled correctly!'}
+					</Text>
+				)}
 
-          {children}
-          {inputItems &&
-            inputItems.map((input, index) => {
-              return (
-                <Input
-                  key={input.id + index}
-                  {...input}
-                  onInputChange={formInputHandler}
-                  onFocus={formInputHandler}
-                  newValue={formState.formIsSubmitted ? '' : formState.inputValues[input.id] }
-                  submitted={formState.formIsSubmitted}
-                />
-              );
-            })
-          }
-
-          {formState.formHasError && formState.showFormStatus &&
-            <Text style={styles.formError}>{formErrorMsg ? formErrorMsg :
-              'Please, ensure that the form is filled correctly!'}</Text>
-          }
-
-          {/* {!formState.formHasError && formState.formIsSubmitted && formState.showFormStatus &&
+				{/* {!formState.formHasError && formState.formIsSubmitted && formState.showFormStatus &&
             <Text style={{ ...styles.formError, color: '#55ff55', backgroundColor: Colors.success }}>
               {formSuccessMsg ? formSuccessMsg :
                 'Your form has been submitted successfully.'}</Text>
           } */}
 
-          <Btn
-            style={{ marginVertical: 20, borderRadius: 10, }}
-            innerStyle={{ paddingVertical: 10 }}
-            onPress={formSubmitHandler}
-            bgColor={Colors.primary}
-            disabled={!objToArr(formState.inputValues).some(value=>!!value)}
-          >
-            {submitTitle ? submitTitle : 'Submit'}
-          </Btn>
-        </View>
+				<Btn
+					fontSize={15}
+					style={{ marginVertical: 20, borderRadius: 10 }}
+					innerStyle={{ paddingVertical: 10 }}
+					onPress={formSubmitHandler}
+					bgColor={Colors.primary}
+					// disabled={!objToArr(formState.inputValues).some(value=>!!value)}
+				>
+					{submitTitle ? submitTitle : 'Submit'}
+				</Btn>
+			</View>
 
-        {/* 
+			{/* 
           <Input
             id='title'
             label='Title'
@@ -262,9 +257,8 @@ const Form = ({ id, title, navig, items, children, onSubmit,
             required
           /> */}
 
-
-        {/* </Card> */}
-      </KeyboardAwareScrollView>
+			{/* </Card> */}
+		</View>
   );
 };
 

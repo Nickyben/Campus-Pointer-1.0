@@ -6,6 +6,7 @@ const tempCourses = courses.filter(c => c.department === 'Computer Engineering')
 const tempHalls = halls.filter(h => h.department === 'Computer Engineering');
 const depts = ['Computer Engineering'];//should be department objs
 const faculties = ['CEET'];
+const universities = ['MOUAU']
 const sessions = ['2020/2021'];
 const semesters = ['First'];
 const timetableTypes = ['Lectures', 'Exam'];
@@ -56,6 +57,7 @@ for (let i = 1; i <= depts.length; i++) {
       depts[0] + ' ' + timetableTypes[0] + ' Timetable for ' + semesters[0] + ' Semester, ' + sessions[0] + ' Session.',
       depts[0],
       faculties[0],
+      universities[0],
       semesters[0],
       sessions[0],
       [100, 200, 300, 400, 500],

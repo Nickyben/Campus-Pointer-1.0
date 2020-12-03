@@ -1,123 +1,224 @@
-import React, { useState, useCallback, useEffect, useReducer, } from 'react';
+import React, { useState, useCallback, useEffect, useReducer } from 'react';
 import { TextInput, Text, View, StyleSheet, Platform, SafeAreaView } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import Colors from '../../constants/Colors';
 import Input from './Input';
 import TouchIcon from './TouchIcon';
+import ItemIcon from './ItemIcon';
 
+const ChatInput = ({
+	inputIcon,
+	hideIcon,
+	placeholder,
+	email,
+	phoneNumber,
+	required,
+	min,
+	max,
+	minLength,
+	maxLength,
+	password,
+	onSubmit,
+	onInputChange,
+	elevated,
+	style,
+	inputStyle,
+	iconLeftName,
+	onLeftIconPress,
+	iconRightName,
+	hideRightIcon,
+	leftIconBgColor,
+	leftIconBgBorderRadius,
+	...others
+}) => {
+	const [chatInputState, setChatInputState] = useState({ value: '', validity: false });
 
+	const textChangeHandler = (text) => {
+		//console.log(text);
+		const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		const emailText = text.toLowerCase();
 
-const ChatInput = ({ onSubmit, onInputChange, elevated, style, iconLeftName, onLeftIconPress,
-  iconRightName, hideRightIcon, leftIconBgColor, leftIconBgBorderRadius, ...others}) => {
-  const [submitted, setSubmitted] = useState(false);
-  const [chatInputState, setChatInputState] = useState('');
+		const phoneNumberRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+		let isValid = true;
 
+		//for requirements
+		if (required && text.trim().length === 0) {
+			isValid = false;
+		}
 
+		//for email
+		if (email && !emailRegex.test(emailText)) {
+			isValid = false;
+		}
 
+		//for passwords
+		if (password && (text.length < 7 || (minLength != null && text.length < minLength))) {
+			isValid = false;
+		}
 
-  const msgInputHandler = (text) => {// 
-    setSubmitted(p => false)
-    onInputChange && onInputChange(text);
-    setChatInputState(p => text)
-    
-  }//, [setChatInputState])//, [dispatchFormAction]);
+		if (phoneNumber && !phoneNumberRegex.test(text)) {
+			isValid = false;
+		}
 
+		//for numerical data
+		if (min != null && +text < min) {
+			isValid = false;
+		}
+		if (max != null && +text > max) {
+			isValid = false;
+		}
 
+		//for strings
+		if (minLength != null && text.length < minLength) {
+			isValid = false;
+		}
+		if (maxLength != null && text.length > maxLength) {
+			isValid = false;
+		}
 
-  const msgPushHandler = () => {
-    chatInputState && onSubmit(chatInputState);
-    chatInputState && setSubmitted(p => true)
-  }
+		onInputChange && onInputChange(text);
+		setChatInputState((p) => ({ value: text, validity: isValid }));
+	};
 
-  const elevateStyle = elevated ? {
-    shadowColor: 'black',
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.26,
-    elevation: 10,
-  } : {}
+	const lostFocusHandler = () => {};
 
-  return (
-    <SafeAreaView style={{ ...styles.typingContainer, ...elevateStyle, ...style }} >
-      <View style={styles.typingActions}>
-      </View>
+	const gainedFocusHandler = () => {};
 
-      <Input
-        {...others}
-        id={'chatScreenInput'}
-        //onInputChange={msgInputHandler}
-        onTextChanged={msgInputHandler}
-        newValue={submitted ? '' : chatInputState}
-        hideLabel hideFloatingLabel showErrorMsg={false} singleInput rectInput
-        placeholder='Start typing message'
-        icon={{
-          iconName: iconLeftName || 'images', touchable: true,
-          onTouch:(onLeftIconPress && onLeftIconPress.bind(this, chatInputState ) )|| (()=>{}) ,
-          bgColor: leftIconBgColor,
-          bgBorderRadius: leftIconBgBorderRadius,
-        }}
-        style={{ flex: 1, width: '89%' }}
-        inputStyle={{ height: '100%' }}
-        inputContainerStyle={styles.inputContainerStyle}
-        submitted={submitted}
-        onEndEditing={(onLeftIconPress && onLeftIconPress.bind(this, chatInputState)) || (() => { })}
+	const msgPushHandler = () => {
+		onSubmit(chatInputState.value);
+    setChatInputState((p) => ({ value: '', validity: false }));	
+  };
 
-      />
-      {!hideRightIcon &&
-        <View style={styles.submitMsgAction}>
-          <TouchIcon
-            onTouch={msgPushHandler}
-            bgColor={Colors.primary + '22'}
-            borderColor={Colors.primary}
-            bigBg
-            name={iconRightName || 'send'}
-            size={22}
-            color={Colors.primary}
-          />
-        </View>
-      }
-    </SafeAreaView>
-  );
-}
+	const elevateStyle = elevated
+		? {
+				shadowColor: 'black',
+				shadowRadius: 8,
+				shadowOffset: { width: 0, height: 2 },
+				shadowOpacity: 0.26,
+				elevation: 10,
+		  }
+		: {};
+
+	const icon = inputIcon
+		? inputIcon
+		: {
+				iconName: iconLeftName || 'images',
+				touchable: true,
+				onTouch: (onLeftIconPress && onLeftIconPress.bind(this, chatInputState.value)) || (() => {}),
+				bgColor: leftIconBgColor,
+				bgBorderRadius: leftIconBgBorderRadius,
+		  };
+
+	return (
+		<SafeAreaView style={{ ...styles.typingContainer, ...elevateStyle, ...style }}>
+			<View style={styles.formControl}>
+				<View
+					style={{
+						...styles.inputContainer,
+						paddingBottom: 0,
+						...styles.inputContainerStyle,
+					}}>
+					{!hideIcon && (
+						<View style={{ marginLeft: 10 }}>
+							<ItemIcon
+								onTouch={icon && icon.touchable && icon.onTouch}
+								bgColor={icon.bgColor || Colors.primary + '22'}
+								name={icon ? icon.iconName : 'clipboard'}
+								borderRadius={icon && icon.bgBorderRadius}
+								size={23}
+								color={icon && icon.iconColor ? icon.iconColor : Colors.primary}
+							/>
+						</View>
+					)}
+
+					<TextInput
+						{...others}
+						keyboardType={email ? 'email-address' : phoneNumber ? 'phone-pad' : 'default'}
+						secureTextEntry={!!password}
+						placeholder={placeholder ? placeholder : 'Start typing message'}
+						style={{ ...styles.input, ...inputStyle }}
+						value={chatInputState.value}
+						onChangeText={textChangeHandler}
+						onBlur={lostFocusHandler}
+						onFocus={gainedFocusHandler}
+						onEndEditing={
+							(onLeftIconPress && onLeftIconPress.bind(this, chatInputState.value)) || (() => {})
+						}
+					/>
+				</View>
+			</View>
+
+			{!hideRightIcon && (
+				<View style={styles.submitMsgAction}>
+					<TouchIcon
+						onTouch={msgPushHandler}
+						bgColor={Colors.primary + '22'}
+						borderColor={Colors.primary}
+						bigBg
+						name={iconRightName || 'send'}
+						size={22}
+						color={Colors.primary}
+					/>
+				</View>
+			)}
+		</SafeAreaView>
+	);
+};
 
 const styles = StyleSheet.create({
+	typingContainer: {
+		alignSelf: 'flex-end',
+		backgroundColor: 'white',
+		height: 60,
+		width: '100%',
+		position: 'absolute',
+		bottom: 0,
+		justifyContent: 'space-between',
+		flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 7,
+		padding: 10,	//	backgroundColor: 'blue',
 
-  typingContainer: {
-    alignSelf: 'flex-end',
-    backgroundColor: 'white',
-    height: 60,
+		//borderTopWidth: 1,
+		borderTopColor: '#ddd', //Colors.primary + '77',
+	},
+
+
+	formControl: {
+    //backgroundColor: 'yellow',
+    flex: 1,    
+    //width: '89%',
+
     width: '100%',
-    position: 'absolute',
-    bottom: 0,
-    justifyContent: 'space-between',
+		height: '100%',
+	},
+	inputContainer: {
+		backgroundColor: '#f7fafb',
+	//	backgroundColor: 'red',
     flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    //borderTopWidth: 1,
-    borderTopColor: '#ddd',//Colors.primary + '77',
-  },
-
-  typingActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'red',
-
-  },
-  inputContainerStyle: {
-    backgroundColor: '#f7fafb',
-    borderRadius: 20,
-    borderBottomWidth: 0,
-    height: '100%',
-  },
-  submitMsgAction: {
-    width: '10%',
-    height: '100%',
-    borderRadius: 1000,
-    // backgroundColor: Colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+		alignItems: 'center',
+		borderBottomColor: '#bbb',
+		paddingBottom: 8,
+		borderRadius: 20,
+		borderBottomWidth: 0,
+		height: '100%',
+	},
+	inputContainerStyle: {},
+	input: {
+		flex: 1,
+		paddingHorizontal: 10,
+		fontFamily: 'OpenSansRegular',
+		fontSize: 18,
+	},
+	submitMsgAction: {
+		width: '10%',
+		height: '100%',
+		borderRadius: 1000,
+		// backgroundColor: Colors.primary,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 });
 
 export default ChatInput;

@@ -25,6 +25,7 @@ const content = (department = null) => {
 
   for (let i = 1; i <= 200; i++) {
     const j = i % 4 === 0 ? 4 : i % 3 === 0 ? 3 : i % 2 === 0 ? 2 : i % 5 == 0 ? 1 : 0;
+    const universities = ['MOUAU'];
     const honours = [
       {
         title: titles[+(Math.random() * (titles.length - 2)).toFixed(0)],
@@ -56,6 +57,7 @@ const content = (department = null) => {
         i % 5 === 0 ? '2010' : '2015',
         i < 60 ? 'Computer Engineering' : 'CEET Engineering', //this should be an instance of Department
         'CEET',
+        universities[0],
         i % 5 === 0 ? 'Senior Staff' : i % 3 === 0 ? 'Junior Staff' : 'Assisting Staff',
         ['Professor','Doctor of Philosophy', 'Masters Holder','PGD Holder','Graduate', 'HND Holder'][+(Math.random() * 4).toFixed(0)],
         i % 4 === 0 ? i % 32 === 0 ? 'HOD' : i % 3 === 0 ? 'Staff Adviser' : 'Course Adviser' : null,

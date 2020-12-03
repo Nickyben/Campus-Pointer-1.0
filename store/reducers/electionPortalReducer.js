@@ -2,7 +2,7 @@ import { executiveOffices, tempRegCandidates } from '../../data/executiveOffices
 import { LOAD_ELECTION_DATA, VOTE_OFFICE } from '../actions/electionPortalActions';
 
 
-
+ 
 
 const initialState = {
   //get some data from the logged in user

@@ -36,6 +36,7 @@ const content = (department = null) => {
     const title2 = titles[+(Math.random() * (titles.length - 2)).toFixed(0)];
     const deptCodes = { 'Electrical': 'EEE', 'Mechanical': 'MEE', 'Civil': 'CIE', 'Chemical': 'CHE', 'Agric and Bio Resource': 'ABE' }
     const dept = rand(['Electrical', 'Mechanical', 'Civil', 'Chemical', 'Agric and Bio Resource'])
+    const universities =['MOUAU'];
     const deptCode = deptCodes[dept];
     const honours = [
       {
@@ -77,6 +78,8 @@ const content = (department = null) => {
           'Computer Engineering',
 
           'CEET',
+
+          universities[0],
 
           'Course Rep',
 
@@ -126,6 +129,7 @@ const content = (department = null) => {
         dept + ' Engineering',
 
         'CEET',
+        universities[0],
 
         i % 84 === 0 ? ['Assistant Course Rep', 'Course Rep'][+(Math.random() * 1.7).toFixed(0)] : null,
 

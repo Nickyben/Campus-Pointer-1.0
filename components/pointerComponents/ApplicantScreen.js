@@ -1,8 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  StyleSheet, ScrollView, Text,
-  View, StatusBar, Platform, TouchableOpacity, TouchableNativeFeedback, Image, useWindowDimensions, Button
+	StyleSheet,
+	ScrollView,
+	Text,
+	View,
+	StatusBar,
+	Platform,
+	TouchableOpacity,
+	TouchableNativeFeedback,
+	Image,
+	useWindowDimensions,
+	Button,
 } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
@@ -19,9 +28,10 @@ import Input from '../UI/Input';
 import Form from '../UI/Form';
 import ItemIcon from '../UI/ItemIcon';
 import TouchIcon from '../UI/TouchIcon';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-
-{/* 
+{
+	/* 
           <Input
             id='title'
             label='Title'
@@ -34,82 +44,73 @@ import TouchIcon from '../UI/TouchIcon';
             initialValue={editProduct ? editProduct.title : ''}
             initialValidity={!!editProduct} //editProduct ? true : false
             required
-          /> */}
+          /> */
+}
 
 const inputItems = [
-  { id: 'FirstName', label: 'First Name', placeholder: 'first name', icon: { iconName: 'person' } },
-  { id: 'LastName', label: 'Last Name', placeholder: 'last name', icon: { iconName: 'person' } },
-  { id: 'RegNumber', label: 'Reg-Number', placeholder: 'reg number', icon: { iconName: 'search' } },
-  { id: 'AspiringOffice', label: 'Aspiring Position', placeholder: 'position', icon: { iconName: 'attach' } },
-  { id: 'Experiences', label: 'Leadership Experiences', placeholder: 'experiences...', icon: { iconName: 'list' } },
-  { id: 'CoverQuote', label: 'Personal Quote', placeholder: 'cover-quote', icon: { iconName: 'text' } },
-  { id: 'Manifesto', label: 'Campaign Manifesto', placeholder: 'manifesto', icon: { iconName: 'paper' } },
-
+	{ id: 'FirstName', label: 'First Name', placeholder: 'first name', icon: { iconName: 'person' } },
+	{ id: 'LastName', label: 'Last Name', placeholder: 'last name', icon: { iconName: 'person' } },
+	{ id: 'RegNumber', label: 'Reg-Number', placeholder: 'reg number', icon: { iconName: 'search' } },
+	{ id: 'AspiringOffice', label: 'Aspiring Position', placeholder: 'position', icon: { iconName: 'attach' } },
+	{ id: 'Experiences', label: 'Leadership Experiences', placeholder: 'experiences...', icon: { iconName: 'list' } },
+	{ id: 'CoverQuote', label: 'Personal Quote', placeholder: 'cover-quote', icon: { iconName: 'text' } },
+	{ id: 'Manifesto', label: 'Campaign Manifesto', placeholder: 'manifesto', icon: { iconName: 'paper' } },
 ];
 
-
 const ApplicantScreen = ({ changeScreen, navig }) => {
-  const [formState, setFormState] = useState({});
+	const [formState, setFormState] = useState({});
 
-  const getFormState = (state) => {
-    setFormState(p => state)
-  };
+	const getFormState = (state) => {
+		setFormState((p) => state);
+	};
 
-  const checkValidity = () => {
-   
-    return formState.formValidity;
-  }
+	const checkValidity = () => {
+		return formState.formValidity;
+	};
 
-  return (
-    <View style={styles.screen}>
-      <View style={{
-        backgroundColor: '#fdfeff',
-        flexDirection: 'row', alignItems: 'center', padding: 15, paddingHorizontal: 20
-      }}>
-        <TouchIcon
-          onTouch={changeScreen.bind(this, 'overview')}
-          name={'arrow-dropleft-circle'}
-          size={23}
-          color={Colors.accent}
-        />
-        <Text
-          style={styles.navigText}
-        >Description/Overview</Text>
-      </View>
-      <Form
-        navig={navig}
-        id={'electionContestForm'}
-        formStateGetter={getFormState}
-        title={'Contestant Form'}
-        submitTitle={'Register'}
-        items={inputItems}
-        onSubmit={checkValidity}        
-        formErrorMsg={'Please ensure that all entries are valid!'}
-        onFormSubmitted={changeScreen.bind(this, 'overview')}
-      >
-        {/* <Input  id={inputItems[0]}/>
-        <Input  id={inputItems[1]}/>
-        <Input  id={inputItems[2]}/>
-        <Input id={inputItems[3]} />
-        <Input  id={inputItems[4]}/>
-        <Input id={inputItems[5]} />
-        <Input id={inputItems[6]} /> */}
+	return (
+		<View style={styles.screen}>
+			<View
+				style={{
+					backgroundColor: '#fdfeff',
+					flexDirection: 'row',
+					alignItems: 'center',
+					padding: 15,
+					paddingHorizontal: 20,
+				}}>
+				<TouchIcon
+					onTouch={changeScreen.bind(this, 'overview')}
+					name={'arrow-dropleft-circle'}
+					size={23}
+					color={Colors.accent}
+				/>
+				<Text style={styles.navigText}>Description/Overview</Text>
+			</View>
 
-      </Form>
-
-    </View>
-
-  );
+			<KeyboardAwareScrollView enableOnAndroid={true}>
+				<Form
+					navig={navig}
+					id={'electionContestForm'}
+					formStateGetter={getFormState}
+					title={'Contestant Form'}
+					submitTitle={'Register'}
+					items={inputItems}
+					onSubmit={checkValidity}
+					formErrorMsg={'Please ensure that all entries are valid!'}
+					onFormSubmitted={changeScreen.bind(this, 'overview')}
+				/>
+			</KeyboardAwareScrollView>
+		</View>
+	);
 };
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#f3f6f7', paddingBottom: 50 },
-  navigText: {
-    fontFamily: 'OpenSansBold',
-    fontSize: 16,
-    color: Colors.accent
-  }
-
+	screen: { flex: 1, backgroundColor: '#f3f6f7', paddingBottom: 50 },
+	navigText: {
+		fontFamily: 'OpenSansBold',
+		fontSize: 16,
+		color: Colors.accent,
+	},
 });
 
 export default ApplicantScreen;

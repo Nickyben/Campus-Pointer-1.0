@@ -51,11 +51,11 @@ export const enableNotifications = (notificationsData, enableNotifications) => {
       type: ENABLE_NOTIFICATIONS,
       enable: enableNotifications,
     });
-  }
+  } 
 
   
 };
-
+ 
 export const setNotifications = (notificationsData) => {
   
   return ({

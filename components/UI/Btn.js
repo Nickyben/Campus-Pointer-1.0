@@ -14,81 +14,82 @@ import { Ionicons } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 
 
-const Btn = ({ type, onPress, disabled, style, children, bgColor, textColor, borderColor, icon, innerStyle }) => {
+const Btn = ({
+	type,
+	onPress,
+	disabled,
+	style,
+	children,
+	bgColor,
+	textColor,
+	borderColor,
+	icon,
+	innerStyle,
+	fontSize,
+}) => {
+	let BtnComponent = TouchableOpacity;
 
-  let BtnComponent = TouchableOpacity;
+	if (Platform.Version >= 21) {
+		BtnComponent = TouchableNativeFeedback;
+	}
 
-  if (Platform.Version >= 21) {
-    BtnComponent = TouchableNativeFeedback;
-  }
+	let btnColor = !disabled ? Colors.primary : Colors.primary + '77';
+	switch (type) {
+		case 'accent':
+			btnColor = !disabled ? Colors.accent : Colors.accent + '77';
+			break;
+		case 'accent2':
+			btnColor = !disabled ? Colors.accent2 : Colors.accent2 + '77';
+			break;
+	}
 
-  let btnColor = !disabled ? Colors.primary : Colors.primary + '77';
-  switch (type) {
-    case 'accent':
-      btnColor = !disabled ? Colors.accent : Colors.accent + '77';
-      break;
-    case 'accent2':
-      btnColor = !disabled ? Colors.accent2 : Colors.accent2 + '77';
-      break;
-  }
-
-
-  return (
-    <View style={{
-      ...styles.touchable,
-      backgroundColor: bgColor ? !disabled ? bgColor : bgColor + '77' : btnColor,
-      borderColor: bgColor === 'white' ?
-        Colors.primary :
-        borderColor ? borderColor :
-          'transparent',
-      borderWidth: (borderColor || bgColor === 'white' || bgColor == '#fff' || bgColor === '#ffffff') ? 1 : 0,
-      width: 'auto',
-      ...style,
-    }}>
-      <BtnComponent onPress={onPress}
-        activeOpacity={0.7}
-        disabled={disabled}
-      >
-
-        <View style={{
-          ...styles.button,
-          ...innerStyle,
-
-        }} >
-          <Text
-            style={{
-              ...styles.btnText,
-              fontSize: 13,
-              color: textColor ?
-                textColor :
-                (bgColor === 'white' || bgColor === '#fff' || bgColor === '#ffffff') ?
-                  Colors.primary :
-                  styles.btnText.color
-            }}>
-            {children}
-          </Text>
-          {icon &&
-            <View style={{ marginLeft: 10 }}>
-              <Ionicons
-                name={
-                  Platform.OS === 'android' ? `md-${icon.iconName}` : `ios-${icon.iconName}`
-                }
-                size={23}
-                color={textColor ?
-                  textColor :
-                  (bgColor === 'white' || bgColor === '#fff' || bgColor === '#ffffff') ?
-                    Colors.primary :
-                    styles.btnText.color}
-              />
-            </View>
-
-          }
-        </View>
-      </BtnComponent>
-    </View>
-
-
-  );
+	return (
+		<View
+			style={{
+				...styles.touchable,
+				backgroundColor: bgColor ? (!disabled ? bgColor : bgColor + '77') : btnColor,
+				borderColor: bgColor === 'white' ? Colors.primary : borderColor ? borderColor : 'transparent',
+				borderWidth: borderColor || bgColor === 'white' || bgColor == '#fff' || bgColor === '#ffffff' ? 1 : 0,
+				width: 'auto',
+				...style,
+			}}>
+			<BtnComponent onPress={onPress} activeOpacity={0.7} disabled={disabled}>
+				<View
+					style={{
+						...styles.button,
+						...innerStyle,
+					}}>
+					<Text
+						style={{
+							...styles.btnText,
+							fontSize: fontSize ? fontSize : 13,
+							color: textColor
+								? textColor
+								: bgColor === 'white' || bgColor === '#fff' || bgColor === '#ffffff'
+								? Colors.primary
+								: styles.btnText.color,
+						}}>
+						{children}
+					</Text>
+					{icon && (
+						<View style={{ marginLeft: 10 }}>
+							<Ionicons
+								name={Platform.OS === 'android' ? `md-${icon.iconName}` : `ios-${icon.iconName}`}
+								size={23}
+								color={
+									textColor
+										? textColor
+										: bgColor === 'white' || bgColor === '#fff' || bgColor === '#ffffff'
+										? Colors.primary
+										: styles.btnText.color
+								}
+							/>
+						</View>
+					)}
+				</View>
+			</BtnComponent>
+		</View>
+	);
 };
 
 const styles = StyleSheet.create({

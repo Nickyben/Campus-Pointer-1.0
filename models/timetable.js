@@ -1,9 +1,10 @@
 class Timetable {
-  constructor(id, title, dept, faculty, semester, session, levels, type, dayRows) {
+  constructor(id, title, dept, faculty, university,semester, session, levels, type, dayRows) {
     this.id = id;
     this.title = title;
     this.department = dept;
     this.faculty = faculty;
+    this.university = university;
     this.levels = levels;
     this.semester = semester;
     this.session = session;

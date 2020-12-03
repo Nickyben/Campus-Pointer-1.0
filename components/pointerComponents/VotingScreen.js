@@ -205,7 +205,7 @@ const SectionItem = ({ onCollapse, title, showingOffice, candidates }) => {
 
 
 
-
+ 
 
 
 const VotingScreen = ({ navig, }) => {
@@ -254,7 +254,6 @@ const VotingScreen = ({ navig, }) => {
     setShowModal(p => false);
   };
 
-  useEffect
   const renderItem = ({ item, index, section: { title, data } }) => { //auto gets data in obj form , I deStructured it in params
     return (
       showingOffice !== title ?

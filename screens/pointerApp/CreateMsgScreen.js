@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import {
   StyleSheet, Text, View, TouchableOpacity,
-  TouchableNativeFeedback, FlatList, Image, Platform, SafeAreaView
+  TouchableNativeFeedback, FlatList, Image, Platform, SafeAreaView, Keyboard
 } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
@@ -31,7 +31,6 @@ const _Item = ({ content: { id, messages }, onSelect, navig, index, searchWord }
 
 
   const viewChatHandler = () => {
-
     //console.log('from here')
     navig.navigate('MsgChatDetail', { chatId: id, fullName })
   };
@@ -39,7 +38,6 @@ const _Item = ({ content: { id, messages }, onSelect, navig, index, searchWord }
 
   useEffect(() => {
     if (searchWord) {
-
       setFullNameSearched(p => fullName.split(searchWord).map((subString, i, arr) => {
         if (i === arr.length - 1) {
           return (
@@ -226,7 +224,7 @@ const CreateMsgScreen = ({ navigation, route: { params: { } } }) => {
         showsHorizontalScrollIndicator={false}
         //initialNumToRender, refreshing
         //remember to render num according to screen dimensions
-        initialNumToRender={20}
+        //initialNumToRender={20}
         keyExtractor={(item, index) => item.id}
         data={chatMsgs}
         renderItem={renderItem}

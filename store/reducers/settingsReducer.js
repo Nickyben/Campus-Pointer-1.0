@@ -51,7 +51,7 @@ export default (state = initialState, action) => {
           currentVisibilitySettings: updatedSettings,
         });
       }
-    case ENABLE_NOTIFICATIONS: {
+    case ENABLE_NOTIFICATIONS: { 
       return({
         ...state,
         enableNotificationSettings: action.enable,

@@ -23,16 +23,22 @@ import Message from '../../models/message';
 
 const _Item = ({ content: { id, text, date, image, senderId, receiverId, type },
   onSelect, navig, index, senderIsPrevious, senderIsNext, isLast }) => {
+  const [longPressed, setLongPressed]=useState(false);
+
   const isUser = senderId === 'studentUserId';
   const shouldHaveCurve = ((isUser && !senderIsNext ? isUser && senderIsNext ? 0 : -10 : 0) !== 0) ||
     ((isUser && !senderIsNext ? isUser && senderIsNext ? 0 : 10 : 0) !== 0) ||
     ((isUser && !senderIsNext ? 0 : !isUser && senderIsNext ? 0 : isUser && senderIsNext ? 0 : 10) !== 0)
+  const when = getWhen(date);
+  
   return (
     <Touch
-      //onLayout={()=>{console.log('touch layout')}}
+      onLongTouch={()=>{setLongPressed(p=>!p)}}
+      onTouch={()=>{setLongPressed(p=>false)}}
       style={{
         ...styles.chatLine,
-        alignItems: isUser ? 'flex-end' : 'flex-start'
+        alignItems: isUser ? 'flex-end' : 'flex-start',
+        backgroundColor: longPressed? Colors.primary + '22': 'transparent',
 
       }}>
       <View style={{
@@ -74,7 +80,7 @@ const _Item = ({ content: { id, text, date, image, senderId, receiverId, type },
           </View>
         </View>
       </View>
-      {!senderIsNext && !isLast &&
+      {!senderIsNext  &&
         <Text style={{
           ...styles.chatText2,
           flex: 1,
@@ -82,7 +88,7 @@ const _Item = ({ content: { id, text, date, image, senderId, receiverId, type },
           paddingHorizontal: 0,
           color: isUser ? '#666' : '#666',
           textAlign: isUser ? 'right' : 'left'
-        }}>{getWhen(date)[2]}{getWhen(date)[1] ? ', ' + getWhen(date)[1] : ''}</Text>
+        }}>{when[2]}{when[1] ? ', ' + when[1] : ''}</Text>
       }
     </Touch>
   );
@@ -105,7 +111,8 @@ const ChatScreen = ({ navigation, route: { params } }) => {
 
   //check if to replace with the dispatching the addChatMessage 
   const pushMsgHandler = (msg) => {
-    setMessages(p => p.concat(
+    if(msg.length>0){
+       setMessages(p => p.concat(
       new Message(
         'studentUserId' + chatId + new Date().toLocaleDateString() + Math.random(),
         'individual',
@@ -119,6 +126,8 @@ const ChatScreen = ({ navigation, route: { params } }) => {
         null
       )
     ))
+    }
+   
     //scrollToBottom();
   }
   useEffect(() => {
@@ -242,6 +251,7 @@ const ChatScreen = ({ navigation, route: { params } }) => {
           ref={scrollViewRef}
           onLayout={scrollToBottom}
           onContentSizeChange={scrollToBottom}
+          
           //onKeyboardDidShow={scrollToBottom}
           //enableOnAndroid={true}
 

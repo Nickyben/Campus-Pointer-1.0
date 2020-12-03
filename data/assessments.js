@@ -8,6 +8,7 @@ import courses from './courses';
 const levels = [100, 200, 300, 400, 500];//should be dept.levels array
 const sessions = ['2019/2020', '2020/2021', '2021/2022'];
 const depts = ['Computer Engineering', 'Electrical', 'Mechanical', 'Civil', 'Chemical', 'Agric and Bio Resource'];
+const universities = ['MOUAU']
 const semesters = ['First', 'Second'];
 const colors = ['#55a5ff', '#f58915', '#24df90', '#ff55dd', '#ee3e11', '#7722ff', '#cc3466', '#65de27', '#a829ff'];
 const scores = []; const scores2 = [];
@@ -128,6 +129,7 @@ for (let i = 1; i <= 120; i++) {
       rand(sessions), //for now
       dept,
       'CEET',
+      universities[0],
       students.filter(s => s.department === dept && +s.level > lev),
       courses.filter(c => c.department === dept && c.courseLevel === lev && c.semester === sem),
       CA_Data

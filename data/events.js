@@ -14,6 +14,7 @@ const content = () => {
   const semester = ['First Semester', 'Second Semester'];
   const session = ['2020/2021', '2019/2020'];
   const date = new Date();
+  const universities = ['MOUAU'];
 
   const events = [];
   for (let i = 1; i <= 30; i++) {
@@ -38,7 +39,8 @@ const content = () => {
         semester[(+Math.random() * (1)).toFixed(0)],
         session[(+Math.random() * (1)).toFixed(0)],
         'Computer Engineering',
-        'CEET'
+        'CEET',
+        universities[0],
       )
     );
   }

@@ -55,7 +55,7 @@ const sections = [
 
 ]
 
-
+ 
 const SettingsScreen = ({ navigation }) => {
   const [showThemeModes, setShowThemeModes] = useState()
   let image;

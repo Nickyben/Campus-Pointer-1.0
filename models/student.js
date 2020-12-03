@@ -1,6 +1,6 @@
 class Student {
   constructor(id,name, regNumber, gender, adminYear, level, dept,
-    faculty, post, office, phoneNumber, mostRecentResult, image, honours, bioData) {
+    faculty, university, post, office, phoneNumber, mostRecentResult, image, honours, bioData) {
 
     //const levelIsValid = this.department.levels.some(deptLevel => (deptLevel === level));
 
@@ -19,6 +19,7 @@ class Student {
     this.honours = honours
     this.department = dept;
     this.faculty = faculty;
+    this.university = university;
     this.phoneNumber = phoneNumber;
     this.image = image;
 

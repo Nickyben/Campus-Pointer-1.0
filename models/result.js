@@ -1,5 +1,5 @@
 class Result {
-  constructor(id, type, level, semester, session, department, faculty, students, courses, resultData) {
+  constructor(id, type, level, semester, session, department, faculty, university, students, courses, resultData) {
     this.id = id;
     this.type = type; //eg Degree_Exam, Non-Degree_Exam
     this.level = level;
@@ -7,6 +7,7 @@ class Result {
     this.session = session;
     this.department = department;
     this.faculty = faculty;
+    this.university = university;
     this.isDegree = (this.type === 'Degree_Exam'); //true if level and semester is last// &&(this.type === 'Exam Result') // bool
     this.students = students;
     this.courses = courses; //? courses : this.level.courses; //array or 
@@ -20,7 +21,7 @@ class Result {
 };
 
 export class Assessment {
-  constructor(id, type, level, semester, session, department, faculty, students, courses, CA_Data) {
+  constructor(id, type, level, semester, session, department, faculty, university, students, courses, CA_Data) {
     this.id = id;
     this.type = type;
     this.level = level;
@@ -28,6 +29,7 @@ export class Assessment {
     this.session = session;
     this.department = department;
     this.faculty = faculty;
+    this.university = university;
     this.isDegree = (this.type === 'Degree_Exam'); // &&(this.type === 'Exam Result') // bool
     this.students = students;
     this.courses = courses
