@@ -16,7 +16,8 @@ const AppNavigator = (props) => {
 	const isSignedIn = true;
 
 	return (
-		<NavigationContainer>
+		<NavigationContainer 
+		>
 			{isSignedIn ? <PointerDrawerNavigator /> : <AuthStackNavigator />}
 
 

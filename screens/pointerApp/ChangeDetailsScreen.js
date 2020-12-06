@@ -105,7 +105,7 @@ const changePhoneInputItems = [
 	},
 ];
 
-const ChangeDetailsScreen = ({ navig, changeDetail,  }) => {
+const ChangeDetailsScreen = ({ navig, changeDetail }) => {
 	const dispatch = useDispatch();
 	const [showVisibilityOptions, setShowVisibilityOptions] = useState([false, '', '', []]);
 	const [formState, setFormState] = useState({});
@@ -154,7 +154,7 @@ const ChangeDetailsScreen = ({ navig, changeDetail,  }) => {
 				formValidity
 			);
 		}
-	}, [isChangePassword,isChangeEmail,inputValues,isChangePhone,formValidity]);
+	}, [isChangePassword, isChangeEmail, inputValues, isChangePhone, formValidity]);
 	//inputValidities && console.warn(inputValidities['oldPassword'] + 'see')//.inputValues['oldPassword'])
 
 	const visibilityChoiceHandler = (id, label, options) => {
@@ -168,8 +168,12 @@ const ChangeDetailsScreen = ({ navig, changeDetail,  }) => {
 
 	const setNotificationsHandler = (notificationsData) => {
 		setNotificationSettingsDispatch((p) => {
-			const alreadyChanged = p.find((setting) => setting.sectionId === notificationsData.sectionId);
-			return alreadyChanged
+			const alreadyChanged = p.find(
+				(setting) =>
+					setting.sectionId === notificationsData.sectionId &&
+					setting.label === notificationsData.label
+			);
+			return !!alreadyChanged
 				? p.filter((setting) => setting.sectionId !== notificationsData.sectionId)
 				: p.concat(notificationsData);
 		});
@@ -194,7 +198,7 @@ const ChangeDetailsScreen = ({ navig, changeDetail,  }) => {
 					settings: updatedSettings,
 				});
 			return updatedNotificationSettings;
-    });
+		});
 
 		//dispatch(setNotifications(notificationsData));
 	};
@@ -208,10 +212,10 @@ const ChangeDetailsScreen = ({ navig, changeDetail,  }) => {
 		if (isSetNotifications) {
 			notificationSettingsDispatch.forEach((notificationsData) => {
 				dispatch(setNotifications(notificationsData));
-      });
-      navig.goBack();
+			});
+			navig.goBack();
 		}
-	}
+	};
 
 	useLayoutEffect(() => {
 		isSetNotifications &&
@@ -228,14 +232,14 @@ const ChangeDetailsScreen = ({ navig, changeDetail,  }) => {
 		isSetNotifications && dispatch(enableNotifications('notificationsSwitch', switchOnNotify));
 	}, [switchOnNotify, isSetNotifications, dispatch]);
 
-//	console.log(isSetNotifications, notificationSettingsDispatch);
+	//	console.log(isSetNotifications, notificationSettingsDispatch);
 
 	return (
 		<View style={styles.screen}>
 			{!isChangeVisibility && !isSetNotifications && (
 				<ScrollView>
 					<View
-						style={{ 
+						style={{
 							backgroundColor: '#fdfeff',
 							flexDirection: 'row',
 							alignItems: 'center',
@@ -386,8 +390,6 @@ const ChangeDetailsScreen = ({ navig, changeDetail,  }) => {
 		</View>
 	);
 };
-
-
 
 const styles = StyleSheet.create({
 	screen: { flex: 1, backgroundColor: '#fff', paddingBottom: 50 },

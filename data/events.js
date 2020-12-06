@@ -1,7 +1,7 @@
 import Event from "../models/event";
+import { rand } from "../constants/MyFunctions";
 
 
-const content = () => {
   const eventArr = [
     ['Induction Ceremony', 'Departmental'], ['Freshers Orientation', 'Seminar'], ['Students\' Awards Ceremony', 'Departmental'], ['Staff Awards Ceremony', 'Departmental'],
     ['Social Awards Ceremony', 'Socials'], ['Sports Awards Ceremony', 'Sports'], ['Academic Awards Ceremony', 'Academics'], ['Matriculation Ceremony', 'General'],
@@ -16,7 +16,7 @@ const content = () => {
   const date = new Date();
   const universities = ['MOUAU'];
 
-  const events = [];
+  let events = [];
   for (let i = 1; i <= 30; i++) {
     const eventItem = eventArr[+(Math.random() * (eventArr.length - 2)).toFixed(0)];
     const dateArg = new Date(
@@ -38,6 +38,7 @@ const content = () => {
         require('../assets/images/nacomesLogo.png'),
         semester[(+Math.random() * (1)).toFixed(0)],
         session[(+Math.random() * (1)).toFixed(0)],
+        rand(['SUG', 'NACOMES', 'NACOMES']),
         'Computer Engineering',
         'CEET',
         universities[0],
@@ -45,10 +46,9 @@ const content = () => {
     );
   }
 
-  return events.sort(
+
+
+ events = events.sort(
     (a, b) => new Date(a.date) - new Date(b.date)
   );
-};
-
-const events = content();
 export default events;

@@ -8,7 +8,7 @@ class Event {
     this.time = time;
     this.venue = venue;
     this.image = image;
-    this.semester = semester;
+    this.semester = semester; 
     this.session = session;
     this.association = association;
     this.department = department;

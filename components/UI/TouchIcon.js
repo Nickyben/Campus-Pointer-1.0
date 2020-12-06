@@ -34,7 +34,8 @@ const TouchIcon = ({ disabled, useIos, onTouch, touched, toggleIcons, size, bigB
       ...styles.container,
       borderRadius: size + 20,
       borderColor: borderColor,
-      borderWidth: borderColor ? 1 : 0, ...style,
+      borderWidth: borderColor ? 1 : 0, 
+      ...style,
       backgroundColor: bgColor ? bgColor : 'transparent',
       ...elevateStyle
 
@@ -49,7 +50,8 @@ const TouchIcon = ({ disabled, useIos, onTouch, touched, toggleIcons, size, bigB
           width: largeBg ? size + 30 : bigBg ? size + 20 : size + 10,
           height: largeBg ? size + 30 : bigBg ? size + 20 : size + 10,
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          
         }}>
         <Ionicons
           name={

@@ -159,10 +159,8 @@ const Form = ({ id, title, navig, items, children, onSubmit,rectInputs,
 
       try {
         //dispatching happens here
-        await dispatch(submitForm(
-          formState.formId,
-          formState.inputValues,
-        ))
+        if (objToArr(formState.inputValues).some((value) => !!value)){
+          await dispatch(submitForm(formState.formId, formState.inputValues));
 
         await dispatchFormAction({
           type: FORM_SUBMIT_CHECK,
@@ -172,6 +170,8 @@ const Form = ({ id, title, navig, items, children, onSubmit,rectInputs,
         });
 
         //onFormSubmitted ? onFormSubmitted() : navig.goBack();
+        }
+			
       } catch (err) {
         // setError(err.message)
       }
@@ -236,7 +236,7 @@ const Form = ({ id, title, navig, items, children, onSubmit,rectInputs,
 					innerStyle={{ paddingVertical: 10 }}
 					onPress={formSubmitHandler}
 					bgColor={Colors.primary}
-					// disabled={!objToArr(formState.inputValues).some(value=>!!value)}
+					//disabled={!objToArr(formState.inputValues).some(value=>!!value)}
 				>
 					{submitTitle ? submitTitle : 'Submit'}
 				</Btn>

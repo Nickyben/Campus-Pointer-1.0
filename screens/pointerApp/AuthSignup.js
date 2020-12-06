@@ -21,29 +21,6 @@ import Form from '../../components/UI/Form';
 import Btn from '../../components/UI/Btn';
 //import * as authActions from '../../store/actions/authAction';
 
-const loginInputItems = [
-	{
-		id: 'loginRegNumberOrEmailAddress',
-		label: 'Reg. number or Email address',
-		placeholder: 'email address or reg. number',
-		icon: {
-			iconName: 'person',
-		},
-		email: true,
-		errorMsg: 'Please provide a valid email or reg. Number',
-	},
-	{
-		id: 'loginPassword',
-		label: 'Password',
-		placeholder: 'password',
-		icon: {
-			iconName: 'lock',
-		},
-		password: true,
-		errorMsg: 'Password must be at least 7 characters.',
-	},
-];
-
 const signUpInputItems = [
 	{
 		id: 'signupRegNumber',
@@ -86,24 +63,32 @@ const signUpInputItems = [
 	},
 ];
 
-const AuthScreen = ({ navigation, route: { params } }) => {
+const AuthSignup = ({ navigation, route: { params } }) => {
 	const [error, setError] = useState();
 	const [isLoading, setIsLoading] = useState(false);
 	const dispatch = useDispatch();
-	const [loginFormState, setLoginFormState] = useState({});
+	const [signupFormState, setSignupFormState] = useState({});
 
-	const getLoginFormState = (state) => {
-		setLoginFormState((p) => state);
+	const getSignUpFormState = (state) => {
+		setSignupFormState((p) => state);
 	};
 
-	const checkLoginValidity = useCallback(() => {
+	const checkSignupValidity = useCallback(() => {
 		if (true) {
 			return (
-				loginFormState.inputValues && loginFormState.formValidity
-				//specific check
+				signupFormState.inputValues &&
+				signupFormState.formValidity &&
+				signupFormState.inputValues['signupPassword'] === signupFormState.inputValues['signupPasswordConfirm']
 			);
+
+			//specific check
 		}
-	}, [loginFormState.inputValues, loginFormState.formValidity]);
+	}, [signupFormState.inputValues, signupFormState.formValidity]);
+
+	const passwordMismatch =
+		signupFormState.inputValues &&
+		signupFormState.formValidity &&
+		signupFormState.inputValues['signupPassword'] !== signupFormState.inputValues['signupPasswordConfirm'];
 
 	const authHandler = async () => {
 		let action;
@@ -133,75 +118,59 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 	}, []); //check : i added an empty array deep
 
 	return (
-		<ImageBackground
-			source={require('../../assets/images/news1.jpg')}
-			style={styles.imageBackground}>
-			<View
-				style={{
-					...styles.container,
-					height: '85%',
-				}}
-				enableOnAndroid={true}>
+		<View
+			style={{
+				...styles.container,
+			}}
+			enableOnAndroid={true}>
+			<KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={styles.formContainer}>
 				<View style={styles.welcomeContainer}>
-					<Text style={styles.welcomeText1}>Welcome to Pointer</Text>
+					<Text style={styles.welcomeText1}>
+					
+          Create a Pointer account
+          
+					</Text>
 					<Text style={styles.welcomeText2}> Make your campus life easy and fun! </Text>
 				</View>
-				<KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={styles.formContainer}>
+			
 					<Form
-						id={'loginForm'}
-						title={'Login'}
-						items={loginInputItems}
+						id={'signupForm'}
+						title={'Signup'}
+						items={signUpInputItems}
 						navig={navigation}
-						formStateGetter={getLoginFormState}
-						submitTitle={'LOGIN'}
-						formErrorMsg={'Please provide valid credentials!'}
-						onSubmit={checkLoginValidity}
+						formStateGetter={getSignUpFormState}
+						submitTitle={'CONTINUE'}
+						formErrorMsg={passwordMismatch ? 'Passwords do not match' : 'Please provide valid credentials!'}
+						onSubmit={checkSignupValidity}
 						style={{
 							borderColor: '#ccc',
 							borderWidth: 2,
 						}}
 						rectInputs
 					/>
-
-					<View
+				<View
+					style={{
+						paddingHorizontal: 20,
+					}}>
+				
+					<Btn
+						fontSize={15}
 						style={{
-							paddingHorizontal: 20,
-						}}>
-						<Btn
-							fontSize={15}
-							style={{
-								marginVertical: 10,
-								borderRadius: 10,
-							}}
-							innerStyle={{
-								paddingVertical: 10,
-							}}
-							onPress={() => {
-								navigation.navigate('ForgotPassword', {});
-							}}
-							borderColor={Colors.primary}
-							bgColor={'#fff'}>
-							Forgot Password ?
-						</Btn>
-
-						<Btn
-							fontSize={15}
-							style={{
-								marginVertical: 10,
-								borderRadius: 10,
-							}}
-							innerStyle={{
-								paddingVertical: 10,
-							}}
-							onPress={() => {
-								navigation.navigate('AuthSignup', {});
-							}}
-							borderColor={Colors.primary}
-							bgColor={'#fff'}>
-							Don't have an account? -- Create account 
-						</Btn>
-					</View>
-					{/* <View style={styles.actions}>
+							marginVertical: 10,
+							borderRadius: 10,
+						}}
+						innerStyle={{
+							paddingVertical: 10,
+						}}
+						onPress={() => {
+							navigation.navigate('Authenticate', {  });
+						}}
+						borderColor={Colors.primary}
+						bgColor={'#fff'}>
+						 Login instead
+					</Btn>
+				</View>
+				{/* <View style={styles.actions}>
 									<View style={styles.btn}>
 										{isLoading ? (
 											<ActivityIndicator color={Colors.primary} size={22} />
@@ -225,10 +194,9 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 										/>
 									</View>
 								</View> */}
-				</KeyboardAwareScrollView>
-				<Text style={styles.versionText}> pointer v 1.0 .0 </Text>
-			</View>
-		</ImageBackground>
+			</KeyboardAwareScrollView>
+			<Text style={styles.versionText}> pointer v 1.0 .0 </Text>
+		</View>
 	);
 };
 
@@ -275,21 +243,18 @@ const styles = StyleSheet.create({
 	},
 	container: {
 		backgroundColor: 'transparent',
-		paddingTop: 40,
-		padding: 20,
-		paddingBottom:0,
+
 		flex: 1,
 		width: '100%',
-		bottom: 0,
-		position: 'absolute',
+
 		backgroundColor: '#fff',
-		borderTopRightRadius: 50,
-		borderTopLeftRadius: 50,
-		overflow: 'hidden',
-		//backgroundColor: 'blue',
+	
+		
 		//justifyContent: 'flex-end',
 	},
 	formContainer: {
+		paddingTop: 40,
+		padding: 20,
 		flex: 1,
 		//	width: '100%',
 		//height: '100%',
@@ -323,9 +288,9 @@ const styles = StyleSheet.create({
 	},
 
 	versionText: {
-		fontFamily: 'OpenSansBold',
+    fontFamily: 'OpenSansBold',
+    padding: 10,
 		fontSize: 15,
-		padding: 10,
 		color: '#444',
 		marginTop: 25,
 		width: '100%',
@@ -342,4 +307,4 @@ const styles = StyleSheet.create({
 	// },
 });
 
-export default AuthScreen;
+export default AuthSignup;

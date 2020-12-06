@@ -85,7 +85,7 @@ const ChatInput = ({
 
 	const gainedFocusHandler = () => {};
 
-	const msgPushHandler = () => {
+	const msgPushHandler = async () => {
 		onSubmit(chatInputState.value);
     setChatInputState((p) => ({ value: '', validity: false }));	
   };
@@ -98,7 +98,7 @@ const ChatInput = ({
 				shadowOpacity: 0.26,
 				elevation: 10,
 		  }
-		: {};
+		: {}; 
 
 	const icon = inputIcon
 		? inputIcon

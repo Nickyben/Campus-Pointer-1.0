@@ -63,6 +63,12 @@ export const setNotificationItems = [
 
 
 
+//AUTHENTICATION FORM ITEMS
+
+
+
+
+
 // INITIAL SETTINGS *** implement with phone storage and database!!!!!
 export const initialVisibilitySettings = changeVisibilityItems.map((setting, i) =>
   ({

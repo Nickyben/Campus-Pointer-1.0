@@ -57,7 +57,11 @@ import HelpOverviewScreen, { screenOptions as helpOverviewScreenOpts } from '../
 import Colors from '../constants/Colors';
 
 import { FacultyTabNavigator, facultyTabNavScreenOptions } from './MaterialTopTabNav';
-import AuthScreen , { screenOptions as authScreenOptions }from '../screens/pointerApp/AuthScreen';
+
+//AUTHENTICATION
+import AuthScreen , { screenOptions as authScreenOptions } from '../screens/pointerApp/AuthScreen';
+import ForgotPasswordScreen, { screenOptions as forgotPWScreenOptions } from '../screens/pointerApp/ForgotPasswordScreen';
+import AuthSignup, { screenOptions as authSignupScreenOptions } from '../screens/pointerApp/AuthSignup';
 
 let TouchableCmp = TouchableOpacity;
 
@@ -130,7 +134,7 @@ const DeptStackNav = createStackNavigator();
 
 const DeptStackNavigator = () => {
 	return (
-		<DeptStackNav.Navigator screenOptions={defaultNavOptions} mode={'modal'}>
+		<DeptStackNav.Navigator screenOptions={defaultNavOptions} >
 			<DeptStackNav.Screen name="DeptOverview" component={DeptOverviewScreen} options={deptScreenOpts} />
 			<DeptStackNav.Screen name="DeptDetails" component={DeptDetailScreen} options={deptDetailScreenOpts} />
 			{/*<DeptStackNav.Screen
@@ -229,12 +233,14 @@ const HomeStackNavigator = () => {
 			/>
 
 			<HomeStackNav.Screen name="DeptDetails" component={DeptDetailScreen} options={deptDetailScreenOpts} />
+			
+			{/* 
 
 			<HomeStackNav.Screen name="MessagesOverview" component={MessagesScreen} options={msgsScreenOpts} />
 
 			<HomeStackNav.Screen name="MsgChatDetail" component={ChatScreen} options={chatScreenOpts} />
 
-			<HomeStackNav.Screen name="CreateMessage" component={CreateMsgScreen} options={createMsgScreenOpts} />
+			<HomeStackNav.Screen name="CreateMessage" component={CreateMsgScreen} options={createMsgScreenOpts} /> */}
 		</HomeStackNav.Navigator>
 	);
 };
@@ -338,14 +344,33 @@ const AuthStackNav = createStackNavigator();
 
 export const AuthStackNavigator = () => {
 	return (
-		<AuthStackNav.Navigator screenOptions={{headerShown: false}}>
+		<AuthStackNav.Navigator
+			screenOptions={{
+				cardStyleInterpolator: ({ current, layouts }) => {
+					return {
+						cardStyle: {
+							transform: [
+								{
+									translateX: current.progress.interpolate({
+										inputRange: [0, 1],
+										outputRange: [layouts.screen.width, 0],
+									}),
+								},
+							],
+						},
+					};
+				},
+				headerShown: false,
+			}}>
+			<AuthStackNav.Screen name="Authenticate" component={AuthScreen} options={authScreenOptions} />
+			<AuthStackNav.Screen name="AuthSignup" component={AuthSignup} options={authSignupScreenOptions} />
+
 			<AuthStackNav.Screen
-				name="Authenticate"
-				component={AuthScreen}
-				options={
-					authScreenOptions
-				}
+				name="ForgotPassword"
+				component={ForgotPasswordScreen}
+				options={forgotPWScreenOptions}
 			/>
+
 			{/* <AuthStackNav.Screen
 				name="HomeReactions"
 				component={HomeReactionsScreen}
@@ -423,7 +448,24 @@ const StackOfTabNav = createStackNavigator();
 
 const StackOfTabNavigator = () => {
 	return (
-		<StackOfTabNav.Navigator screenOptions={{ headerShown: false }}>
+		<StackOfTabNav.Navigator
+			screenOptions={{
+				cardStyleInterpolator: ({ current, layouts }) => {
+					return {
+						cardStyle: {
+							transform: [
+								{
+									translateX: current.progress.interpolate({
+										inputRange: [0, 1],
+										outputRange: [layouts.screen.width, 0],
+									}),
+								},
+							],
+						},
+					};
+				},
+				headerShown: false,
+			}}>
 			<StackOfTabNav.Screen
 				name="DepartmentTabNav"
 				component={DeptTabNavigator}
