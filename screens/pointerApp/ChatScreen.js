@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { HeaderBackButton, HeaderTitle } from '@react-navigation/stack';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import {
 	StyleSheet,
 	Text,
@@ -17,7 +17,6 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 import HeaderBtn from '../../components/UI/HeaderBtn';
 import Colors from '../../constants/Colors';
-import { fetchHomeData, likePost, sharePost, commentPost } from '../../store/actions/homeActions';
 import TouchIcon from '../../components/UI/TouchIcon';
 import { rand, shuffle, getSince, getWhen } from '../../constants/MyFunctions';
 import Btn from '../../components/UI/Btn';
@@ -27,6 +26,16 @@ import ChatInput from '../../components/UI/ChatInput';
 import { sendChatMessage, fetchChatMessages } from '../../store/actions/messageActions';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Message from '../../models/message';
+import { useNavigation } from '@react-navigation/native';
+import { set } from 'react-native-reanimated';
+
+const EmptyList = ({}) => {
+	return (
+		<View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+			<Text style={{ fontFamily: 'OpenSansBold', fontSize: 17 }}>No messages yet...Start Chatting</Text>
+		</View>
+	);
+};
 
 const _Item = ({
 	content: { id, text, date, image, senderId, receiverId, type },
@@ -41,8 +50,8 @@ const _Item = ({
 }) => {
 	const [longPressed, setLongPressed] = useState(false);
 
-	const prev = index > 0 ? index - 1 : 0;
-	const next = index + 1 >= messages.length ? messages.length - 1 : index + 1;
+	const next = index > 0 ? index - 1 : 0;
+	const prev = index + 1 >= messages.length ? messages.length - 1 : index + 1;
 	const senderIsPrevious = messages && messages[index].senderId === messages[prev].senderId && index !== prev;
 	const senderIsNext = messages && messages[index].senderId === messages[next].senderId && index !== next;
 	const isLast = index === messages.length - 1;
@@ -125,87 +134,62 @@ const _Item = ({
 	);
 };
 
-const ChatScreen = ({ navigation, route: { params } }) => {
+const Messages = ({ chatId }) => {
 	const dispatch = useDispatch();
 	const scrollViewRef = useRef();
 
-	const { chatId, fullName } = params;
-	const chat = useSelector((s) => s.messageReducer.availableChatMsgs.find((c) => c.id === chatId));
-	const msgs = chat ? chat.messages : [];
-	const [messages, setMessages] = useState(msgs);
-	//const messages = msgs;
-	// const [scrollViewContentDim, setScrollViewContentDim] = useState({});
-	const chatPerson = useSelector((s) => s.dataReducer.availableStudents.find((s) => s.id === chatId));
-	const { image, firstName } = chatPerson && chatPerson;
+	const navigation = useNavigation();
+	const chat = useSelector((s) => s.messageReducer.availableChatMsgs.find((c) => c.id === chatId), shallowEqual);
+	const msgs = chat ? chat.messages.sort((m1, m2) => m2.date.getTime() - m1.date.getTime()) : [];
+	const messages = msgs;
+	//const [messages, setMessages] = useState([]);
 
-	//check if to replace with the dispatching the addChatMessage
-	const pushMsgHandler = useCallback((msg) => {
-		if (msg.length > 0) {
-			setMessages((p) =>
-				p.concat(
-					new Message(
-						'studentUserId' + chatId + new Date().toLocaleDateString() + Math.random(),
-						'individual',
-						new Date(),
-						'studentUserId',
-						chatId,
-						{
-							text: msg,
-							image: null,
-						},
-						null
-					)
-				)
-			)
-		
-		}
-
-		//scrollToBottom();
-	},[chatId]);
-
-	useEffect(() => {
-		if (msgs.length !== messages.length) {
-			// dispatch(sendChatMessage(chatId, 'studentUserId', chatId, chatInputState.text))
-		dispatch(sendChatMessage(messages[messages.length - 1]));
-		}
-	}, [messages, msgs]);
-
-	const viewChatPerson = () => {
-		navigation.navigate('DeptDetails', { item: chatPerson, itemId: chatId, title: chatPerson.constructor.name });
+	const renderItem = ({ item, index }) => {
+		// const prev = index > 0 ? index - 1 : 0;
+		// const next = index + 1 >= messages.length ? messages.length - 1 : index + 1;
+		// const senderIsPrev = messages && messages[index].senderId === messages[prev].senderId && index !== prev;
+		// const senderIsNext = messages && messages[index].senderId === messages[next].senderId && index !== next;
+		return (
+			<_Item
+				content={item}
+				index={index}
+				onSelect={() => {}}
+				navig={navigation}
+				chatId={chatId}
+				messages={messages}
+				//	senderIsPrevious={senderIsPrev}
+				//	senderIsNext={senderIsNext}
+				//	isLast={index === messages.length - 1}
+			/>
+		);
 	};
 
-	const scrollToBottom =useCallback( () => {
+	const scrollToBottom = useCallback(() => {
 		//(contentWidth, contentHeight)
 		//setScrollViewContentDim(p => ({ contentWidth, contentHeight }))
-		scrollViewRef.current.scrollToEnd({ animated: false, duration: 0 });
-	},[]);
+		scrollViewRef.current.scrollToIndex({ animated: false, duration: 0 , index: 0});
+	}, []);
 
-	useLayoutEffect(() => {
-		navigation.setOptions({
-			headerTitle: ({ tintColor, style }) => (
-				<HeaderTitle tintColor={tintColor} style={style} onPress={viewChatPerson}>
-					{fullName}
-				</HeaderTitle>
-			),
-
-			headerLeft: ({ tintColor }) => (
-				<View style={{ flexDirection: 'row' }}>
-					<HeaderBackButton
-						tintColor={tintColor}
-						style={{ marginRight: 5 }}
-						onPress={() => {
-							navigation.goBack();
-						}}
-					/>
-					<View style={styles.chatPersonImageContainer}>
-						<Touch onTouch={viewChatPerson} style={{}}>
-							<Image source={image} style={styles.chatPersonImage} />
-						</Touch>
-					</View>
-				</View>
-			),
-		});
-	}, [chatPerson, chatId]);
+	// const addMsgHandler = useCallback((msg) => {
+	// 	if (msg.length > 0) {
+	// 		setMessages((p) =>
+	// 			p.concat(
+	// 				new Message(
+	// 					'studentUserId' + chatId + new Date().toLocaleDateString() + Math.random(),
+	// 					'individual',
+	// 					new Date(),
+	// 					'studentUserId',
+	// 					chatId,
+	// 					{
+	// 						text: msg,
+	// 						image: null,
+	// 					},
+	// 					null
+	// 				)
+	// 			)
+	// 		);
+	// 	}
+	// }, []);
 
 	const loadChatMessages = useCallback(async () => {
 		//   setError(null);
@@ -240,55 +224,139 @@ const ChatScreen = ({ navigation, route: { params } }) => {
 		[loadChatMessages]
 	);
 
-	// const RenderItem = ({ item, index }) => {
-	// 	// const prev = index > 0 ? index - 1 : 0;
-	// 	// const next = index + 1 >= messages.length ? messages.length - 1 : index + 1;
-	// 	// const senderIsPrev = messages && messages[index].senderId === messages[prev].senderId && index !== prev;
-	// 	// const senderIsNext = messages && messages[index].senderId === messages[next].senderId && index !== next;
-	// 	return (
-	// 		<_Item
-	// 			content={item}
-	// 			index={index}
-	// 			onSelect={() => {}}
-	// 			navig={navigation}
-	// 			chatId={chatId}
-	// 			messages={messages}
-	// 			//	senderIsPrevious={senderIsPrev}
-	// 			//	senderIsNext={senderIsNext}
-	// 			//	isLast={index === messages.length - 1}
-	// 		/>
-	// 	);
-	// };
+	// useEffect(() => {
+	// 	addMsgHandler(msg);
+	// }, [msg]);
 
-	const renderItem = ({ item, index }) => {
-		// const prev = index > 0 ? index - 1 : 0;
-		// const next = index + 1 >= messages.length ? messages.length - 1 : index + 1;
-		// const senderIsPrev = messages && messages[index].senderId === messages[prev].senderId && index !== prev;
-		// const senderIsNext = messages && messages[index].senderId === messages[next].senderId && index !== next;
-		return (
-			<_Item
-				content={item}
-				index={index}
-				onSelect={() => {}}
-				navig={navigation}
-				chatId={chatId}
-				messages={messages}
-				//	senderIsPrevious={senderIsPrev}
-				//	senderIsNext={senderIsNext}
-				//	isLast={index === messages.length - 1}
-			/>
-		);
+	// useEffect(() => {
+	// 	setMessages(msgs);
+	// }, [msgs]);
+
+	return (
+		<>
+			{messages.length === 0 && <EmptyList />}
+			{messages.length > 0 && (
+				<FlatList
+					ref={scrollViewRef}
+					style={styles.flatList}
+					//onLayout={scrollToBottom}
+					onContentSizeChange={scrollToBottom}
+					//initialNumToRender, refreshing
+					//remember to render num according to screen dimensions
+					//initialNumToRender={5}
+					keyExtractor={(item, index) => item.id + index}
+					data={messages}
+					renderItem={renderItem}
+					//	ListEmptyComponent={EmptyList}
+					contentContainerStyle={styles.listContainer}
+				//	extraData={[msgs, chat]}
+					inverted
+					//initialScrollIndex={messages.length-1}
+				/>
+			)}
+		</>
+	);
+};
+
+const ChatScreen = ({ navigation, route: { params } }) => {
+	const dispatch = useDispatch();
+
+	const { chatId, fullName } = params;
+	//const [messages, setMessages] = useState(msgs);
+	const [msg, setMsg] = useState('');
+	const chatPerson = useSelector((s) => s.dataReducer.availableStudents.find((s) => s.id === chatId));
+	const { image, firstName } = chatPerson && chatPerson;
+
+	//check if to replace with the dispatching the addChatMessage
+	const sendMsgHandler = useCallback(
+		(msg) => {
+			if (msg.length > 0) {
+				dispatch(
+					sendChatMessage(
+						new Message(
+							'studentUserId' + chatId + new Date().toLocaleDateString() + Math.random(),
+							'individual',
+							new Date(),
+							'studentUserId',
+							chatId,
+							{
+								text: msg,
+								image: null,
+							},
+							null
+						)
+					)
+				);
+				// setMessages((p) =>
+				// 	p.concat(
+				// 		new Message(
+				// 			'studentUserId' + chatId + new Date().toLocaleDateString() + Math.random(),
+				// 			'individual',
+				// 			new Date(),
+				// 			'studentUserId',
+				// 			chatId,
+				// 			{
+				// 				text: msg,
+				// 				image: null,
+				// 			},
+				// 			null
+				// 		)
+				// 	)
+				// )
+			}
+
+			//scrollToBottom();
+		},
+		[]
+	);
+
+	const getMsgHandler = (msg) => {
+		setMsg(msg);
 	};
 
-	const EmptyList = ({}) => {
-		return (
-			<View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-				<Text style={{ fontFamily: 'OpenSansBold', fontSize: 17 }}>
-					{firstName} has sent no messages yet...
-				</Text>
-			</View>
-		);
+	const viewChatPerson = () => {
+		navigation.navigate('DeptDetails', { item: chatPerson, itemId: chatId, title: chatPerson.constructor.name });
 	};
+
+	// const scrollToBottom = useCallback(() => {
+	// 	//(contentWidth, contentHeight)
+	// 	//setScrollViewContentDim(p => ({ contentWidth, contentHeight }))
+	// 	scrollViewRef.current.scrollToEnd({ animated: false, duration: 0 });
+	// }, []);
+
+	useLayoutEffect(() => {
+		navigation.setOptions({
+			headerTitle: ({ tintColor, style }) => (
+				<HeaderTitle tintColor={tintColor} style={style} onPress={viewChatPerson}>
+					{fullName}
+				</HeaderTitle>
+			),
+
+			headerLeft: ({ tintColor }) => (
+				<View style={{ flexDirection: 'row' }}>
+					<HeaderBackButton
+						tintColor={tintColor}
+						style={{ marginRight: 5 }}
+						onPress={() => {
+							navigation.goBack();
+						}}
+					/>
+					<View style={styles.chatPersonImageContainer}>
+						<Touch onTouch={viewChatPerson} style={{}}>
+							<Image source={image} style={styles.chatPersonImage} />
+						</Touch>
+					</View>
+				</View>
+			),
+		});
+	}, [chatPerson, chatId]);
+
+	useEffect(() => {
+		
+			sendMsgHandler(msg);
+		//	setMsg('');
+		
+	}, [msg]);
 
 	//console.warn(messages.length)
 	return (
@@ -308,27 +376,13 @@ const ChatScreen = ({ navigation, route: { params } }) => {
 					})}
 				</KeyboardAwareScrollView>
 			)} */}
-			{messages.length === 0 && <EmptyList />}
-			{messages.length > 0 && (
-				<FlatList
-					ref={scrollViewRef}
-					style={styles.flatList}
-					onLayout={scrollToBottom}
-					onContentSizeChange={scrollToBottom}
-					//initialNumToRender, refreshing
-					//remember to render num according to screen dimensions
-					//initialNumToRender={5}
-					keyExtractor={(item, index) => item.id + index}
-					data={messages}
-					renderItem={renderItem}
-					ListEmptyComponent={EmptyList}
-					contentContainerStyle={styles.listContainer}
-					extraData={msgs}
-					//inverted={-1}
-					//initialScrollIndex={messages.length-1}
-				/>
-			)}
-			<ChatInput chatId={chatId} onSubmit={pushMsgHandler} elevated multiline={true} />
+			<Messages chatId={chatId} />
+			<ChatInput
+				//onSubmit={pushMsgHandler}
+				elevated
+				multiline={true}
+				onSubmit={getMsgHandler}
+			/>
 		</View>
 	);
 };

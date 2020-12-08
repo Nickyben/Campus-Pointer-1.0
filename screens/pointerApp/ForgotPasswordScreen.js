@@ -20,6 +20,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import Form from '../../components/UI/Form';
 import Btn from '../../components/UI/Btn';
 import TouchIcon from '../../components/UI/TouchIcon';
+import { StatusBar } from 'expo-status-bar';
 //import * as authActions from '../../store/actions/authAction';
 
 const forgotPWInputItems = [
@@ -99,56 +100,60 @@ const ForgotPasswordScreen = ({ navigation }) => {
 	}, []); //check : i added an empty array deep
 
 	return (
-		<View
-			style={{
-				...styles.container,
-			}}
-			enableOnAndroid={true}>
-			<View style={{ marginTop: 50, alignItems: 'center', flexDirection: 'row', padding: 30 }}>
-				<TouchIcon
-					name={'arrow-back'}
-					size={28}
-					color={Colors.primary}
-					onTouch={() => {
-						navigation.goBack();
-					}}
-				/>
-				<Text
-					onPress={() => {
-						navigation.goBack();
-					}}
-					style={styles.backText}>
-					Back
-				</Text>
-			</View>
-
-			<KeyboardAwareScrollView
-				showsVerticalScrollIndicator={false}
-				contentContainerStyle={styles.formContainerScroll}>
-				<View style={styles.welcomeContainer}>
-					<Text style={styles.welcomeText1}>{isVerifyCode ? 'Code Verification' : 'Forgot Password?'}</Text>
-					<Text style={styles.welcomeText2}>An Email will be sent to your registered email address.</Text>
+		<>
+			<StatusBar />
+			<View
+				style={{
+					...styles.container,
+				}}>
+				<View style={{ marginVertical: 50, alignItems: 'center', flexDirection: 'row', padding: 30 }}>
+					<TouchIcon
+						name={'arrow-back'}
+						size={25}
+						color={Colors.primary}
+						onTouch={() => {
+							navigation.goBack();
+						}}
+					/>
+					<Text
+						onPress={() => {
+							navigation.goBack();
+						}}
+						style={styles.backText}>
+						Back
+					</Text>
 				</View>
 
-				{!isVerifyCode && (
-					<Form
-						id={'forgotPasswordForm'}
-						title={'Receive password reset email?'}
-						items={forgotPWInputItems}
-						navig={navigation}
-						formStateGetter={getForgotPwFormState}
-						submitTitle={'Send Email'}
-						formErrorMsg={'Please provide valid credentials!'}
-						onSubmit={checkFPWValidity}
-						style={{
-							borderColor: '#ccc',
-							borderWidth: 2,
-						}}
-						rectInputs
-					/>
-				)}
-			</KeyboardAwareScrollView>
-		</View>
+				<KeyboardAwareScrollView
+					showsVerticalScrollIndicator={false}
+					contentContainerStyle={{ ...styles.formContainerScroll }}>
+					<View style={styles.welcomeContainer}>
+						<Text style={styles.welcomeText1}>
+							{isVerifyCode ? 'Code Verification' : 'Forgot Password?'}
+						</Text>
+						<Text style={styles.welcomeText2}>An Email will be sent to your registered email address.</Text>
+					</View>
+
+					{!isVerifyCode && (
+						<Form
+							id={'forgotPasswordForm'}
+							title={'Receive password reset email?'}
+							items={forgotPWInputItems}
+							navig={navigation}
+							formStateGetter={getForgotPwFormState}
+							submitTitle={'Send Email'}
+							formErrorMsg={'Please provide valid credentials!'}
+							onSubmit={checkFPWValidity}
+							style={{
+								borderColor: '#ccc',
+								borderWidth: 2,
+							}}
+							rectInputs
+						/>
+					)}
+				</KeyboardAwareScrollView>
+			</View>
+		</>
 	);
 };
 
@@ -196,19 +201,19 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		width: '100%',
-		paddingTop: 40,
+		//paddingTop: 40,
 		//	bottom: 0,
 		//	position: 'absolute',
 		backgroundColor: '#fff',
 
 		//backgroundColor: 'blue',
-		//justifyContent: 'flex-end',
+		justifyContent: 'space-between',
 	},
 	formContainerScroll: {
 		flex: 1,
 		paddingTop: 40,
 		padding: 20,
-	//	backgroundColor: 'blue',
+		//	backgroundColor: 'blue',
 		//justifyContent: 'center',
 
 		//	width: '100%',
@@ -227,10 +232,10 @@ const styles = StyleSheet.create({
 		//backgroundColor: 'yellow',
 	},
 	backText: {
-		fontSize: 25,
+		fontSize: 22,
 		fontFamily: 'OpenSansBold',
-    color: Colors.primary,
-    marginLeft: 10,
+		color: Colors.primary,
+		marginLeft: 10,
 	},
 	welcomeText1: {
 		width: '75%',

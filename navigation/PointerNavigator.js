@@ -9,6 +9,7 @@ import {
 	Text,
 	Image,
 	ImageBackground,
+	ScrollView,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -59,8 +60,10 @@ import Colors from '../constants/Colors';
 import { FacultyTabNavigator, facultyTabNavScreenOptions } from './MaterialTopTabNav';
 
 //AUTHENTICATION
-import AuthScreen , { screenOptions as authScreenOptions } from '../screens/pointerApp/AuthScreen';
-import ForgotPasswordScreen, { screenOptions as forgotPWScreenOptions } from '../screens/pointerApp/ForgotPasswordScreen';
+import AuthScreen, { screenOptions as authScreenOptions } from '../screens/pointerApp/AuthScreen';
+import ForgotPasswordScreen, {
+	screenOptions as forgotPWScreenOptions,
+} from '../screens/pointerApp/ForgotPasswordScreen';
 import AuthSignup, { screenOptions as authSignupScreenOptions } from '../screens/pointerApp/AuthSignup';
 
 let TouchableCmp = TouchableOpacity;
@@ -134,7 +137,7 @@ const DeptStackNav = createStackNavigator();
 
 const DeptStackNavigator = () => {
 	return (
-		<DeptStackNav.Navigator screenOptions={defaultNavOptions} >
+		<DeptStackNav.Navigator screenOptions={defaultNavOptions}>
 			<DeptStackNav.Screen name="DeptOverview" component={DeptOverviewScreen} options={deptScreenOpts} />
 			<DeptStackNav.Screen name="DeptDetails" component={DeptDetailScreen} options={deptDetailScreenOpts} />
 			{/*<DeptStackNav.Screen
@@ -233,7 +236,7 @@ const HomeStackNavigator = () => {
 			/>
 
 			<HomeStackNav.Screen name="DeptDetails" component={DeptDetailScreen} options={deptDetailScreenOpts} />
-			
+
 			{/* 
 
 			<HomeStackNav.Screen name="MessagesOverview" component={MessagesScreen} options={msgsScreenOpts} />
@@ -396,10 +399,10 @@ export const DeptTabNavigator = () => {
 				activeTintColor: Colors.primary,
 				inactiveTintColor: '#778',
 				activeBackgroundColor: 'white',
-				inactiveBackgroundColor: '#fafeff', //'#effdff',
+				//inactiveBackgroundColor: '#fafeff', //'#effdff',
 				//labelPosition: true,
 
-				showLabel: Platform.OS !== 'android',
+				showLabel: false, //Platform.OS !== 'android',
 				keyboardHidesTabBar: true,
 				style: {
 					height: 56,
@@ -411,7 +414,9 @@ export const DeptTabNavigator = () => {
 					fontFamily: 'OpenSansBold',
 					fontSize: 12,
 					textAlign: 'center',
-					//marginBottom: 10,
+					alignSelf: 'center',
+					//backgroundColor: 'red',
+					paddingBottom: 2,
 				},
 			}}>
 			<DeptTabNav.Screen name="Department" component={DeptStackNavigator} options={{ tabBarBadge: 3 }} />
@@ -438,10 +443,6 @@ export const DeptTabNavigator = () => {
 		</DeptTabNav.Navigator>
 	);
 };
-
-
-
-
 
 //TAB IN STACK NAVIGATION++++++++++++++++++++++++++++++++++++++++++++++++++++++
 const StackOfTabNav = createStackNavigator();
@@ -481,16 +482,6 @@ const StackOfTabNavigator = () => {
 	);
 };
 
-
-
-
-
-
-
-
-
-
-
 //DRAWER NAVIGATION++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 const PointerDrawerNav = createDrawerNavigator();
@@ -502,6 +493,7 @@ export const PointerDrawerNavigator = () => {
 
 	return (
 		<PointerDrawerNav.Navigator
+			drawerType={'slide'}
 			drawerLabel="Menu"
 			drawerContent={(props) => {
 				const { navigation } = props;
@@ -510,11 +502,15 @@ export const PointerDrawerNavigator = () => {
 						{...props}
 						style={{ flex: 1, height: '100%', backgroundColor: Colors.switchPrimary }}
 						contentContainerStyle={{ height: '100%' }}>
-						<ImageBackground
-							style={{ width: '100%', height: '100%' }}
-							source={require('../assets/images/me.jpg')}>
-							<View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: '#fffd' }}>
-								<View>
+						<ImageBackground style={{ flex: 1 }} source={require('../assets/images/me.jpg')}>
+							<View
+								style={{
+									flex: 1,
+									//height: '100%',
+									justifyContent: 'space-between',
+									backgroundColor: '#fffd',
+								}}>
+								<View style={{ flex: 1 }}>
 									<View
 										style={{
 											padding: 20,
@@ -561,16 +557,17 @@ export const PointerDrawerNavigator = () => {
                     }}>
                     </View> */}
 									</View>
-
-									<DrawerItemList
-										{...props}
-										itemStyle={
-											{
-												// marginHorizontal: 0,
-												//borderRadius: 0
+									<ScrollView>
+										<DrawerItemList
+											{...props}
+											itemStyle={
+												{
+													// marginHorizontal: 0,
+													//borderRadius: 0
+												}
 											}
-										}
-									/>
+										/>
+									</ScrollView>
 								</View>
 								<View
 									style={{
@@ -591,7 +588,7 @@ export const PointerDrawerNavigator = () => {
 											//marginTop: '95%',color: '#fff',
 											backgroundColor: '#fff', //Colors.switchPrimary//'#ff2244',
 										}}
-										label="Sign Out"
+										label="Logout"
 										labelStyle={{
 											color: Colors.primary, // Colors.switchWhite,
 											fontSize: 17,
@@ -626,6 +623,7 @@ export const PointerDrawerNavigator = () => {
 				inactiveBackgroundColor: '#fcfcfc',
 				activeTintColor: '#fff', //Colors.primary,//'#006f8f',
 				inactiveTintColor: '#444',
+
 				labelStyle: {
 					fontFamily: 'OpenSansBold',
 					fontSize: 16,

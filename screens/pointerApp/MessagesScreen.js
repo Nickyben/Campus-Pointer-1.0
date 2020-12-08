@@ -22,23 +22,29 @@ import Btn from '../../components/UI/Btn';
 import Touch from '../../components/UI/Touch';
 import Card from '../../components/UI/Card';
 import { fetchChatMessages } from '../../store/actions/messageActions';
+import { useRef } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
-const _Item = ({ content: { id, messages }, onSelect, navig, index }) => {
-	const { type, date, senderId, receiverId, text, groupId } = messages && messages[messages.length - 1];
+const _Item = ({ content: { id, messages }, onSelect, index}) => {
+	const navigation = useNavigation();
+	const { type, date, senderId, receiverId, text, groupId } =
+		messages && messages.sort((m1, m2) => m2.date.getTime() - m1.date.getTime())[0]; //[messages.length - 1];
 
 	const sender = useSelector((s) => s.dataReducer.availableStudents.find((s) => s.id === senderId));
 	const receiver = useSelector((s) => s.dataReducer.availableStudents.find((s) => s.id === receiverId));
-	const unreadMsgs = rand([0, 0, 0, 1, 2, 3, 4, 5, 6]); // for now
 
+	const randNum = useRef(rand([0, 0, 0, 1, 2, 3, 4, 5, 6])); // for now
+	const unreadMsgs = randNum.current;
 	const chatPerson = sender && receiver && senderId === 'studentUserId' ? receiver : sender;
 	const { image, fullName, level, office, post } = chatPerson;
 	const when = getWhen(date)[2];
 
 	const viewChatHandler = () => {
-		navig.navigate('MsgChatDetail', { chatId: id, fullName });
+		navigation.navigate('MsgChatDetail', { chatId: id, fullName });
 	};
+
 	return (
-		<Touch 
+		<Touch
 			useIos
 			onTouch={viewChatHandler}
 			//onTouch={viewReactPersonHandler.bind(this, reactPerson, reactPerson.id, reactPerson.constructor.name)}
@@ -49,7 +55,7 @@ const _Item = ({ content: { id, messages }, onSelect, navig, index }) => {
 				<View style={styles.imageContainer}>
 					<Touch
 						onTouch={() => {
-							console.log('touched image');
+							console.warn('touched image');
 						}}
 						style={{
 							width: styles.image.width,
@@ -73,7 +79,7 @@ const _Item = ({ content: { id, messages }, onSelect, navig, index }) => {
 						<View style={{ padding: 5 }}>
 							{text && (
 								<Text
-									numberOfLines={2}
+									numberOfLines={1}
 									style={{
 										...styles.detailsText2,
 										color: '#567',
@@ -117,12 +123,16 @@ const MessagesScreen = ({
 	//const userMsgs = useSelector(s => s.messageReducer.availableMessages);
 	//const chatPersonIds = useSelector(s => s.messageReducer.availableChatPersonsId);
 	const chatMsgs = useSelector((s) => s.messageReducer.availableChatMsgs).sort((m2, m1) => {
-		return m1.messages[m1.messages.length - 1].date.getTime() - m2.messages[m2.messages.length - 1].date.getTime();
+//messages.sort((m1, m2) => m2.date.getTime() - m1.date.getTime())[0];
+		let m1Last = m1.messages.sort((m1, m2) => m2.date.getTime() - m1.date.getTime())[0];
+		let m2Last = m2.messages.sort((m1, m2) => m2.date.getTime() - m1.date.getTime())[0]
+		return m1Last.date.getTime() - m2Last.date.getTime();
 	});
 	const dispatch = useDispatch();
+
 	const renderItem = (
 		{ item, index } //auto gets data in obj form , I deStructured it in params
-	) => <_Item content={item} onSelect={() => {}} navig={navigation} index={index} />;
+	) => <_Item content={item} onSelect={() => {}}  index={index} />;
 	const loadChatMessages = useCallback(async () => {
 		//   setError(null);
 		//   setIsRefreshing(true)
@@ -155,7 +165,6 @@ const MessagesScreen = ({
 		},
 		[loadChatMessages]
 	);
-
 	//console.log(messages.filter((m, i) => i < 20))
 	return (
 		<View style={styles.screen}>

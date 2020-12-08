@@ -19,7 +19,9 @@ import Colors from '../../constants/Colors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Form from '../../components/UI/Form';
 import Btn from '../../components/UI/Btn';
-//import * as authActions from '../../store/actions/authAction';
+import {login} from '../../store/actions/authActions';
+import AuthLoadingScreen from './AutoLoginScreen';
+import { StatusBar } from 'expo-status-bar';
 
 const loginInputItems = [
 	{
@@ -91,6 +93,8 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const dispatch = useDispatch();
 	const [loginFormState, setLoginFormState] = useState({});
+	const {inputValues, formValidity} = loginFormState;
+
 
 	const getLoginFormState = (state) => {
 		setLoginFormState((p) => state);
@@ -99,23 +103,19 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 	const checkLoginValidity = useCallback(() => {
 		if (true) {
 			return (
-				loginFormState.inputValues && loginFormState.formValidity
+				inputValues && formValidity
 				//specific check
 			);
 		}
-	}, [loginFormState.inputValues, loginFormState.formValidity]);
+	}, [inputValues, formValidity]);
 
 	const authHandler = async () => {
-		let action;
-		if (true) {
-			//action = authActions.signup(formState.inputValues.authEmail, formState.inputValues.authPassword);
-		} else {
-			//	action = authActions.login(formState.inputValues.authEmail, formState.inputValues.authPassword);
-		}
+		let action = login(inputValues.loginRegNumberOrEmailAddress, inputValues.loginPassword);
+
 		setError(null);
 		setIsLoading(true);
 		try {
-			//	await dispatch(action);
+				await dispatch(action);
 		} catch (err) {
 			setError(err.message);
 			setIsLoading(false);
@@ -130,78 +130,82 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 				},
 			]);
 		}
-	}, []); //check : i added an empty array deep
+	},[error]); 
+
+	if (isLoading) {
+		return <AuthLoadingScreen />;
+	}
 
 	return (
-		<ImageBackground
-			source={require('../../assets/images/news1.jpg')}
-			style={styles.imageBackground}>
-			<View
-				style={{
-					...styles.container,
-					height: '85%',
-				}}
-				enableOnAndroid={true}>
-				<View style={styles.welcomeContainer}>
-					<Text style={styles.welcomeText1}>Welcome to Pointer</Text>
-					<Text style={styles.welcomeText2}> Make your campus life easy and fun! </Text>
-				</View>
-				<KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={styles.formContainer}>
-					<Form
-						id={'loginForm'}
-						title={'Login'}
-						items={loginInputItems}
-						navig={navigation}
-						formStateGetter={getLoginFormState}
-						submitTitle={'LOGIN'}
-						formErrorMsg={'Please provide valid credentials!'}
-						onSubmit={checkLoginValidity}
-						style={{
-							borderColor: '#ccc',
-							borderWidth: 2,
-						}}
-						rectInputs
-					/>
-
-					<View
-						style={{
-							paddingHorizontal: 20,
-						}}>
-						<Btn
-							fontSize={15}
-							style={{
-								marginVertical: 10,
-								borderRadius: 10,
-							}}
-							innerStyle={{
-								paddingVertical: 10,
-							}}
-							onPress={() => {
-								navigation.navigate('ForgotPassword', {});
-							}}
-							borderColor={Colors.primary}
-							bgColor={'#fff'}>
-							Forgot Password ?
-						</Btn>
-
-						<Btn
-							fontSize={15}
-							style={{
-								marginVertical: 10,
-								borderRadius: 10,
-							}}
-							innerStyle={{
-								paddingVertical: 10,
-							}}
-							onPress={() => {
-								navigation.navigate('AuthSignup', {});
-							}}
-							borderColor={Colors.primary}
-							bgColor={'#fff'}>
-							Don't have an account? -- Create account 
-						</Btn>
+		<>
+			<StatusBar />
+			<ImageBackground source={require('../../assets/images/news1.jpg')} style={styles.imageBackground}>
+				<View
+					style={{
+						...styles.container,
+						height: '85%',
+					}}>
+					<View style={styles.welcomeContainer}>
+						<Text style={styles.welcomeText1}>Welcome to Pointer</Text>
+						<Text style={styles.welcomeText2}> Make your campus life easy and fun! </Text>
 					</View>
-					{/* <View style={styles.actions}>
+					<KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={styles.formContainer}>
+						<Form
+							id={'loginForm'}
+							title={'Login'}
+							items={loginInputItems}
+							navig={navigation}
+							formStateGetter={getLoginFormState}
+							submitTitle={'LOGIN'}
+							formErrorMsg={'Please provide valid credentials!'}
+							onSubmit={checkLoginValidity}
+							formAction={authHandler}
+							style={{
+								borderColor: '#ccc',
+								borderWidth: 2,
+							}}
+							rectInputs
+						/>
+
+						<View
+							style={{
+								paddingHorizontal: 20,
+							}}>
+							<Btn
+								fontSize={15}
+								style={{
+									marginVertical: 10,
+									borderRadius: 10,
+								}}
+								innerStyle={{
+									paddingVertical: 10,
+								}}
+								onPress={() => {
+									navigation.navigate('ForgotPassword', {});
+								}}
+								borderColor={Colors.primary}
+								bgColor={'#fff'}>
+								Forgot Password ?
+							</Btn>
+
+							<Btn
+								fontSize={15}
+								style={{
+									marginVertical: 10,
+									borderRadius: 10,
+								}}
+								innerStyle={{
+									paddingVertical: 10,
+								}}
+								onPress={() => {
+									navigation.navigate('AuthSignup', {});
+								}}
+								borderColor={Colors.primary}
+								bgColor={'#fff'}>
+								Don't have an account? -- Create account
+							</Btn>
+						</View>
+						{/* <View style={styles.actions}>
 									<View style={styles.btn}>
 										{isLoading ? (
 											<ActivityIndicator color={Colors.primary} size={22} />
@@ -225,10 +229,11 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 										/>
 									</View>
 								</View> */}
-				</KeyboardAwareScrollView>
-				<Text style={styles.versionText}> pointer v 1.0 .0 </Text>
-			</View>
-		</ImageBackground>
+					</KeyboardAwareScrollView>
+					<Text style={styles.versionText}> pointer v 1.0 .0 </Text>
+				</View>
+			</ImageBackground>
+		</>
 	);
 };
 
@@ -277,7 +282,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'transparent',
 		paddingTop: 40,
 		padding: 20,
-		paddingBottom:0,
+		paddingBottom: 0,
 		flex: 1,
 		width: '100%',
 		bottom: 0,

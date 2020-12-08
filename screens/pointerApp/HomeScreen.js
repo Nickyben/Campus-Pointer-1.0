@@ -272,7 +272,7 @@ const HomeScreen = ({ navigation }) => {
     return (() => {
       unsubscribe();
     });
-  }, [loadData, homePosts]);
+  }, [loadData,]);
 
 
   useEffect(//will run only when the component loads and not again unless dependencies change

@@ -170,7 +170,7 @@ const CreateMsgScreen = ({
 	//const chatPersonIds = useSelector(s => s.messageReducer.availableChatPersonsId);
 	const chatMessages = useSelector((s) => s.messageReducer.availableChatMsgs);
 	const searchStudents = useSelector((s) => s.dataReducer.availableStudents);
-	const [chatMsgs, setChatMsgs] = useState(chatMessages);
+	const [chatMsgs, setChatMsgs] = useState([]);
 	const [searchWord, setSearchWord] = useState('');
 	const dispatch = useDispatch();
 
@@ -183,10 +183,10 @@ const CreateMsgScreen = ({
 			setChatMsgs((p) => {
 				return searchStudents
 					.filter(
-						(s,i) =>
+						(s, i) =>
 							(s.firstName.toLowerCase().indexOf(text.toLowerCase()) === 0 ||
 								s.lastName.toLowerCase().indexOf(text.toLowerCase()) === 0) &&
-							s.id !== 'studentUserId' 
+							s.id !== 'studentUserId'
 					)
 					.map((s) => {
 						const chatMsg = chatMsgs.find((c) => c.id === s.id);
@@ -233,7 +233,10 @@ const CreateMsgScreen = ({
 		[loadChatMessages]
 	);
 
-	//console.log(messages.filter((m, i) => i < 20))
+	useEffect(() => {
+		setChatMsgs(chatMessages);
+	}, []);
+
 
 	return (
 		<View style={styles.screen}>

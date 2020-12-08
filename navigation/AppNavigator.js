@@ -5,27 +5,31 @@ import { useWindowDimensions } from 'react-native';
 //React navigation version 5
 import { NavigationContainer } from '@react-navigation/native';
 
-import { DeptTabNavigator, PointerDrawerNavigator,AuthStackNavigator } from './PointerNavigator';
-import StartupScreen from '../screens/pointerApp/StartupScreen';
+import { DeptTabNavigator, PointerDrawerNavigator, AuthStackNavigator } from './PointerNavigator';
 import WelcomeScreen from '../screens/pointerApp/WelcomeScreen';
+import AutoLoginScreen from '../screens/pointerApp/AutoLoginScreen';
 
 const AppNavigator = (props) => {
-	// const isAuth = useSelector(state => !!state.authRed.idToken);
-	// const didTryAutoLogin = useSelector(state => !!state.authRed.didTryAutoLogin);
+	const isAuthorized = useSelector((state) => !!state.authReducer.idToken);
+	const userId = useSelector((state) => !!state.authReducer.userId);
+	const triedAutoLogin = useSelector((state) => !!state.authReducer.triedAutoLogin);
 
-	const isSignedIn = true;
+	//const isAuthorized = false;
 
 	return (
-		<NavigationContainer 
-		>
-			{isSignedIn ? <PointerDrawerNavigator /> : <AuthStackNavigator />}
-
-
-			{/* {isAuth && <ShopDrawerNavigator />}
-      {!isAuth && didTryAutoLogin && <AuthNavigator />}
-      {!isAuth && !didTryAutoLogin && <StartupScreen />} */}
+		<NavigationContainer>
+			{
+				isAuthorized && <PointerDrawerNavigator /> //successfully logged in
+			}
+			{
+				!isAuthorized && triedAutoLogin && <AuthStackNavigator />
+				//is not logged in and has tried auto login and failed to get idToken
+			}
+			{
+				!isAuthorized && !triedAutoLogin && <AutoLoginScreen />
+				//is not logged in and has not tried the auto login
+			}
 			{/* <WelcomeScreen/> */}
-			{/* <DeptTabNavigator /> */}
 		</NavigationContainer>
 	);
 };

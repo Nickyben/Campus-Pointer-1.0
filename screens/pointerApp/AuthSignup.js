@@ -19,6 +19,8 @@ import Colors from '../../constants/Colors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Form from '../../components/UI/Form';
 import Btn from '../../components/UI/Btn';
+import TouchIcon from '../../components/UI/TouchIcon';
+import { StatusBar } from 'expo-status-bar';
 //import * as authActions from '../../store/actions/authAction';
 
 const signUpInputItems = [
@@ -118,21 +120,41 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 	}, []); //check : i added an empty array deep
 
 	return (
-		<View
-			style={{
-				...styles.container,
-			}}
-			enableOnAndroid={true}>
-			<KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={styles.formContainer}>
-				<View style={styles.welcomeContainer}>
-					<Text style={styles.welcomeText1}>
-					
-          Create a Pointer account
-          
+		<>
+			<StatusBar />
+			<View
+				style={{
+					...styles.container,
+				}}>
+				<View
+					style={{
+						marginTop: 50,
+						alignItems: 'center',
+						flexDirection: 'row',
+						padding: 30,
+					}}>
+					<TouchIcon
+						name={'arrow-back'}
+						size={25}
+						color={Colors.primary}
+						onTouch={() => {
+							navigation.goBack();
+						}}
+					/>
+					<Text
+						onPress={() => {
+							navigation.goBack();
+						}}
+						style={styles.backText}>
+						Back
 					</Text>
-					<Text style={styles.welcomeText2}> Make your campus life easy and fun! </Text>
 				</View>
-			
+				<KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={styles.formContainer}>
+					<View style={styles.welcomeContainer}>
+						<Text style={styles.welcomeText1}>Create a Pointer account</Text>
+						<Text style={styles.welcomeText2}> Make your campus life easy and fun! </Text>
+					</View>
+
 					<Form
 						id={'signupForm'}
 						title={'Signup'}
@@ -148,29 +170,28 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 						}}
 						rectInputs
 					/>
-				<View
-					style={{
-						paddingHorizontal: 20,
-					}}>
-				
-					<Btn
-						fontSize={15}
+					<View
 						style={{
-							marginVertical: 10,
-							borderRadius: 10,
-						}}
-						innerStyle={{
-							paddingVertical: 10,
-						}}
-						onPress={() => {
-							navigation.navigate('Authenticate', {  });
-						}}
-						borderColor={Colors.primary}
-						bgColor={'#fff'}>
-						 Login instead
-					</Btn>
-				</View>
-				{/* <View style={styles.actions}>
+							paddingHorizontal: 20,
+						}}>
+						<Btn
+							fontSize={15}
+							style={{
+								marginVertical: 10,
+								borderRadius: 10,
+							}}
+							innerStyle={{
+								paddingVertical: 10,
+							}}
+							onPress={() => {
+								navigation.navigate('Authenticate', {});
+							}}
+							borderColor={Colors.primary}
+							bgColor={'#fff'}>
+							Login instead
+						</Btn>
+					</View>
+					{/* <View style={styles.actions}>
 									<View style={styles.btn}>
 										{isLoading ? (
 											<ActivityIndicator color={Colors.primary} size={22} />
@@ -194,9 +215,10 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 										/>
 									</View>
 								</View> */}
-			</KeyboardAwareScrollView>
-			<Text style={styles.versionText}> pointer v 1.0 .0 </Text>
-		</View>
+				</KeyboardAwareScrollView>
+				<Text style={styles.versionText}> pointer v 1.0 .0 </Text>
+			</View>
+		</>
 	);
 };
 
@@ -248,12 +270,11 @@ const styles = StyleSheet.create({
 		width: '100%',
 
 		backgroundColor: '#fff',
-	
-		
+
 		//justifyContent: 'flex-end',
 	},
 	formContainer: {
-		paddingTop: 40,
+		paddingTop: 10,
 		padding: 20,
 		flex: 1,
 		//	width: '100%',
@@ -268,6 +289,12 @@ const styles = StyleSheet.create({
 		padding: 20,
 		paddingBottom: 0,
 		//backgroundColor:'yellow',
+	},
+	backText: {
+		fontSize: 22,
+		fontFamily: 'OpenSansBold',
+		color: Colors.primary,
+		marginLeft: 10,
 	},
 	welcomeText1: {
 		width: '75%',
@@ -288,8 +315,8 @@ const styles = StyleSheet.create({
 	},
 
 	versionText: {
-    fontFamily: 'OpenSansBold',
-    padding: 10,
+		fontFamily: 'OpenSansBold',
+		padding: 10,
 		fontSize: 15,
 		color: '#444',
 		marginTop: 25,

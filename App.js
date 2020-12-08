@@ -23,14 +23,14 @@ import electionPortalReducer from './store/reducers/electionPortalReducer';
 import reportsReducer from './store/reducers/reportsReducer';
 import settingsReducer from './store/reducers/settingsReducer';
 import messageReducer from './store/reducers/messageReducer';
+import authReducer from './store/reducers/authReducer';
 
 enableScreens(); //useScreens(); is for lower versions of expo and react-native
 
 //used to combine multiple reducers 
 const rootReducer = combineReducers({
-  studentRed: () => {
-    return null;
-  },
+
+  authReducer: authReducer,
   courseAppReducer: courseAppReducer,
   dataReducer: dataReducer,
   homeReducer: homeReducer,
