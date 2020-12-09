@@ -24,6 +24,7 @@ import reportsReducer from './store/reducers/reportsReducer';
 import settingsReducer from './store/reducers/settingsReducer';
 import messageReducer from './store/reducers/messageReducer';
 import authReducer from './store/reducers/authReducer';
+import formReducer from './store/reducers/formReducer';
 
 enableScreens(); //useScreens(); is for lower versions of expo and react-native
 
@@ -38,6 +39,7 @@ const rootReducer = combineReducers({
   reportsReducer: reportsReducer,
   settingsReducer: settingsReducer,
   messageReducer: messageReducer,
+  formReducer: formReducer,
 });
 
 //creates the store with the rootReducer as arg

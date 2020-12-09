@@ -21,6 +21,8 @@ import Form from '../../components/UI/Form';
 import Btn from '../../components/UI/Btn';
 import TouchIcon from '../../components/UI/TouchIcon';
 import { StatusBar } from 'expo-status-bar';
+import { signup } from '../../store/actions/authActions';
+import AuthLoadingScreen from './AuthLoadingScreen';
 //import * as authActions from '../../store/actions/authAction';
 
 const signUpInputItems = [
@@ -31,7 +33,9 @@ const signUpInputItems = [
 		icon: {
 			iconName: 'person',
 		},
-		errorMsg: 'Please provide a valid email or reg. Number',
+		required: true,
+		minLength: 9,
+		errorMsg: 'Please provide a valid reg. Number',
 	},
 	{
 		id: 'signupEmailAddress',
@@ -45,6 +49,7 @@ const signUpInputItems = [
 	},
 	{
 		id: 'signupPassword',
+		check: 'confirmPasswordMatch',
 		label: 'Password',
 		placeholder: 'password',
 		icon: {
@@ -55,6 +60,7 @@ const signUpInputItems = [
 	},
 	{
 		id: 'signupPasswordConfirm',
+		check: 'confirmPasswordMatch',
 		label: 'Confirm password',
 		placeholder: 'confirm password',
 		icon: {
@@ -71,38 +77,31 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 	const dispatch = useDispatch();
 	const [signupFormState, setSignupFormState] = useState({});
 
-	const getSignUpFormState = (state) => {
-		setSignupFormState((p) => state);
-	};
+	// const getSignUpFormState = (state) => {
+	// 	setSignupFormState((p) => state);
+	// };
 
-	const checkSignupValidity = useCallback(() => {
-		if (true) {
-			return (
-				signupFormState.inputValues &&
-				signupFormState.formValidity &&
-				signupFormState.inputValues['signupPassword'] === signupFormState.inputValues['signupPasswordConfirm']
-			);
+	// const checkSignupValidity = useCallback(() => {
+	// 	if (true) {
+	// 		return (
+	// 			signupFormState.inputValues &&
+	// 			signupFormState.formValidity &&
+	// 			signupFormState.inputValues['signupPassword'] === signupFormState.inputValues['signupPasswordConfirm']
+	// 		);
 
-			//specific check
-		}
-	}, [signupFormState.inputValues, signupFormState.formValidity]);
+	// 		//specific check
+	// 	}
+	// }, [signupFormState.inputValues, signupFormState.formValidity]);
 
-	const passwordMismatch =
-		signupFormState.inputValues &&
-		signupFormState.formValidity &&
-		signupFormState.inputValues['signupPassword'] !== signupFormState.inputValues['signupPasswordConfirm'];
+	const authHandler = async (inputValues) => {
+		const { signupEmailAddress, signupPassword } = inputValues;
 
-	const authHandler = async () => {
-		let action;
-		if (true) {
-			//action = authActions.signup(formState.inputValues.authEmail, formState.inputValues.authPassword);
-		} else {
-			//	action = authActions.login(formState.inputValues.authEmail, formState.inputValues.authPassword);
-		}
+		let action = signup(signupEmailAddress, signupPassword);
+
 		setError(null);
 		setIsLoading(true);
 		try {
-			//	await dispatch(action);
+			await dispatch(action);
 		} catch (err) {
 			setError(err.message);
 			setIsLoading(false);
@@ -111,17 +110,37 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 
 	useEffect(() => {
 		if (error) {
-			Alert.alert('Error Occurred', error, [
-				{
-					text: 'Okay',
+			navigation.navigate('ErrorStack', {
+				screen: 'ErrorOverview',
+				params: {
+					messageHead: error.toLowerCase().includes('network') ? 'Network Connection Failed' : 'Error Occurred',
+					messageBody: error,
+					image: null,
 				},
-			]);
+			});
+
+			// if (error.toLowerCase().includes('network')) {
+			// 	Alert.alert('Network Error', error, [
+			// 		{
+			// 			text: 'Okay',
+			// 		},
+			// 	]);
+			// } else {
+			// 	Alert.alert('Error Occurred', error, [
+			// 		{
+			// 			text: 'Okay',
+			// 		},
+			// 	]);
+			// }
 		}
-	}, []); //check : i added an empty array deep
+	}, [error]);
+
+	if (isLoading) {
+		return <AuthLoadingScreen />;
+	}
 
 	return (
 		<>
-			<StatusBar />
 			<View
 				style={{
 					...styles.container,
@@ -160,10 +179,13 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 						title={'Signup'}
 						items={signUpInputItems}
 						navig={navigation}
-						formStateGetter={getSignUpFormState}
+						//formStateGetter={getSignUpFormState}
 						submitTitle={'CONTINUE'}
-						formErrorMsg={passwordMismatch ? 'Passwords do not match' : 'Please provide valid credentials!'}
-						onSubmit={checkSignupValidity}
+						formErrorMsg={'Please provide valid credentials!'}
+						//onSubmit={checkSignupValidity}
+						formAction={authHandler}
+						doNotClearInputs
+						specificCheck="confirmPasswordMatch"
 						style={{
 							borderColor: '#ccc',
 							borderWidth: 2,
@@ -218,6 +240,8 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 				</KeyboardAwareScrollView>
 				<Text style={styles.versionText}> pointer v 1.0 .0 </Text>
 			</View>
+
+			{/* {<ErrorScreen />} */}
 		</>
 	);
 };

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useReducer, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect, useReducer, useCallback, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
 	View,
 	Text,
@@ -19,14 +19,15 @@ import Colors from '../../constants/Colors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Form from '../../components/UI/Form';
 import Btn from '../../components/UI/Btn';
-import {login} from '../../store/actions/authActions';
-import AuthLoadingScreen from './AutoLoginScreen';
+import { login } from '../../store/actions/authActions';
+import AuthLoadingScreen from './AuthLoadingScreen';
 import { StatusBar } from 'expo-status-bar';
 
 const loginInputItems = [
 	{
 		id: 'loginRegNumberOrEmailAddress',
 		label: 'Reg. number or Email address',
+		//initialValue: 'Okay',
 		placeholder: 'email address or reg. number',
 		icon: {
 			iconName: 'person',
@@ -46,76 +47,24 @@ const loginInputItems = [
 	},
 ];
 
-const signUpInputItems = [
-	{
-		id: 'signupRegNumber',
-		label: 'Registration number',
-		placeholder: 'ex: MOUAU/CME/000000',
-		icon: {
-			iconName: 'person',
-		},
-		errorMsg: 'Please provide a valid email or reg. Number',
-	},
-	{
-		id: 'signupEmailAddress',
-		label: 'Registered email address',
-		placeholder: 'ex: example@example.com',
-		icon: {
-			iconName: 'at',
-		},
-		email: true,
-		errorMsg: 'Please provide a valid email or reg. Number',
-	},
-	{
-		id: 'signupPassword',
-		label: 'Password',
-		placeholder: 'password',
-		icon: {
-			iconName: 'lock',
-		},
-		password: true,
-		errorMsg: 'Password must be at least 7 characters.',
-	},
-	{
-		id: 'signupPasswordConfirm',
-		label: 'Confirm password',
-		placeholder: 'confirm password',
-		icon: {
-			iconName: 'lock',
-		},
-		password: true,
-		errorMsg: 'Password must be at least 7 characters.',
-	},
-];
-
 const AuthScreen = ({ navigation, route: { params } }) => {
+	const formId = 'loginForm';
+	
+
+	//const mountedRef = useRef(true);
 	const [error, setError] = useState();
 	const [isLoading, setIsLoading] = useState(false);
 	const dispatch = useDispatch();
-	const [loginFormState, setLoginFormState] = useState({});
-	const {inputValues, formValidity} = loginFormState;
 
-
-	const getLoginFormState = (state) => {
-		setLoginFormState((p) => state);
-	};
-
-	const checkLoginValidity = useCallback(() => {
-		if (true) {
-			return (
-				inputValues && formValidity
-				//specific check
-			);
-		}
-	}, [inputValues, formValidity]);
-
-	const authHandler = async () => {
-		let action = login(inputValues.loginRegNumberOrEmailAddress, inputValues.loginPassword);
+	const authHandler = async (inputValues) => {
+		//console.log(inputValues)
+		const { loginRegNumberOrEmailAddress, loginPassword } = inputValues;
+		let action = login(loginRegNumberOrEmailAddress, loginPassword);
 
 		setError(null);
 		setIsLoading(true);
 		try {
-				await dispatch(action);
+			await dispatch(action);
 		} catch (err) {
 			setError(err.message);
 			setIsLoading(false);
@@ -124,21 +73,30 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 
 	useEffect(() => {
 		if (error) {
-			Alert.alert('Error Occurred', error, [
-				{
-					text: 'Okay',
+			navigation.navigate('ErrorStack', {
+				screen: 'ErrorOverview',
+				params: {
+					messageHead: error.toLowerCase().includes('network')
+						? 'Network Connection Failed'
+						: 'Error Occurred',
+					messageBody: error,
+					image: null,
 				},
-			]);
+			});
 		}
-	},[error]); 
+	}, [error]);
 
 	if (isLoading) {
 		return <AuthLoadingScreen />;
 	}
 
+	if (error) {
+		//return <ErrorScreen />;
+	}
+
 	return (
 		<>
-			<StatusBar />
+			{/* <StatusBar /> */}
 			<ImageBackground source={require('../../assets/images/news1.jpg')} style={styles.imageBackground}>
 				<View
 					style={{
@@ -151,14 +109,15 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 					</View>
 					<KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={styles.formContainer}>
 						<Form
-							id={'loginForm'}
+							id={formId}
 							title={'Login'}
 							items={loginInputItems}
 							navig={navigation}
-							formStateGetter={getLoginFormState}
+							//formStateGetter={getLoginFormState}
 							submitTitle={'LOGIN'}
 							formErrorMsg={'Please provide valid credentials!'}
-							onSubmit={checkLoginValidity}
+							//	onSubmit={checkLoginValidity}
+							doNotClearInputs
 							formAction={authHandler}
 							style={{
 								borderColor: '#ccc',
@@ -233,6 +192,7 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 					<Text style={styles.versionText}> pointer v 1.0 .0 </Text>
 				</View>
 			</ImageBackground>
+			{/* {<ErrorScreen />} */}
 		</>
 	);
 };

@@ -65,6 +65,7 @@ import ForgotPasswordScreen, {
 	screenOptions as forgotPWScreenOptions,
 } from '../screens/pointerApp/ForgotPasswordScreen';
 import AuthSignup, { screenOptions as authSignupScreenOptions } from '../screens/pointerApp/AuthSignup';
+import ErrorScreen, { screenOptions as errorScreenOptions } from '../screens/pointerApp/ErrorScreen';
 
 let TouchableCmp = TouchableOpacity;
 
@@ -373,18 +374,44 @@ export const AuthStackNavigator = () => {
 				component={ForgotPasswordScreen}
 				options={forgotPWScreenOptions}
 			/>
-
-			{/* <AuthStackNav.Screen
-				name="HomeReactions"
-				component={HomeReactionsScreen}
-				options={homeReactionsScreenOpts}
+			<AuthStackNav.Screen
+				name="ErrorStack"
+				component={ErrorStackNavigator}
+				//options={helpOverviewScreenOpts}
 			/>
-			<AuthStackNav.Screen name="SignIn" component={SignInScreen} />
-			<AuthStackNav.Screen name="SignUp" component={SignUpScreen} />
-			<AuthStackNav.Screen name="ResetPassword" component={ResetPassword} /> */}
 		</AuthStackNav.Navigator>
 	);
 };
+
+const ErrorStackNav = createStackNavigator();
+
+export const ErrorStackNavigator = () => {
+	return (
+		<ErrorStackNav.Navigator
+			screenOptions={{
+				cardStyleInterpolator: ({ current, layouts }) => {
+					return {
+						cardStyle: {
+							transform: [
+								{
+									translateX: current.progress.interpolate({
+										inputRange: [0, 1],
+										outputRange: [layouts.screen.width, 0],
+									}),
+								},
+							],
+						},
+					};
+				},
+				headerShown: false,
+			}}>
+			<ErrorStackNav.Screen name="ErrorOverview" component={ErrorScreen} options={errorScreenOptions} />
+		
+		</ErrorStackNav.Navigator>
+	);
+};
+
+
 
 //TABS NAVIGATION****************************************************
 
@@ -476,6 +503,12 @@ const StackOfTabNavigator = () => {
 			<StackOfTabNav.Screen
 				name="MessageStack"
 				component={MsgStackNavigator}
+				//options={helpOverviewScreenOpts}
+			/>
+
+			<StackOfTabNav.Screen
+				name="ErrorStack"
+				component={ErrorStackNavigator}
 				//options={helpOverviewScreenOpts}
 			/>
 		</StackOfTabNav.Navigator>

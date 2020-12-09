@@ -24,6 +24,7 @@ const initialState = {//!!remember that students etc should be from departments[
   availableHalls:halls,//[],
   availableEvents: events,// [],
   availableTimetables: timetables,// [],
+  
 };
 
 export default (state = initialState, action) => {

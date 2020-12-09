@@ -12,6 +12,8 @@ import { useNavigation } from '@react-navigation/native';
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 const FORM_SUBMIT_CHECK = 'FORM_SUBMIT_CHECK';
+const FORM_SPECIFIC_CHECK = 'FORM_SPECIFIC_CHECK';
+
 const SUBMIT_FORM = 'SUBMIT_FORM';
 const FORM_IS_SUBMITTED = 'FORM_IS_SUBMITTED';
 
@@ -62,6 +64,7 @@ const formReducer = (state, action) => {
 				formLostFocus: updatedFormBlur,
 				showFormStatus: false,
 				formIsSubmitted: action.formIsSubmitted,
+				newFormErrorMsg: null,
 			};
 		case FORM_SUBMIT_CHECK:
 			return {
@@ -70,7 +73,9 @@ const formReducer = (state, action) => {
 				showFormStatus: action.showFormStatus,
 				submitForm: !action.hasError,
 				formIsSubmitted: action.formIsSubmitted,
+				newFormErrorMsg: action.newFormErrorMsg,
 			};
+
 		case FORM_IS_SUBMITTED:
 			return {
 				...state,
@@ -92,12 +97,16 @@ const Form = ({
 	formStateGetter,
 	submitTitle,
 	formErrorMsg,
+	specificCheck,
+	doNotClearInputs,
 	formSuccessMsg,
 	onFormSubmitted,
 }) => {
 	const dispatch = useDispatch();
-	const mountedRef = useRef(true);
+	//const mountedRef = useRef(true);
 	const navigation = useNavigation();
+	const prevSubmittedForm = useSelector((s) => s.formReducer.submittedFormsData.find((form) => form.id === id));
+	const lastInputItems = prevSubmittedForm && prevSubmittedForm.inputValues;
 
 	const inputItems = items ? items : [];
 	let initialInputValues = {};
@@ -106,12 +115,17 @@ const Form = ({
 	let initialInputBlurs = {};
 
 	for (let input of inputItems) {
-		initialInputValues[input.id] = '';
-		initialInputValidities[input.id] = false;
+		if (lastInputItems && !input.password) {
+			initialInputValues[input.id] = lastInputItems[input.id];
+			initialInputValidities[input.id] = true;
+		} else {
+			initialInputValues[input.id] = '';
+			initialInputValidities[input.id] = false;
+		}
+
 		initialInputFocuses[input.id] = false;
 		initialInputBlurs[input.id] = false;
 	}
-
 	const initialFormState = {
 		//recommended instead of mgt of all text states and validity individually with useState() hook
 		//initial Values
@@ -128,6 +142,7 @@ const Form = ({
 		formHasError: false,
 		formIsSubmitted: false,
 		showFormStatus: false,
+		newFormErrorMsg: null,
 	};
 
 	const [formState, dispatchFormAction] = useReducer(formReducer, initialFormState);
@@ -153,28 +168,29 @@ const Form = ({
 
 	const formSubmitHandler = useCallback(async () => {
 		// console.warn(onSubmit(), formState.formValidity, formState.formIsSubmitted)
-		if (!onSubmit()) {
-			await dispatchFormAction({
-				type: FORM_SUBMIT_CHECK,
-				hasError: !onSubmit(),
-				showFormStatus: true,
-				formIsSubmitted: formState.formIsSubmitted,
-			});
-		} else {
+		//if (!onSubmit()) {
+		let specificData = {};
+		const passTestFunc = () => {
 			//setError(null);
 			// setIsLoading(true);
 
 			try {
 				//dispatching happens here
-				if (objToArr(formState.inputValues).some((value) => !!value)) {
-					(await formAction) ? formAction() : dispatch(submitForm(formState.formId, formState.inputValues));
 
-					await dispatchFormAction({
+				if (objToArr(formState.inputValues).every((value) => !!value)) {
+					//console.warn('valid');
+					dispatchFormAction({
 						type: FORM_SUBMIT_CHECK,
-						hasError: !onSubmit(),
+						hasError: false, //!onSubmit(),
 						showFormStatus: true,
 						formIsSubmitted: true,
+						newFormErrorMsg: null,
 					});
+					//await
+					formAction
+						? formAction(formState.inputValues, specificData) &&
+						  dispatch(submitForm(formState.formId, formState.inputValues))
+						: dispatch(submitForm(formState.formId, formState.inputValues));
 
 					//onFormSubmitted ? onFormSubmitted() : navig.goBack();
 				}
@@ -183,6 +199,44 @@ const Form = ({
 			}
 			// setIsLoading(false);
 			//props.navigation.goBack();
+		};
+
+		if (!formState.formValidity ) {
+			await dispatchFormAction({
+				type: FORM_SUBMIT_CHECK,
+				hasError: true, // !onSubmit(),
+				showFormStatus: true,
+				formIsSubmitted: formState.formIsSubmitted,
+				newFormErrorMsg: formErrorMsg,
+			});
+		} else {
+			if (specificCheck) {
+				if (specificCheck === 'confirmPasswordMatch') {
+					//check the password fields
+					const confirmationInputs = inputItems.filter(
+						(input) => input.password === true && input.check === 'confirmPasswordMatch'
+					);
+					const firstPassword = formState.inputValues[confirmationInputs[0].id];
+					let passwordsMatched = true;
+					for (let input of confirmationInputs) {
+						passwordsMatched = formState.inputValues[input.id] === firstPassword && passwordsMatched;
+					}
+
+					if (!passwordsMatched) {
+						await dispatchFormAction({
+							type: FORM_SUBMIT_CHECK,
+							hasError: true, // !onSubmit(),
+							showFormStatus: true,
+							formIsSubmitted: formState.formIsSubmitted,
+							newFormErrorMsg: 'Passwords do not match',
+						});
+					} else {
+						passTestFunc();
+					}
+				}
+			} else {
+				passTestFunc();
+			}
 		}
 
 		// if (!formState.formValidity) {
@@ -193,19 +247,10 @@ const Form = ({
 	}, [dispatch, formState]);
 
 	useEffect(() => {
-		mountedRef.current && formStateGetter(formState);
-
-		//clean up function to run when effect is about to rerun or when component is destroyed or unmounted
-		return () => {
-			mountedRef.current = false;
-		};
+		formStateGetter && formStateGetter(formState);
 	}, [formState]);
 
-	// useEffect(() => {
-	// 	return () => {
-	// 		mountedRef.current = false;
-	// 	};
-	// }, []);
+
 
 	return (
 		<View style={{ ...styles.scroll }} enableOnAndroid={true}>
@@ -222,15 +267,25 @@ const Form = ({
 								rectInput={rectInputs}
 								onInputChange={formInputHandler}
 								onFocus={formInputHandler}
-								newValue={formState.formIsSubmitted ? '' : formState.inputValues[input.id]}
-								submitted={formState.formIsSubmitted}
+								initialValue={formState.inputValues[input.id]}
+								initialValidity={formState.inputValidities[input.id]}
+								newValue={
+									formState.formIsSubmitted && (!doNotClearInputs || input.password)
+										? ''
+										: formState.inputValues[input.id]
+								}
+								submitted={formState.formIsSubmitted && (!doNotClearInputs || input.password)}
 							/>
 						);
 					})}
 
 				{formState.formHasError && formState.showFormStatus && (
 					<Text style={styles.formError}>
-						{formErrorMsg ? formErrorMsg : 'Please, ensure that the form is filled correctly!'}
+						{formState.newFormErrorMsg
+							? formState.newFormErrorMsg
+							: formErrorMsg
+							? formErrorMsg
+							: 'Please, ensure that the form is filled correctly!'}
 					</Text>
 				)}
 

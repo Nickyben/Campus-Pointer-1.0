@@ -58,6 +58,7 @@ const Btn = ({
 					style={{
 						...styles.button,
 						...innerStyle,
+						borderRadius: style && style.borderRadius ? style.borderRadius : styles.button.borderRadius,
 					}}>
 					<Text
 						style={{
@@ -95,21 +96,23 @@ const Btn = ({
 const styles = StyleSheet.create({
   touchable: {
     borderRadius: 25,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
+		overflow: 'hidden',
+    // justifyContent: 'center',
+		// alignItems: 'center',
+		//margin: 'auto'
+		
   },
 
   button: {
-    // maxWidth: 150,
-    width: '100%',
+		// maxWidth: 150,
+   // width: '100%',//i changed this 09-12-2020
     minWidth: 80,
     paddingVertical: 5,
     paddingHorizontal: 20,
     borderRadius: 25,
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    flexDirection: 'row'
+		flexDirection: 'row',
   },
 
   btnText: {

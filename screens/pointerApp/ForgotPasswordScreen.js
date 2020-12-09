@@ -101,7 +101,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
 
 	return (
 		<>
-			<StatusBar />
+			{/* <StatusBar /> */}
 			<View
 				style={{
 					...styles.container,

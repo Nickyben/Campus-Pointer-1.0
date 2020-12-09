@@ -38,17 +38,26 @@ export const signup = (userEmail, userPassword) => {
 
 		if (userEmail && userPassword) {
 			//SEND REQUEST FOR SIGNUP
-			const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${''}`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					email: userEmail,
-					password: userPassword,
-					returnSecureToken: true,
-				}),
-			});
+
+			let response;
+			try {
+				response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${''}`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						email: userEmail,
+						password: userPassword,
+						returnSecureToken: true,
+					}),
+				});
+			} catch (err) {
+				if (err.message.toLowerCase().includes('network'))
+					throw new Error(
+						'Hmm...Something is wrong with your Network Connection. Please check your connection!'
+					);
+			}
 
 			//HANDLE BAD RESPONSE
 			if (!response.ok) {
@@ -69,7 +78,7 @@ export const signup = (userEmail, userPassword) => {
 						errMsg = `We are so sorry but, you are not allowed to do this!`;
 					}
 					default:
-						errMsg = 'Hmm...we encountered an error while doing this. Please check your connectivity';
+						errMsg = 'Hmm...Something went wrong';
 				}
 
 				//make sure to handle all errors, example: network error
@@ -93,25 +102,32 @@ export const signup = (userEmail, userPassword) => {
 
 //YOU CAN ALSO CHOOSE TO COMBINE THE TWO ACTION CREATORS INTO JUST ONE ACTION CREATOR(FUNC)
 export const login = (userEmail, userPassword) => {
-  console.warn(userEmail, userPassword);
-  return({type: 'TEST'})
+	//console.warn(userEmail, userPassword);
 	return async (dispatch) => {
 		//this fetch request creates an new user and returns info about the new account
 		if (userEmail && userPassword) {
-			const response = await fetch(
-				`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${''}`,
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						email: userEmail,
-						password: userPassword,
-						returnSecureToken: true,
-					}),
-				}
-			);
+			let response;
+			try {
+				response = await fetch(
+					`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${''}`,
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({
+							email: userEmail,
+							password: userPassword,
+							returnSecureToken: true,
+						}),
+					}
+				);
+			} catch (err) {
+				if (err.message.toLowerCase().includes('network'))
+					throw new Error(
+						'Hmm...Something is wrong with your Network Connection. Please check your connection!'
+					);
+			}
 
 			if (!response.ok) {
 				const responseErrorData = await response.json();
@@ -131,11 +147,11 @@ export const login = (userEmail, userPassword) => {
 						errMsg = `We are so sorry but, this account has been disabled!`;
 					}
 					default:
-						errMsg = 'Hmm...we encountered some error while doing this. Please check your connectivity';
+						errMsg = 'Hmm...Something went wrong!';
 				}
 
 				//make sure to handle all errors, example: network error
-				//console.log(errMsg);
+				//console.warn(errMsg);
 				throw new Error(errMsg);
 			}
 
@@ -161,9 +177,9 @@ export const login = (userEmail, userPassword) => {
 	};
 };
 
-export const logout = () => {
+export const logout = async () => {
 	clearLogoutTimer();
-	AsyncStorage.removeItem('userData'); //you can still choose to wait for this
+	await AsyncStorage.removeItem('userData'); //you can still choose to wait for this
 	return {
 		type: LOGOUT,
 	};
@@ -184,27 +200,26 @@ const setLogoutTimer = (tokenExpiryTime) => {
 	};
 };
 
-const saveDataToStorage =async (idToken, userId, tokenExpiry) => {
-  try {
-    const jsonValue = JSON.stringify({
+const saveDataToStorage = async (idToken, userId, tokenExpiry) => {
+	try {
+		const jsonValue = JSON.stringify({
 			idToken: idToken,
 			userId: userId,
-      expiryDate: tokenExpiry.toISOString(),
-      //pushToken: ....,//check if this is possible
-		})
-    await AsyncStorage.setItem('userData', jsonValue)
-  } catch (e) {
-    // saving error
-  }
-
+			expiryDate: tokenExpiry.toISOString(),
+			//pushToken: ....,//check if this is possible
+		});
+		await AsyncStorage.setItem('userData', jsonValue);
+	} catch (e) {
+		// saving error
+	}
 
 	// AsyncStorage.setItem(
 	// 	'userData',
 	// 	JSON.stringify({
 	// 		idToken: idToken,
 	// 		userId: userId,
-  //     expiryDate: tokenExpiry.toISOString(),
-  //     //pushToken: ....,//check if this is possible
+	//     expiryDate: tokenExpiry.toISOString(),
+	//     //pushToken: ....,//check if this is possible
 	// 	})
 	// );
 };

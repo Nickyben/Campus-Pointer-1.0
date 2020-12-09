@@ -42,6 +42,7 @@ const AutoLoginScreen = ({}) => {
 		tryLogin();
 	}, [dispatch]);
 
+
 	return (
 		<View style={styles.screen}>
 			<ActivityIndicator size={50} color={Colors.primary} />

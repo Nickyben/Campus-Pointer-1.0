@@ -14,7 +14,8 @@ const AppNavigator = (props) => {
 	const userId = useSelector((state) => !!state.authReducer.userId);
 	const triedAutoLogin = useSelector((state) => !!state.authReducer.triedAutoLogin);
 
-	//const isAuthorized = false;
+//	const isAuthorized = true;
+//console.warn(triedAutoLogin);
 
 	return (
 		<NavigationContainer>
