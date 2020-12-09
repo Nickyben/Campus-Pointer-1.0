@@ -88,7 +88,6 @@ const formReducer = (state, action) => {
 const Form = ({
 	id,
 	title,
-	navig,
 	items,
 	children,
 	onSubmit,
@@ -115,7 +114,10 @@ const Form = ({
 	let initialInputBlurs = {};
 
 	for (let input of inputItems) {
-		if (lastInputItems && !input.password) {
+		if (input.initialValue) {
+			initialInputValues[input.id] = input.initialValue;
+			initialInputValidities[input.id] = true;
+		} else if (lastInputItems && !input.password) {
 			initialInputValues[input.id] = lastInputItems[input.id];
 			initialInputValidities[input.id] = true;
 		} else {
@@ -188,10 +190,9 @@ const Form = ({
 					});
 					//await
 					formAction
-						? formAction(formState.inputValues, specificData) &&
+						? formAction(formState.inputValues) &&
 						  dispatch(submitForm(formState.formId, formState.inputValues))
 						: dispatch(submitForm(formState.formId, formState.inputValues));
-
 					//onFormSubmitted ? onFormSubmitted() : navig.goBack();
 				}
 			} catch (err) {
@@ -201,7 +202,7 @@ const Form = ({
 			//props.navigation.goBack();
 		};
 
-		if (!formState.formValidity ) {
+		if (!formState.formValidity) {
 			await dispatchFormAction({
 				type: FORM_SUBMIT_CHECK,
 				hasError: true, // !onSubmit(),
@@ -249,8 +250,6 @@ const Form = ({
 	useEffect(() => {
 		formStateGetter && formStateGetter(formState);
 	}, [formState]);
-
-
 
 	return (
 		<View style={{ ...styles.scroll }} enableOnAndroid={true}>

@@ -53,25 +53,8 @@ const ForgotPasswordScreen = ({ navigation }) => {
 	const [error, setError] = useState();
 	const [isLoading, setIsLoading] = useState(false);
 	const dispatch = useDispatch();
-	const [forgotPWFormState, setForgotPWFormState] = useState({});
 
-	const getForgotPwFormState = (state) => {
-		setForgotPWFormState((p) => state);
-	};
-
-	const getSignUpFormState = (state) => {
-		//setForgotPWFormState((p) => state);
-	};
-
-	const checkFPWValidity = useCallback(() => {
-		if (true) {
-			return (
-				forgotPWFormState.inputValues && forgotPWFormState.formValidity
-				//specific check
-			);
-		}
-	}, [forgotPWFormState.inputValues, forgotPWFormState.formValidity]);
-
+	
 	const authHandler = async () => {
 		let action;
 		if (isVerifyCode) {
@@ -83,6 +66,8 @@ const ForgotPasswordScreen = ({ navigation }) => {
 		setIsLoading(true);
 		try {
 			//	await dispatch(action);
+			//show modal to indicate sent
+			navigation.goBack();
 		} catch (err) {
 			setError(err.message);
 			setIsLoading(false);
@@ -91,13 +76,18 @@ const ForgotPasswordScreen = ({ navigation }) => {
 
 	useEffect(() => {
 		if (error) {
-			Alert.alert('Error Occurred', error, [
-				{
-					text: 'Okay',
+			navigation.navigate('ErrorStack', {
+				screen: 'ErrorOverview',
+				params: {
+					messageHead: error.toLowerCase().includes('network')
+						? 'Network Connection Failed'
+						: 'Error Occurred',
+					messageBody: error,
+					image: null,
 				},
-			]);
+			});
 		}
-	}, []); //check : i added an empty array deep
+	}, [error]);
 
 	return (
 		<>
@@ -137,13 +127,13 @@ const ForgotPasswordScreen = ({ navigation }) => {
 					{!isVerifyCode && (
 						<Form
 							id={'forgotPasswordForm'}
-							title={'Receive password reset email?'}
+							title={'Send password reset email'}
 							items={forgotPWInputItems}
-							navig={navigation}
-							formStateGetter={getForgotPwFormState}
+							//formStateGetter={getForgotPwFormState}
 							submitTitle={'Send Email'}
 							formErrorMsg={'Please provide valid credentials!'}
-							onSubmit={checkFPWValidity}
+							formAction={authHandler}
+							//onSubmit={checkFPWValidity}
 							style={{
 								borderColor: '#ccc',
 								borderWidth: 2,

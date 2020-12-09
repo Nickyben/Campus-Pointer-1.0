@@ -14,15 +14,15 @@ export const REPORT_PROBLEM = 'REPORT_PROBLEM';
 export const GIVE_FEEDBACK = 'GIVE_FEEDBACK';
 
 
-export const changePassword = (passwordData) => {
-  const { idToken, userId } = passwordData;
+// export const changePassword = (passwordData) => {
+//   const { idToken, userId } = passwordData;
 
-  //http request etc;
-  return ({
+//   //http request etc;
+//   return ({
 
-    type: CHANGE_PASSWORD,
-  });
-};
+//     type: CHANGE_PASSWORD,
+//   });
+// };
 
 export const changeEmail = (emailData) => {
   return ({

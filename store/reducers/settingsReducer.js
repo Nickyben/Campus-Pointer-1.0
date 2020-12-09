@@ -26,13 +26,7 @@ const initialState = {
 export default (state = initialState, action) => {
   const { type, idToken, userId } = action;
   switch (type) {
-    case CHANGE_PASSWORD:
-      return ({
-        ...state,
-        //currentPassword:,
-        idToken,
-        userId,
-      });
+    
     case CHANGE_EMAIL:
       return ({
         ...state,

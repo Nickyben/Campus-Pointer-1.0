@@ -28,6 +28,9 @@ import {
 	setNotificationItems as notificationItems,
 } from '../../data/generalData';
 import Btn from '../../components/UI/Btn';
+import AuthLoadingScreen from './AuthLoadingScreen';
+import { changePassword, verifyPassword } from '../../store/actions/authActions';
+import { useNavigation } from '@react-navigation/native';
 
 const changeVisibilityItems = visibilityItems;
 
@@ -35,7 +38,7 @@ const setNotificationsItems = notificationItems;
 
 const changePWInputItems = [
 	{
-		id: 'oldPassword',
+		id: 'changePassword_oldPassword',
 		label: 'Old Password',
 		placeholder: 'old password',
 		icon: { iconName: 'lock' },
@@ -43,7 +46,8 @@ const changePWInputItems = [
 		showErrorMsg: false,
 	},
 	{
-		id: 'newPassword',
+		id: 'changePassword_newPassword',
+		check: 'confirmPasswordMatch',
 		label: 'New Password',
 		placeholder: 'new password',
 		icon: { iconName: 'lock' },
@@ -51,7 +55,8 @@ const changePWInputItems = [
 		errorMsg: 'Password must be at least 7 characters.',
 	},
 	{
-		id: 'confirmPassword',
+		id: 'changePassword_passWordConfirm',
+		check: 'confirmPasswordMatch',
 		label: 'Confirm Password',
 		placeholder: 'confirm password',
 		icon: { iconName: 'lock' },
@@ -62,18 +67,19 @@ const changePWInputItems = [
 
 const changeEmailInputItems = [
 	{
-		id: 'currentEmail',
-		label: 'Current Email',
+		id: 'changeEmailAddress_currentEmailAddress',
+		label: 'Current Email Address',
 		editable: false,
 		initialValidity: true,
-
-		placeholder: 'theCurrentEmail',
+		initialValue: 'pointer@pointer.com',
+		placeholder: 'current email address',
+		email: true,
 		icon: { iconName: 'at' },
 		showErrorMsg: false,
 	},
 	{
-		id: 'newEmail',
-		label: 'New Email',
+		id: 'changeEmailAddress_newEmailAddress',
+		label: 'New Email Address',
 		email: true,
 		errorMsg: 'Please, enter a valid email address.',
 		successMsg: 'Email with a valid format entered.',
@@ -84,21 +90,21 @@ const changeEmailInputItems = [
 
 const changePhoneInputItems = [
 	{
-		id: 'currentPhoneNumber',
+		id: 'changePhoneNumber_currentPhoneNumber',
 		label: 'Current Phone Number',
 		editable: false,
 		initialValidity: true,
-
-		placeholder: 'theCurrentNumber',
+		initialValue: '0000000000',
+		placeholder: 'previous phone number',
 		icon: { iconName: 'call' },
 		showErrorMsg: false,
 	},
 	{
-		id: 'newPhoneNumber',
+		id: 'changePhoneNumber_newPhoneNumber',
 		label: 'New Phone Number',
 		phoneNumber: true,
 		required: true,
-		placeholder: 'new Number',
+		placeholder: 'new phone number',
 		icon: { iconName: 'call' },
 		errorMsg: 'Please enter a 10 digit phone number e.g 8134******',
 		successMsg: 'Phone number with valid format entered.',
@@ -107,9 +113,7 @@ const changePhoneInputItems = [
 
 const ChangeDetailsScreen = ({ navig, changeDetail }) => {
 	const dispatch = useDispatch();
-	const [showVisibilityOptions, setShowVisibilityOptions] = useState([false, '', '', []]);
-	const [formState, setFormState] = useState({});
-	const { inputValues, inputValidities, formValidity } = formState;
+	const navigation = useNavigation();
 	const isChangePassword = changeDetail === 'Change Password';
 	const isChangeEmail = changeDetail === 'Change Email';
 	const isChangePhone = changeDetail === 'Change Phone Number';
@@ -123,39 +127,18 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
 		: isChangePhone
 		? changePhoneInputItems
 		: [];
+	const userIdToken = useSelector((state) => state.authReducer.idToken);
+	const userEmail = useSelector((state) => state.authReducer.userEmail);
+
 	const currentVisibilitySettings = useSelector((s) => s.settingsReducer.currentVisibilitySettings);
 	const currentNotification_On_Off = useSelector((s) => s.settingsReducer.enableNotificationSettings);
 	const currentNotificationsSettings = useSelector((s) => s.settingsReducer.currentNotificationsSettings);
 	const [switchOnNotify, setSwitchOnNotify] = useState(currentNotification_On_Off);
 	const [notificationSettingsDispatch, setNotificationSettingsDispatch] = useState([]);
-	const [screenNotificationsSettings, setScreenNotificationSettings] = useState(currentNotificationsSettings);
-
-	const getFormState = (state) => {
-		setFormState((p) => state);
-	};
-
-	const checkValidity = useCallback(() => {
-		if (isChangePassword) {
-			return (
-				inputValues &&
-				formValidity &&
-				true && // oldPasswordIdToken &&
-				inputValues['newPassword'] === inputValues['confirmPassword']
-			);
-		}
-
-		if (isChangeEmail) {
-			return formValidity;
-		}
-
-		if (isChangePhone) {
-			return (
-				//do the phone number validation here
-				formValidity
-			);
-		}
-	}, [isChangePassword, isChangeEmail, inputValues, isChangePhone, formValidity]);
-	//inputValidities && console.warn(inputValidities['oldPassword'] + 'see')//.inputValues['oldPassword'])
+	const [screenNotificationsSettings, setScreenNotificationSettings] = useState([]); //currentNotificationsSettings
+	const [showVisibilityOptions, setShowVisibilityOptions] = useState([false, '', '', []]);
+	const [error, setError] = useState();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const visibilityChoiceHandler = (id, label, options) => {
 		setShowVisibilityOptions((p) => [true, id, label, options]);
@@ -170,8 +153,7 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
 		setNotificationSettingsDispatch((p) => {
 			const alreadyChanged = p.find(
 				(setting) =>
-					setting.sectionId === notificationsData.sectionId &&
-					setting.label === notificationsData.label
+					setting.sectionId === notificationsData.sectionId && setting.label === notificationsData.label
 			);
 			return !!alreadyChanged
 				? p.filter((setting) => setting.sectionId !== notificationsData.sectionId)
@@ -217,6 +199,53 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
 		}
 	};
 
+	const changeAuthDetailHandler = async (inputValues) => {
+		const {
+			changePassword_oldPassword,
+			changePassword_newPassword,
+			changePassword_passWordConfirm,
+			changeEmailAddress_currentEmailAddress,
+			changeEmailAddress_newEmailAddress,
+			changePhoneNumber_currentPhoneNumber,
+			changePhoneNumber_newPhoneNumber,
+		} = inputValues;
+
+		//console.warn(inputValues);
+
+		if (isChangePassword) {
+		//console.warn('about to change password');
+			setError(null);
+			setIsLoading(true);
+			try {
+				try {
+					await dispatch(verifyPassword(userEmail, changePassword_oldPassword));
+				} catch (err) {
+					throw err;
+				}
+				await dispatch(changePassword(userIdToken, changePassword_newPassword));
+				setIsLoading(false);
+			} catch (err) {
+				setError(err.message);
+				setIsLoading(false);
+			}
+		}
+	};
+
+	useEffect(() => {
+		if (error) {
+			navigation.navigate('Settings Error', {
+				screen: 'ErrorOverview',
+				params: {
+					messageHead: error.toLowerCase().includes('network')
+						? 'Network Connection Failed'
+						: 'Error Occurred',
+					messageBody: error,
+					image: null,
+				},
+			});
+		}
+	}, [error]);
+
 	useLayoutEffect(() => {
 		isSetNotifications &&
 			navig.setOptions({
@@ -232,7 +261,13 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
 		isSetNotifications && dispatch(enableNotifications('notificationsSwitch', switchOnNotify));
 	}, [switchOnNotify, isSetNotifications, dispatch]);
 
-	//	console.log(isSetNotifications, notificationSettingsDispatch);
+	useEffect(() => {
+		isSetNotifications && setScreenNotificationSettings(currentNotificationsSettings);
+	}, []);
+
+	if (isLoading) {
+		return <AuthLoadingScreen />;
+	}
 
 	return (
 		<View style={styles.screen}>
@@ -247,7 +282,6 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
 							paddingHorizontal: 20,
 						}}></View>
 					<Form
-						navig={navig}
 						id={
 							isChangePassword
 								? 'changePasswordForm'
@@ -255,17 +289,20 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
 								? 'changeEmailAddressForm'
 								: 'changePhoneNumberForm'
 						}
-						formStateGetter={getFormState}
+						//formStateGetter={getFormState}
 						submitTitle={'Save Change'}
 						items={inputItems}
 						formErrorMsg={
 							isChangePassword
-								? 'Hmm, you must have entered short, wrong or unmatched password(s)'
+								? 'Please ensure that the password field(s) are filled correctly.'
 								: isChangeEmail
 								? 'Please ensure that the email field(s) are filled correctly.'
 								: 'Please ensure that the  phone number field(s) are filled correctly'
 						}
-						onSubmit={checkValidity}></Form>
+						//onSubmit={checkValidity}
+						formAction={changeAuthDetailHandler}
+						specificCheck={isChangePassword ? 'confirmPasswordMatch' : null}
+					/>
 				</ScrollView>
 			)}
 			{isChangeVisibility && (

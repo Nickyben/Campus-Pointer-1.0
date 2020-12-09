@@ -320,6 +320,12 @@ const SettingsStackNavigator = () => {
 				component={SettingsDetailsScreen}
 				options={settingsDetailsScreenOpts}
 			/>
+
+			<SettingsStackNav.Screen
+				name="Settings Error"
+				component={ErrorStackNavigator}
+				options={settingsDetailsScreenOpts}
+			/>
 		</SettingsStackNav.Navigator>
 	);
 };

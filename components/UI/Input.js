@@ -275,25 +275,19 @@ const Input = ({
 					onBlur={lostFocusHandler}
 					onFocus={gainedFocusHandler}
 				/>
-				{password && !showPassword && (
+				{password && (
 					<ItemIcon
 						onTouch={toggleShowPassword}
 						bgColor={'transparent'}
-						name={'eye-off'}
+						name={showPassword?'eye-off':'eye'}
 						size={23}
 						color={icon && icon.iconColor ? icon.iconColor : Colors.primary}
 					/>
 				)}
-				{password && showPassword && (
-					<ItemIcon
-						onTouch={toggleShowPassword}
-						bgColor={'transparent'}
-						name={'eye'}
-						size={23}
-						color={icon && icon.iconColor ? icon.iconColor : Colors.primary}
-					/>
-				)}
+			
 			</View>
+
+			
 			{showErrorMsg !== false && (
 				<>
 					{!inputState.validity && inputState.hasFocus && inputState.value.length > 1 && (

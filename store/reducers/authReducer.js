@@ -7,7 +7,8 @@ import {
 const initialState = {
 	idToken: null,
   userId: null,
-  pushToken: null,
+	pushToken: null,
+	userEmail:null,
 	triedAutoLogin: false,
 };
 

@@ -112,7 +112,6 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 							id={formId}
 							title={'Login'}
 							items={loginInputItems}
-							navig={navigation}
 							//formStateGetter={getLoginFormState}
 							submitTitle={'LOGIN'}
 							formErrorMsg={'Please provide valid credentials!'}

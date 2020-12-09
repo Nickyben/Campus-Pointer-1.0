@@ -10,11 +10,11 @@ import WelcomeScreen from '../screens/pointerApp/WelcomeScreen';
 import AutoLoginScreen from '../screens/pointerApp/AutoLoginScreen';
 
 const AppNavigator = (props) => {
-	const isAuthorized = useSelector((state) => !!state.authReducer.idToken);
-	const userId = useSelector((state) => !!state.authReducer.userId);
+//	const isAuthorized = useSelector((state) => !!state.authReducer.idToken);
+	const userId = useSelector((state) => state.authReducer.userId);
 	const triedAutoLogin = useSelector((state) => !!state.authReducer.triedAutoLogin);
 
-//	const isAuthorized = true;
+	const isAuthorized = true;
 //console.warn(triedAutoLogin);
 
 	return (

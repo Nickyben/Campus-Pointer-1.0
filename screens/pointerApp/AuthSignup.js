@@ -75,24 +75,8 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 	const [error, setError] = useState();
 	const [isLoading, setIsLoading] = useState(false);
 	const dispatch = useDispatch();
-	const [signupFormState, setSignupFormState] = useState({});
 
-	// const getSignUpFormState = (state) => {
-	// 	setSignupFormState((p) => state);
-	// };
-
-	// const checkSignupValidity = useCallback(() => {
-	// 	if (true) {
-	// 		return (
-	// 			signupFormState.inputValues &&
-	// 			signupFormState.formValidity &&
-	// 			signupFormState.inputValues['signupPassword'] === signupFormState.inputValues['signupPasswordConfirm']
-	// 		);
-
-	// 		//specific check
-	// 	}
-	// }, [signupFormState.inputValues, signupFormState.formValidity]);
-
+	
 	const authHandler = async (inputValues) => {
 		const { signupEmailAddress, signupPassword } = inputValues;
 
@@ -119,19 +103,7 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 				},
 			});
 
-			// if (error.toLowerCase().includes('network')) {
-			// 	Alert.alert('Network Error', error, [
-			// 		{
-			// 			text: 'Okay',
-			// 		},
-			// 	]);
-			// } else {
-			// 	Alert.alert('Error Occurred', error, [
-			// 		{
-			// 			text: 'Okay',
-			// 		},
-			// 	]);
-			// }
+		
 		}
 	}, [error]);
 

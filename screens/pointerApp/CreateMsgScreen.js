@@ -35,38 +35,7 @@ const _Item = ({ content: { id, messages }, onSelect, navig, index, searchWord }
 		navig.navigate('MsgChatDetail', { chatId: id, fullName });
 	};
 
-	// useEffect(() => {
-	// 	if (searchWord) {
-	// 		setFullNameSearched((p) =>
-	// 			fullName.split(searchWord).map((subString, i, arr) => {
-	// 				if (i === arr.length - 1) {
-	// 					return (
-	// 						<Text key={i} style={{ ...styles.detailsText }}>
-	// 							{subString}
-	// 						</Text>
-	// 					);
-	// 				}
-	// 				return (
-	// 					<Text key={i}>
-	// 						<Text key={Math.random()} style={{ ...styles.detailsText }}>
-	// 							{subString}
-	// 						</Text>
-	// 						<Text key={Math.random()} style={{ ...styles.detailsText, color: Colors.primary }}>
-	// 							{searchWord}
-	// 						</Text>
-	// 					</Text>
-	// 				);
-	// 			})
-	// 		);
-	// 		//new RegExp(searchWord, 'i')
-	// 	} else {
-	// 		setFullNameSearched((p) => (
-	// 			<Text key={Math.random()} style={{ ...styles.detailsText }}>
-	// 				{fullName}
-	// 			</Text>
-	// 		));
-	// 	}
-	// }, [searchWord, fullName, styles]);
+
 
 	return (
 		<Touch
