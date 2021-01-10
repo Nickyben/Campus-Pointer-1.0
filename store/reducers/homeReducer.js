@@ -1,7 +1,7 @@
 import { LIKE_POST, LOAD_HOME_DATA, COMMENT_POST } from "../actions/homeActions";
 import homePosts from "../../data/homePosts";
 import HomePost from "../../models/homePost";
-
+ 
 
 const initialState = {
   availablePosts: homePosts,//[],

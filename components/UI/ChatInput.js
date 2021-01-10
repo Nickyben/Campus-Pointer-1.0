@@ -21,6 +21,9 @@ const ChatInput = ({
 	password,
 	onSubmit,
 	onInputChange,
+	defaultPosition,
+	expandable,
+	expandHeight,
 	elevated,
 	style,
 	inputStyle,
@@ -86,9 +89,9 @@ const ChatInput = ({
 	const gainedFocusHandler = () => {};
 
 	const msgPushHandler = async () => {
-		setChatInputState((p) => ({ value: '', validity: false }));	
-		onSubmit(chatInputState.value);	
-  };
+		setChatInputState((p) => ({ value: '', validity: false }));
+		onSubmit(chatInputState.value);
+	};
 
 	const elevateStyle = elevated
 		? {
@@ -98,7 +101,7 @@ const ChatInput = ({
 				shadowOpacity: 0.26,
 				elevation: 10,
 		  }
-		: {}; 
+		: {};
 
 	const icon = inputIcon
 		? inputIcon
@@ -111,7 +114,17 @@ const ChatInput = ({
 		  };
 
 	return (
-		<SafeAreaView style={{ ...styles.typingContainer, ...elevateStyle, ...style }}>
+		<SafeAreaView
+			style={{
+				...styles.typingContainer,
+				position: defaultPosition ? 'relative' : 'absolute',
+				bottom: defaultPosition ? 'auto' : 0,
+				...elevateStyle,
+				...style,
+			}}>
+			{
+
+			}
 			<View style={styles.formControl}>
 				<View
 					style={{
@@ -137,8 +150,10 @@ const ChatInput = ({
 						keyboardType={email ? 'email-address' : phoneNumber ? 'phone-pad' : 'default'}
 						secureTextEntry={!!password}
 						placeholder={placeholder ? placeholder : 'Start typing message'}
-						style={{ ...styles.input, ...inputStyle }}
+						style={{ ...styles.input, ...inputStyle,
+						 maxHeight:!expandable? 50:expandHeight?expandHeight: 200	, minHeight: 50  }}
 						value={chatInputState.value}
+						
 						onChangeText={textChangeHandler}
 						onBlur={lostFocusHandler}
 						onFocus={gainedFocusHandler}
@@ -170,39 +185,40 @@ const styles = StyleSheet.create({
 	typingContainer: {
 		alignSelf: 'flex-end',
 		backgroundColor: 'white',
-		height: 60,
+		//height: 60,
 		width: '100%',
-		position: 'absolute',
-		bottom: 0,
+	//	position: 'absolute',
+	//	bottom: 0,
 		justifyContent: 'space-between',
 		flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 7,
-		padding: 10,	//	backgroundColor: 'blue',
+		alignItems: 'center',
+		paddingVertical: 7,
+		padding: 10, 
+		//	backgroundColor: 'blue',
 
 		//borderTopWidth: 1,
 		borderTopColor: '#ddd', //Colors.primary + '77',
 	},
 
-
 	formControl: {
-    //backgroundColor: 'yellow',
-    flex: 1,    
-    //width: '89%',
+	//	backgroundColor: 'yellow',
+		flex: 1,
+		//width: '89%',
 
-    width: '100%',
-		height: '100%',
+		width: '100%',
+		//height: '100%',
 	},
 	inputContainer: {
 		backgroundColor: '#f7fafb',
-	//	backgroundColor: 'red',
-    flexDirection: 'row',
+			//backgroundColor: 'red',
+		flexDirection: 'row',
 		alignItems: 'center',
 		borderBottomColor: '#bbb',
 		paddingBottom: 8,
 		borderRadius: 20,
+		overflow: 'hidden',
 		borderBottomWidth: 0,
-		height: '100%',
+	//	height: '100%',
 	},
 	inputContainerStyle: {},
 	input: {
@@ -210,6 +226,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		fontFamily: 'OpenSansRegular',
 		fontSize: 18,
+		//backgroundColor: 'blue',
+	
 	},
 	submitMsgAction: {
 		width: '10%',

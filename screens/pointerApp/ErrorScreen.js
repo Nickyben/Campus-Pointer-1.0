@@ -7,9 +7,12 @@ import { authenticate, tryAutoLogin } from '../../store/actions/authActions';
 
 import Colors from '../../constants/Colors';
 import Btn from '../../components/UI/Btn';
+import { useNavigation } from '@react-navigation/native';
 
-const ErrorScreen = ({navigation, route:{params} }) => {
-   const { messageHead, messageBody, image } = params;
+const ErrorScreen = ({ route, errorObj,retryFunc }) => {
+	const navigation = useNavigation();
+	const {params} = route ?route: {};
+   const { messageHead, messageBody, image } = params? params :errorObj;
   //console.warn(params)
 	return (
 		<View style={styles.screen}>
@@ -22,7 +25,7 @@ const ErrorScreen = ({navigation, route:{params} }) => {
 					marginVertical: 10,
 				}}
 				onPress={() => {
-					navigation.goBack();
+					retryFunc? retryFunc() : navigation.goBack();
 				}}
 		>
 				Retry
@@ -52,7 +55,7 @@ const styles = StyleSheet.create({
 	},
 	errMsgBody: {
 		fontFamily: 'OpenSansBold',
-		fontSize: 14,
+		fontSize: 15,
     textAlign: 'center',
     color: '#555',
     marginBottom:20,

@@ -1,11 +1,13 @@
 //import Icon from 'react-native-vector-icons/FontAwesome';
 //import { Input as RNElemInput } from 'react-native-elements';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState, useCallback } from 'react';
 import { TextInput, Text, View, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import Colors from '../../constants/Colors';
 import ItemIcon from './ItemIcon';
+import DropdownPicker from './DropdownPicker';
+import { toTitleCase } from '../../constants/MyFunctions';
 
 const INPUT_FOCUS = 'INPUT_FOCUS';
 const INPUT_CHANGE = 'INPUT_CHANGE';
@@ -65,6 +67,7 @@ const Input = ({
 	min,
 	max,
 	textType,
+	inputType,
 	minLength,
 	maxLength,
 	style,
@@ -91,6 +94,7 @@ const Input = ({
 	hideFloatingLabel,
 	placeholder,
 	showErrorMsg,
+	formHasError,
 	...others
 }) => {
 	// const { id, initialValue, initialValidity, onInputChange, required, email, password, phoneNumber,
@@ -112,6 +116,7 @@ const Input = ({
 		min,
 		max,
 		textType,
+		inputType,
 		minLength,
 		maxLength,
 		style,
@@ -138,6 +143,7 @@ const Input = ({
 		hideFloatingLabel,
 		placeholder,
 		showErrorMsg,
+		formHasError,
 		...others,
 	};
 
@@ -151,14 +157,45 @@ const Input = ({
 	});
 
 	const [showPassword, setShowPassword] = useState(false);
-	//console.warn(id, inputState.validity)
+
+	const ValidityResponse = () => {
+		return (
+			<>
+				{showErrorMsg !== false && (
+					<>
+						{((!inputState.validity && inputState.hasFocus && inputState.value.length > 2) ||
+							(formHasError && !inputState.validity)) && (
+							<View style={styles.errorMsgWrap}>
+								<Text style={styles.errorMsg}>{errorMsg ? errorMsg : 'Invalid field'}</Text>
+							</View>
+						)}
+						{inputState.validity && inputState.hasFocus && inputState.value.length > 2 && (
+							<View style={styles.errorMsgWrap}>
+								<Text style={styles.successMsg}>{successMsg ? successMsg : 'Valid input'}</Text>
+							</View>
+						)}
+					</>
+				)}
+			</>
+		);
+	};
 
 	const toggleShowPassword = () => {
 		setShowPassword((p) => !p);
 	};
 
 	const textChangeHandler = (text) => {
-		//console.log(text);
+		if (typeof text !== 'string') {
+			const arr = text;
+			let isValid = true;
+			if (required && arr.length === 0) {
+				isValid = false;
+			}
+
+			dispatchAction({ type: INPUT_CHANGE, value: text, validity: isValid, hasFocus: true });
+			return;
+		}
+
 		const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 		const emailText = text.toLowerCase();
 
@@ -204,13 +241,13 @@ const Input = ({
 		onTextChanged && onTextChanged(text);
 	};
 
-	const lostFocusHandler = () => {
+	const lostFocusHandler = useCallback(() => {
 		dispatchAction({ type: INPUT_BLUR });
-	};
+	}, []);
 
-	const gainedFocusHandler = () => {
+	const gainedFocusHandler = useCallback(() => {
 		dispatchAction({ type: INPUT_FOCUS });
-	};
+	}, []);
 
 	useEffect(() => {
 		if (inputState.hasFocus || inputState.gainedFocus || inputState.lostFocus || initialValidity === true) {
@@ -224,6 +261,27 @@ const Input = ({
 			dispatchAction({ type: INPUT_SUBMIT });
 		}
 	}, [submitted]);
+
+	if (inputType === 'dropdown') {
+		return (
+			<>
+				<DropdownPicker
+					{...props}
+					
+					pickerLabel={label}
+					pickerHeader={toTitleCase(label)}
+					onChooseOption={textChangeHandler}
+					onBlur={lostFocusHandler}
+					onFocus={gainedFocusHandler}
+					hasFocus={inputState.gainedFocus}
+					placeholder={placeholder ? placeholder : 'placeholder'}
+					style={style}
+					value={newValue}
+				/>
+				<ValidityResponse/>
+			</>
+		);
+	}
 
 	return (
 		//REMINDER: Edit inputs are not working properly when you submit with first input Empty
@@ -255,7 +313,7 @@ const Input = ({
 					<View style={{ marginLeft: rectInput ? 0 : 10 }}>
 						<ItemIcon
 							onTouch={icon && icon.touchable && icon.onTouch}
-							bgColor={icon.bgColor || Colors.primary + '22'}
+							bgColor={(icon && icon.bgColor) || Colors.primary + '22'}
 							name={icon ? icon.iconName : 'clipboard'}
 							borderRadius={icon && icon.bgBorderRadius}
 							size={23}
@@ -279,29 +337,13 @@ const Input = ({
 					<ItemIcon
 						onTouch={toggleShowPassword}
 						bgColor={'transparent'}
-						name={showPassword?'eye-off':'eye'}
+						name={showPassword ? 'eye-off' : 'eye'}
 						size={23}
 						color={icon && icon.iconColor ? icon.iconColor : Colors.primary}
 					/>
 				)}
-			
 			</View>
-
-			
-			{showErrorMsg !== false && (
-				<>
-					{!inputState.validity && inputState.hasFocus && inputState.value.length > 1 && (
-						<View style={styles.errorMsgWrap}>
-							<Text style={styles.errorMsg}>{errorMsg ? errorMsg : 'Invalid field'}</Text>
-						</View>
-					)}
-					{inputState.validity && inputState.hasFocus && inputState.value.length > 1 && (
-						<View style={styles.errorMsgWrap}>
-							<Text style={styles.successMsg}>{successMsg ? successMsg : 'Valid input'}</Text>
-						</View>
-					)}
-				</>
-			)}
+			<ValidityResponse />
 		</View>
 	);
 };

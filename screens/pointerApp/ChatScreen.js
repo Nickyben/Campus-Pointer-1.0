@@ -27,9 +27,8 @@ import { sendChatMessage, fetchChatMessages } from '../../store/actions/messageA
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Message from '../../models/message';
 import { useNavigation } from '@react-navigation/native';
-import { set } from 'react-native-reanimated';
 
-const EmptyList = ({}) => {
+const emptyList = ({}) => {
 	return (
 		<View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
 			<Text style={{ fontFamily: 'OpenSansBold', fontSize: 17 }}>No messages yet...Start Chatting</Text>
@@ -234,26 +233,26 @@ const Messages = ({ chatId }) => {
 
 	return (
 		<>
-			{messages.length === 0 && <EmptyList />}
-			{messages.length > 0 && (
+			{/* {messages.length === 0 && <EmptyList />} */}
+			{
 				<FlatList
 					ref={scrollViewRef}
 					style={styles.flatList}
 					//onLayout={scrollToBottom}
-					onContentSizeChange={scrollToBottom}
+					onContentSizeChange={messages.length !== 0 ? scrollToBottom : () => {}}
 					//initialNumToRender, refreshing
 					//remember to render num according to screen dimensions
 					//initialNumToRender={5}
 					keyExtractor={(item, index) => item.id + index}
 					data={messages}
 					renderItem={renderItem}
-					//	ListEmptyComponent={EmptyList}
-					contentContainerStyle={styles.listContainer}
-				//	extraData={[msgs, chat]}
-					inverted
+					ListEmptyComponent={emptyList}
+					contentContainerStyle={{ ...styles.listContainer, flex: messages.length === 0 ? 1 : 0 }}
+					//	extraData={[msgs, chat]}
+					inverted={messages.length !== 0 ? true: false}
 					//initialScrollIndex={messages.length-1}
 				/>
-			)}
+			}
 		</>
 	);
 };
@@ -379,6 +378,8 @@ const ChatScreen = ({ navigation, route: { params } }) => {
 			<Messages chatId={chatId} />
 			<ChatInput
 				//onSubmit={pushMsgHandler}
+				expandable
+				expandHeight={100}
 				elevated
 				multiline={true}
 				onSubmit={getMsgHandler}

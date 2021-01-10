@@ -25,7 +25,7 @@ const CheckBox = ({ title, shape, type, checkedColor, textStyle, itemStyle,
       }}>
       {type === 'right' && <Text style={{
         ...styles.titleStyle, ...textStyle,
-        color: disabled ? ('#888') : ('#555'),
+        color: disabled ? ('#888') : ('#333'),
       }}>{title}</Text>}
       <View style={{
         marginRight: type === 'right' ? 0 : 20,
@@ -54,7 +54,7 @@ const CheckBox = ({ title, shape, type, checkedColor, textStyle, itemStyle,
       {(!type || type === 'left') &&
         <Text style={{
           ...styles.titleStyle, ...textStyle,
-          color: disabled ? ('#555') : ('#333'),
+          color: disabled ? ('#888') : ('#333'),
         }}>{title}</Text>}
 
 

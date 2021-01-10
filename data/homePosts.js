@@ -27,7 +27,7 @@ const content = () => {
     { name: 'Anyone Somebody', level: 400, office: 'VicePresident' },
 
   ];
-  const types = ['Global', 'International', 'National', 'University', 'Faculty', 'Departmental', 'General'];
+  const types = ['Global', 'International', 'National', 'University', 'Faculty', 'Departmental', 'General', ];//'Personal', 'Official'
   const responses = [
     ['Helpful', 'Wow!', 'Interesting', 'Amazing', 'WorldClass', 'Good info'],
     ['Helpful', 'Wow!', 'Interesting', 'Amazing', 'Resourceful', 'Good info'],
@@ -66,16 +66,16 @@ const content = () => {
   const contentArr = [];
   for (let s = 1; s <= 22; s++) {
     const postArr = rand(posts);
-    const authorsArr = rand(authors)
+    const author = rand(authors)
     contentArr.push(
-      new HomePost(
+      new HomePost( 
         Math.random().toString(),
         postArr[0],
         postArr[1],
         new Date(),
         postArr[1], //for now, should be local, twitter,facebook, website,link etc 
-        authorsArr,
-        authorsArr,
+        author,
+        author,
         {
           image: rand(images),
           text: postArr[2],

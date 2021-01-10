@@ -65,7 +65,12 @@ import ForgotPasswordScreen, {
 	screenOptions as forgotPWScreenOptions,
 } from '../screens/pointerApp/ForgotPasswordScreen';
 import AuthSignup, { screenOptions as authSignupScreenOptions } from '../screens/pointerApp/AuthSignup';
+
 import ErrorScreen, { screenOptions as errorScreenOptions } from '../screens/pointerApp/ErrorScreen';
+
+import CreateHomePostScreen, {
+	screenOptions as createHomePostScreenOpts,
+} from '../screens/pointerApp/CreateHomePostScreen';
 
 let TouchableCmp = TouchableOpacity;
 
@@ -238,6 +243,7 @@ const HomeStackNavigator = () => {
 
 			<HomeStackNav.Screen name="DeptDetails" component={DeptDetailScreen} options={deptDetailScreenOpts} />
 
+		
 			{/* 
 
 			<HomeStackNav.Screen name="MessagesOverview" component={MessagesScreen} options={msgsScreenOpts} />
@@ -263,6 +269,12 @@ const MsgStackNavigator = () => {
 			<MsgStackNav.Screen name="CreateMessage" component={CreateMsgScreen} options={createMsgScreenOpts} />
 
 			<MsgStackNav.Screen name="MessageSettings" component={MsgSettingsScreen} options={msgSettingsScreenOpts} />
+
+			<MsgStackNav.Screen
+				name="CreateHomePost"
+				component={CreateHomePostScreen}
+				options={createHomePostScreenOpts}
+			/>
 		</MsgStackNav.Navigator>
 	);
 };
@@ -412,12 +424,9 @@ export const ErrorStackNavigator = () => {
 				headerShown: false,
 			}}>
 			<ErrorStackNav.Screen name="ErrorOverview" component={ErrorScreen} options={errorScreenOptions} />
-		
 		</ErrorStackNav.Navigator>
 	);
 };
-
-
 
 //TABS NAVIGATION****************************************************
 

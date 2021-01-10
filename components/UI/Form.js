@@ -92,9 +92,11 @@ const Form = ({
 	children,
 	onSubmit,
 	rectInputs,
+	hideInputIcons,
 	formAction,
 	formStateGetter,
 	submitTitle,
+	formActionDone,
 	formErrorMsg,
 	specificCheck,
 	doNotClearInputs,
@@ -105,7 +107,7 @@ const Form = ({
 	//const mountedRef = useRef(true);
 	const navigation = useNavigation();
 	const prevSubmittedForm = useSelector((s) => s.formReducer.submittedFormsData.find((form) => form.id === id));
-	const lastInputItems = prevSubmittedForm && prevSubmittedForm.inputValues;
+	const lastInputItems = prevSubmittedForm ? prevSubmittedForm.inputValues : null;
 
 	const inputItems = items ? items : [];
 	let initialInputValues = {};
@@ -114,7 +116,7 @@ const Form = ({
 	let initialInputBlurs = {};
 
 	for (let input of inputItems) {
-		if (input.initialValue) {
+		if (input.initialValue !== null && input.initialValue !== undefined) {
 			initialInputValues[input.id] = input.initialValue;
 			initialInputValidities[input.id] = true;
 		} else if (lastInputItems && !input.password) {
@@ -122,7 +124,7 @@ const Form = ({
 			initialInputValidities[input.id] = true;
 		} else {
 			initialInputValues[input.id] = '';
-			initialInputValidities[input.id] = false;
+			initialInputValidities[input.id] = input.required? false: true;
 		}
 
 		initialInputFocuses[input.id] = false;
@@ -148,6 +150,7 @@ const Form = ({
 	};
 
 	const [formState, dispatchFormAction] = useReducer(formReducer, initialFormState);
+	const formHasSomeEntry = objToArr(formState.inputValues).some((value) => value && value.length !== 0);
 
 	const formInputHandler = useCallback(
 		(inputNameOrId, text, validity, hasFocus, lostFocus) => {
@@ -179,7 +182,11 @@ const Form = ({
 			try {
 				//dispatching happens here
 
-				if (objToArr(formState.inputValues).every((value) => !!value)) {
+				
+				if (
+					objToArr(formState.inputValues).every((value) => value.length !== 0) ||
+					objToArr(formState.inputValidities).every((bool) => bool)
+				) {
 					//console.warn('valid');
 					dispatchFormAction({
 						type: FORM_SUBMIT_CHECK,
@@ -252,17 +259,17 @@ const Form = ({
 	}, [formState]);
 
 	return (
-		<View style={{ ...styles.scroll }} enableOnAndroid={true}>
+		<View style={{ ...styles.scroll }}>
 			{/* <Card style={styles.form}> */}
 			{title && <Text style={styles.formTitle}>{title}</Text>}
 			<View style={{ padding: 20 }}>
-				{children}
 				{inputItems &&
 					inputItems.map((input, index) => {
 						return (
 							<Input
 								key={input.id + index}
 								{...input}
+								hideIcon={hideInputIcons}
 								rectInput={rectInputs}
 								onInputChange={formInputHandler}
 								onFocus={formInputHandler}
@@ -273,18 +280,25 @@ const Form = ({
 										? ''
 										: formState.inputValues[input.id]
 								}
+								formHasError={formState.formHasError && formState.showFormStatus && formHasSomeEntry}
 								submitted={formState.formIsSubmitted && (!doNotClearInputs || input.password)}
 							/>
 						);
 					})}
-
-				{formState.formHasError && formState.showFormStatus && (
+				{children}
+				{formState.formHasError && formState.showFormStatus && formHasSomeEntry && (
 					<Text style={styles.formError}>
 						{formState.newFormErrorMsg
 							? formState.newFormErrorMsg
 							: formErrorMsg
 							? formErrorMsg
 							: 'Please, ensure that the form is filled correctly!'}
+					</Text>
+				)}
+
+				{!formState.formHasError && formActionDone && !formState.formHasFocus && (
+					<Text style={{ ...styles.formError, color: '#55ff55', backgroundColor: '#ddffdd' }}>
+						{formSuccessMsg ? formSuccessMsg : 'Your form has been submitted successfully.'}
 					</Text>
 				)}
 

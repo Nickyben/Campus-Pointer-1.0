@@ -14,7 +14,7 @@ import HelpCenterScreen from './HelpCenterScreen';
 import { enableNotifications, setNotifications } from '../../store/actions/settingsActions';
 import Btn from '../../components/UI/Btn';
 
-const Temp = () => (
+const Temp = ({ settingTitle }) => (
 	<View style={styles.screen2}>
 		<Text style={styles.screenText}>Hmm... Looks like the</Text>
 		<Text style={styles.highlight}>{settingTitle}</Text>
@@ -85,7 +85,7 @@ const SettingsDetailsScreen = ({ navigation, route: { params } }) => {
 
 	return (
 		<View style={styles.screen}>
-			<Screen />
+			<Screen settingTitle={settingTitle} />
 			{/* <Screen
         navig={navigation}
         source={{ option: settingTitle, }}

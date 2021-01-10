@@ -140,7 +140,7 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 						Back
 					</Text>
 				</View>
-				<KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={styles.formContainer}>
+				<KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={styles.formContainer} enableOnAndroid>
 					<View style={styles.welcomeContainer}>
 						<Text style={styles.welcomeText1}>Create a Pointer account</Text>
 						<Text style={styles.welcomeText2}> Make your campus life easy and fun! </Text>

@@ -3,25 +3,30 @@
 //SETTINGS SCREEN ITEMS *************************************************
 
 export const changeVisibilityItems = [
-  {
-    id: 'emailVisibility',
-    label: 'Who can see my email',
-    choiceLabels: ['Everyone', 'My Faculty', 'My department', 'My course mates'],
-    rightBtn: 'arrow-dropright',
-  },
-  {
-    id: 'phoneVisibility',
-    label: 'Who can see my phone number',
-    choiceLabels: ['Everyone', 'My Faculty', 'My department', 'My course mates'],
-    rightBtn: 'arrow-dropright',
-  },
-  {
-    id: 'regNumberVisibility',
-    label: 'Who can see my reg. number',
-    choiceLabels: ['Everyone', 'My Faculty', 'My department', 'My course mates'],
-    rightBtn: 'arrow-dropright',
-  },
-
+	{
+		id: 'emailVisibility',
+		label: 'Who can see my email',
+		choiceLabels: ['Everyone', 'My Faculty', 'My department', 'My course mates'],
+		rightBtn: 'arrow-dropright',
+	},
+	{
+		id: 'phoneVisibility',
+		label: 'Who can see my phone number',
+		choiceLabels: ['Everyone', 'My Faculty', 'My department', 'My course mates'],
+		rightBtn: 'arrow-dropright',
+	},
+	{
+		id: 'regNumberVisibility',
+		label: 'Who can see my reg. number',
+		choiceLabels: [
+			'Everyone',
+			'My Faculty',
+			'My department',
+			'My course mates',
+			
+		],
+		rightBtn: 'arrow-dropright',
+	},
 ];
 
 

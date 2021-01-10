@@ -77,7 +77,7 @@ const SettingsScreen = ({ navigation }) => {
             borderRadius: image ? styles.image.borderRadius : 1000
           }}>
             <Touch
-              onTouch={() => { console.log('touched image') }} style={{
+              onTouch={() => { console.warn('touched image') }} style={{
                 width: image ? styles.image.width : 90,
                 height: image ? styles.image.height : 90,
                 borderRadius: image ? styles.image.borderRadius : 1000

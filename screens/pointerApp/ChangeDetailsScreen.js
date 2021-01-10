@@ -147,7 +147,7 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
 	const setVisibilityHandler = (visibilityData) => {
 		dispatch(setVisibility(visibilityData));
 		setShowVisibilityOptions(() => [false, '', '', []]);
-	};
+	}; 
 
 	const setNotificationsHandler = (notificationsData) => {
 		setNotificationSettingsDispatch((p) => {

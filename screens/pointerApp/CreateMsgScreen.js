@@ -268,9 +268,10 @@ const styles = StyleSheet.create({
 		alignSelf: 'flex-start',
 		top: 0,
 		bottom: 'auto',
+		//marginBottom:10,
 	},
 	flatList: {
-		marginTop: 60,
+		marginTop: 70,
 		flex: 1,
 	},
 	listContainer: {
@@ -318,27 +319,9 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		color: '#678',
 	},
-	timeContainer: {
-		alignItems: 'center',
-		justifyContent: 'center',
-		paddingRight: 10,
-		//backgroundColor:'red',
-	},
-	unreadBadgeContainer: {
-		borderRadius: 15,
-		marginTop: 5,
-		backgroundColor: '#fff',
-	},
-	unreadBadgeCount: {
-		color: '#fff',
-		fontSize: 13,
-		textAlign: 'center',
-		textAlignVertical: 'center',
-		backgroundColor: Colors.primary + 'dd', //'#22ff99',
-		width: 25,
-		height: 25,
-		borderRadius: 15,
-	},
+
+
+
 });
 
 export default CreateMsgScreen;

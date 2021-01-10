@@ -1,4 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { endpoints } from '../../src/firebase';
+
 
 // export const SIGNUP = 'SIGNUP';
 // export const LOGIN = 'LOGIN';
@@ -35,7 +37,7 @@ export const signup = (userEmail, userPassword) => {
 
 			let response;
 			try {
-				response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${''}`, {
+				response = await fetch(endpoints.signUp, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
@@ -62,14 +64,17 @@ export const signup = (userEmail, userPassword) => {
 				switch (respErrMsg) {
 					case 'EMAIL_EXISTS': {
 						errMsg = `An account already exists with this email ${userEmail}!`;
+						break;
 					}
 
 					case 'TOO_MANY_ATTEMPTS_TRY_LATER': {
 						errMsg = `You have made too many attempts. Kindly try again later!`;
+						break;
 					}
 
 					case 'OPERATION_NOT_ALLOWED': {
 						errMsg = `We are so sorry but, you are not allowed to do this!`;
+						break;
 					}
 					default:
 						errMsg = 'Hmm...Something went wrong';
@@ -85,9 +90,14 @@ export const signup = (userEmail, userPassword) => {
 
 			//LOGGING IN AFTER SIGN-UP???!!!
 			dispatch(
-				authenticate(responseData.idToken, responseData.localId, parseInt(responseData.expiresIn) * 1000),
-				'pushToken',
-				responseData.email
+				authenticate(
+					//CHECK IF YOU CAN STORE THE USERS PUSH TOKEN EACH TIME THEY LOGIN(even for auto login) (SINCE THEIR PUSH TOKEN SHOULD CHANGE ON EVERY NEW DEVICE)
+					responseData.idToken,
+					responseData.localId,
+					parseInt(responseData.expiresIn) * 1000,
+					'pushToken',
+					responseData.email
+				)
 			);
 			//dispatch({ type: SIGNUP, token: responseData.idToken, userId: responseData.localId });
 			const expiryDate = new Date(new Date().getTime() + parseInt(responseData.expiresIn) * 1000);
@@ -108,7 +118,7 @@ export const login = (userEmail, userPassword) => {
 			let response;
 			try {
 				response = await fetch(
-					`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${''}`,
+					endpoints.login,
 					{
 						method: 'POST',
 						headers: {
@@ -136,14 +146,17 @@ export const login = (userEmail, userPassword) => {
 				switch (respErrMsg) {
 					case 'EMAIL_NOT_FOUND': {
 						errMsg = `There is no account with email ${userEmail}, please create an account!`;
+						break;
 					}
 
 					case 'INVALID_PASSWORD': {
 						errMsg = `The password you entered is incorrect`;
+						break;
 					}
 
 					case 'USER_DISABLED': {
 						errMsg = `We are so sorry but, this account has been disabled!`;
+						break;
 					}
 					default:
 						errMsg = 'Hmm...Something went wrong!';
@@ -223,7 +236,7 @@ export const verifyPassword = (userEmail, userPassword) => {
 			let response;
 			try {
 				response = await fetch(
-					`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${''}`,
+					endpoints.login,
 					{
 						method: 'POST',
 						headers: {
@@ -251,14 +264,17 @@ export const verifyPassword = (userEmail, userPassword) => {
 				switch (respErrMsg) {
 					case 'EMAIL_NOT_FOUND': {
 						errMsg = `There is no account with email the ${userEmail}! please logout try logging in again`;
+						break;
 					}
 
 					case 'INVALID_PASSWORD': {
 						errMsg = `The password you entered as old password is incorrect!`;
+						break;
 					}
 
 					case 'USER_DISABLED': {
 						errMsg = `We are so sorry but, this account has been disabled!`;
+						break;
 					}
 					default:
 						errMsg = 'Hmm...Something went wrong!';
@@ -291,20 +307,20 @@ export const verifyPassword = (userEmail, userPassword) => {
 			// if (userEmail === null || userPassword === null) {
 			// 	throw new Error('OPERATION NOT ALLOWED, PLEASE LOGOUT AND LOGIN AGAIN!');
 			// } else {
-				throw new Error('PLEASE FILL IN THE FIELDS CORRECTLY!');
-		//	}
+			throw new Error('PLEASE FILL IN THE FIELDS CORRECTLY!');
+			//	}
 		}
 	};
 };
 
 export const changePassword = (idToken, newUserPassword) => {
-		console.warn(idToken, newUserPassword);
+	console.warn(idToken, newUserPassword);
 
 	return async (dispatch) => {
 		if (idToken && newUserPassword) {
 			let response;
 			try {
-				response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${''}`, {
+				response = await fetch(endpoints.update, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
@@ -330,10 +346,12 @@ export const changePassword = (idToken, newUserPassword) => {
 				switch (respErrMsg) {
 					case 'INVALID_ID_TOKEN': {
 						errMsg = `You are currently not logged in, please log in again!`;
+						break;
 					}
 
 					case 'WEAK_PASSWORD': {
 						errMsg = `The password you entered is too weak, please enter a stronger password!`;
+						break;
 					}
 
 					default:
@@ -364,7 +382,7 @@ export const changePassword = (idToken, newUserPassword) => {
 			saveDataToStorage(responseData.idToken, responseData.localId, expiryDate, 'pushToken', responseData.email); //just like you stored it in redux store(mem), but here, in the device storage
 		} else {
 			//console.log('EMPTY FIELDS');
-				throw new Error('PLEASE FILL IN THE FIELDS CORRECTLY!');
+			throw new Error('PLEASE FILL IN THE FIELDS CORRECTLY!');
 		}
 	};
 };
