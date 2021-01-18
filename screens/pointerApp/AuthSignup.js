@@ -23,6 +23,7 @@ import TouchIcon from '../../components/UI/TouchIcon';
 import { StatusBar } from 'expo-status-bar';
 import { signup } from '../../store/actions/authActions';
 import AuthLoadingScreen from './AuthLoadingScreen';
+import ErrorScreen from './ErrorScreen';
 //import * as authActions from '../../store/actions/authAction';
 
 const signUpInputItems = [
@@ -92,23 +93,25 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 		}
 	};
 
-	useEffect(() => {
-		if (error) {
-			navigation.navigate('ErrorStack', {
-				screen: 'ErrorOverview',
-				params: {
-					messageHead: error.toLowerCase().includes('network') ? 'Network Connection Failed' : 'Error Occurred',
-					messageBody: error,
-					image: null,
-				},
-			});
 
-		
-		}
-	}, [error]);
 
 	if (isLoading) {
 		return <AuthLoadingScreen />;
+	}
+
+	if (error) {
+		return (
+			<ErrorScreen
+				errorObj={{
+					messageHead: error.toLowerCase().includes('network')
+						? 'Network Connection Failed'
+						: 'Error Occurred',
+					messageBody: error,
+					image: null,
+				}}
+				retryFunc={() => setError(null)}
+			/>
+		);
 	}
 
 	return (
@@ -140,7 +143,10 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 						Back
 					</Text>
 				</View>
-				<KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={styles.formContainer} enableOnAndroid>
+				<KeyboardAwareScrollView
+					showsVerticalScrollIndicator={false}
+					style={styles.formContainer}
+					enableOnAndroid>
 					<View style={styles.welcomeContainer}>
 						<Text style={styles.welcomeText1}>Create a Pointer account</Text>
 						<Text style={styles.welcomeText2}> Make your campus life easy and fun! </Text>
@@ -151,7 +157,7 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 						title={'Signup'}
 						items={signUpInputItems}
 						navig={navigation}
-						//formStateGetter={getSignUpFormState}
+						requiresAllInputs
 						submitTitle={'CONTINUE'}
 						formErrorMsg={'Please provide valid credentials!'}
 						//onSubmit={checkSignupValidity}

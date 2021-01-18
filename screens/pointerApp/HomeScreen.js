@@ -18,12 +18,12 @@ import HeaderBtn from '../../components/UI/HeaderBtn';
 import Colors from '../../constants/Colors';
 import { fetchHomeData, likePost, sharePost, commentPost } from '../../store/actions/homeActions';
 import TouchIcon from '../../components/UI/TouchIcon';
-import { TabRouter } from '@react-navigation/native';
 import { rand, shuffle, getSince } from '../../constants/MyFunctions';
 import Btn from '../../components/UI/Btn';
 import Touch from '../../components/UI/Touch';
 import LoadingScreen from './LoadingScreen';
 import ErrorScreen from './ErrorScreen';
+import { RefreshControl } from 'react-native';
 
 let TouchableCmp = TouchableOpacity;
 
@@ -32,24 +32,14 @@ if (Platform.OS === 'android' && Platform.Version >= 21) {
 }
 
 const _Item = ({
-	content: {
-		id,
-		title,
-		date,
-		type,
-		responses,
-		author: { name, office, post },
-		text,
-		image,
-		shares,
-	},
+	content: { id, title, date, type, responses, author, text, image, shares },
 	onSelect,
 	replyingPostId,
 	hideOtherRepliesFunc,
 	navig,
 }) => {
 	const _dispatch = useDispatch();
-
+	const { name, office, post } = author ? author : {};
 	const isStudent = true; //for now
 	const commentAuthorType = isStudent ? 'student' : rand(['staff', 'admin', 'postAuthor']);
 	const theUser = isStudent
@@ -286,8 +276,6 @@ const HomeScreen = ({ navigation }) => {
 		setError(null);
 		setIsRefreshing(true);
 		try {
-			//console.warn('loadData');
-
 			await dispatch(fetchHomeData());
 		} catch (err) {
 			setError(err.message);
@@ -295,14 +283,14 @@ const HomeScreen = ({ navigation }) => {
 		setIsRefreshing(false);
 	}, [dispatch]); //setIsLoading is handled already by react,
 
-	useEffect(() => {
-		const unsubscribe = navigation.addListener('focus', loadData);
+	// useEffect(() => {
+	// 	const unsubscribe = navigation.addListener('focus', loadData);
 
-		//clean up function to run when effect is about to rerun or when component is destroyed or unmounted
-		return () => {
-			unsubscribe();
-		};
-	}, [loadData]);
+	// 	//clean up function to run when effect is about to rerun or when component is destroyed or unmounted
+	// 	return () => {
+	// 		unsubscribe();
+	// 	};
+	// }, [loadData]);
 
 	useEffect(
 		//will run only when the component loads and not again unless dependencies change
@@ -331,9 +319,7 @@ const HomeScreen = ({ navigation }) => {
 		//dispatch(sharePost(postId));
 	};
 
-	const renderItem = (
-		{ item } //auto gets data in obj form , I deStructured it in params
-	) => (
+	const renderItem = ({ item }) => (
 		<_Item
 			content={item}
 			onSelect={() => {}}
@@ -343,41 +329,10 @@ const HomeScreen = ({ navigation }) => {
 		/>
 	);
 
-	// useEffect(() => {
-	// 	if (error) {
-	// 		navigation.navigate('ErrorStack', {
-	// 			screen: 'ErrorOverview',
-	// 			params: {
-	// 				messageHead: error.toLowerCase().includes('network')
-	// 					? 'Network Connection Failed'
-	// 					: 'Error Occurred',
-	// 				messageBody: error,
-	// 				image: null,
-	// 			},
-	// 		});
-	// 	}
-	// }, [error]);
-
-	if (error) {
-		return (
-			<ErrorScreen
-				errorObj={{
-					messageHead: error.toLowerCase().includes('network')
-						? 'Network Connection Failed'
-						: 'Error Occurred',
-					messageBody: error,
-					image: null,
-				}}
-				retryFunc={loadData}
-			/>
-		);
-	}
-
-	if (isLoading) {
-		return <LoadingScreen />;
-	}
-
-	const listEmptyComponent = () => {
+	const listEmptyComponent = (itemName, notFoundText) => {
+		if (isRefreshing) {
+			return <LoadingScreen />;
+		}
 		return (
 			<View style={styles.centered}>
 				<Text
@@ -387,7 +342,7 @@ const HomeScreen = ({ navigation }) => {
 						color: '#333',
 						//textAlign: 'justify',
 					}}>
-					Oops! No items Found!
+					{notFoundText ? notFoundText : `Oops! No ${itemName ? itemName : 'items'} Found!`}
 				</Text>
 				<Btn
 					fontSize={15}
@@ -401,11 +356,29 @@ const HomeScreen = ({ navigation }) => {
 		);
 	};
 
+	if (error) {
+		return (
+			<ErrorScreen
+				errorObj={{
+					messageHead: error.toLowerCase().includes('network') ? 'Network Error' : 'Error Occurred',
+					messageBody: error,
+					image: null,
+				}}
+				retryFunc={loadData}
+			/>
+		);
+	}
+
+	if (isLoading) {
+		return <LoadingScreen />;
+	}
+
 	return (
 		<View style={styles.screen}>
 			<FlatList
-				onRefresh={loadData}
-				refreshing={isRefreshing}
+				refreshControl={
+					<RefreshControl colors={[Colors.primary]} refreshing={isRefreshing} onRefresh={loadData} />
+				}
 				showsHorizontalScrollIndicator={false}
 				//initialNumToRender, refreshing
 				keyExtractor={(item, index) => item.id}
@@ -417,7 +390,7 @@ const HomeScreen = ({ navigation }) => {
 			{
 				//if user is authorized to post
 				<TouchIcon
-					style={{ bottom: 20, right: 20, position: 'absolute', zIndex:1500 }}
+					style={{ bottom: 20, right: 20, position: 'absolute', zIndex: 1500 }}
 					onTouch={() => {
 						navigation.navigate('MessageStack', {
 							screen: 'CreateHomePost',
@@ -454,7 +427,7 @@ export const screenOptions = (navProps) => {
 					onPress={() => {}}
 				/>
 			</HeaderButtons>
-		), 
+		),
 		headerRight: (props) => (
 			<HeaderButtons HeaderButtonComponent={HeaderBtn}>
 				<Item tile="Search" iconName={searchIcon} onPress={() => {}} />

@@ -4,44 +4,295 @@ import staff from '../../data/staff';
 import events from '../../data/events';
 import halls from '../../data/halls';
 import timetables from '../../data/timetables';
-
+import Staff from '../../models/staff';
+import Hall from '../../models/hall';
+import Student from '../../models/student';
+import { endpoints } from '../../src/firebase';
+import { thunkFetch } from '../../constants/MyFunctions';
+import Course from '../../models/course';
+import Event from '../../models/event';
+import Timetable from '../../models/timetable';
 
 export const LOAD_ADMINS = 'LOAD_ADMINS';
-export const LOAD_COURSES = 'LOAD_COURSES';//Should probably depend on the departments
-export const LOAD_STUDENTS = 'LOAD_STUDENTS';//Should probably depend on the departments
-export const LOAD_STAFF = 'LOAD_STAFF';//Should probably depend on the departments
+export const LOAD_COURSES = 'LOAD_COURSES'; //Should probably depend on the departments
+export const LOAD_STUDENTS = 'LOAD_STUDENTS'; //Should probably depend on the departments
+export const LOAD_STAFF = 'LOAD_STAFF'; //Should probably depend on the departments
+export const LOAD_HALLS = 'LOAD_HALLS';
 export const LOAD_DEPARTMENTS = 'LOAD_DEPARTMENTS';
 export const LOAD_FACULTIES = 'LOAD_FACULTIES';
 export const LOAD_ASSOCIATIONS = 'LOAD_ASSOCIATIONS';
 export const LOAD_DEPT_DATA = 'LOAD_DEPT_DATA';
 export const LOAD_HOME_DATA = 'LOAD_HOME_DATA';
+export const LOAD_DEPT_EVENTS = 'LOAD_DEPT_EVENTS';
+export const LOAD_TIMETABLES = 'LOAD_TIMETABLES';
+
+export const fetchDeptHomeData = () => {
+	const urlArr = [
+		{ url: endpoints.getData('staff'), init: {} },
+		{ url: endpoints.getData('students'), init: {} },
+		{ url: endpoints.getData('halls'), init: {} },
+	];
+	const consumerFunc = (arrOfRespJsonS, { idToken, userId, dispatch, state }) => {
+		const staffResponseJson = arrOfRespJsonS[0];
+		const studentsResponseJson = arrOfRespJsonS[1];
+		const hallsResponseJson = arrOfRespJsonS[2];
+		const dummyDeptData = [staff, students, halls];
+
+		const allAreOkay = arrOfRespJsonS.every((jsonObj) => jsonObj && !jsonObj.error);
+
+		// for (const respJson of arrOfRespJsonS) {
+		const deptStaff = staffResponseJson && !staffResponseJson.error ? [] : state.dataReducer.availableStaff;
+		const deptStudents =
+			studentsResponseJson && !studentsResponseJson.error ? [] : state.dataReducer.availableStudents;
+		const deptHalls = hallsResponseJson && !hallsResponseJson.error ? [] : state.dataReducer.availableHalls;
+
+		if (staffResponseJson && !staffResponseJson.error) {
+			for (const key in staffResponseJson) {
+				const staffItem = staffResponseJson[key];
+				const {
+					firstName,
+					lastName,
+					staffNumber,
+					gender,
+					entryYear,
+					department,
+					faculty,
+					university,
+					designation,
+					rank,
+					office,
+					phoneNumber,
+					courses,
+					allocatedLevel,
+					image,
+					isAcademic,
+					honours,
+				} = staffItem;
+
+				deptStaff.push(
+					new Staff({
+						key,
+						firstName,
+						lastName,
+						staffNumber,
+						gender,
+						entryYear,
+						department,
+						faculty,
+						university,
+						designation,
+						rank,
+						office,
+						phoneNumber,
+						faculty,
+						university,
+						designation,
+						rank,
+						office,
+						phoneNumber,
+						courses,
+						allocatedLevel,
+						image,
+						isAcademic,
+						honours,
+					})
+				);
+			}
+		}
+
+		if (studentsResponseJson && !studentsResponseJson.error) {
+			for (const key in studentsResponseJson) {
+				const studentItem = studentsResponseJson[key];
+				deptStudents.push(new Student(studentItem));
+			}
+		}
+
+		if (hallsResponseJson && !hallsResponseJson.error) {
+			for (const key in hallsResponseJson) {
+				const hallItem = hallsResponseJson[key];
+				deptHalls.push(new Hall(hallItem));
+			}
+		}
+
+		// }
+
+		dispatch({
+			type: LOAD_DEPT_DATA,
+			availableStaff: deptStaff,
+			availableStudents: deptStudents,
+			availableHalls: deptHalls,
+		});
+	};
+	return thunkFetch(urlArr, consumerFunc);
+};
+
+export const fetchCoursesData = () => {
+	const urlArr = [
+		{ url: endpoints.getData('courses'), init: {} },
+		{ url: endpoints.getData('registeredCourses'), init: {} },
+		{ url: endpoints.getData('pendingCourses'), init: {} },
+		{ url: endpoints.getData('approvedCourses'), init: {} },
+	];
+	const consumerFunc = (arrOfRespJsonS, { idToken, userId, dispatch, state }) => {
+		const staffResponseJson = arrOfRespJsonS[0];
+		const studentsResponseJson = arrOfRespJsonS[1];
+		const hallsResponseJson = arrOfRespJsonS[2];
+		const previousDataArrays = [
+			state.dataReducer.availableCourses,
+			state.courseAppReducer.registeredCourses,
+			state.courseAppReducer.pendingCourses,
+			state.courseAppReducer.approvedCourses,
+		];
+
+		const allAreOkay = arrOfRespJsonS.every((jsonObj) => jsonObj && !jsonObj.error);
+		let coursesData, registeredCoursesData, pendingCoursesData, approvedCoursesData;
+
+		for (const [index, respJson] of arrOfRespJsonS.entries()) {
+			const initialArr = respJson && !respJson.error ? [] : previousDataArrays[index];
+
+			if (respJson && !respJson.error) {
+				for (const key in respJson) {
+					const item = respJson[key];
+					initialArr.push(new Course(item));
+				}
+			}
+			switch (index) {
+				case 0: {
+					coursesData = initialArr;
+					break;
+				}
+				case 1: {
+					registeredCoursesData = initialArr;
+					break;
+				}
+				case 2: {
+					pendingCoursesData = initialArr;
+					break;
+				}
+				case 3: {
+					approvedCoursesData = initialArr;
+					break;
+				}
+			}
+		}
+
+		dispatch({
+			type: LOAD_COURSES,
+			availableCourses: coursesData,
+			registeredCourses: registeredCoursesData,
+			pendingCourses: pendingCoursesData,
+			approvedCourses: approvedCoursesData,
+		});
+	};
+	return thunkFetch(urlArr, consumerFunc);
+};
+
+export const fetchEvents = () => {
+	const urlArr = [{ url: endpoints.getData('deptEvents'), init: {} }];
+	const consumerFunc = (arrOfRespJsonS, { idToken, userId, dispatch, state }) => {
+		const previousDataArrays = [state.dataReducer.availableEvents];
+
+		let deptEventsData;
+		const allAreOkay = arrOfRespJsonS.every((jsonObj) => jsonObj && !jsonObj.error);
+
+		for (const [index, respJson] of arrOfRespJsonS.entries()) {
+			const initialArr = respJson && !respJson.error ? [] : previousDataArrays[index];
+
+			if (respJson && !respJson.error) {
+				for (const key in respJson) {
+					const item = respJson[key];
+					initialArr.push(new Event(item));
+				}
+			}
+			switch (index) {
+				case 0: {
+					deptEventsData = initialArr;
+					break;
+				}
+			}
+		}
+
+		dispatch({
+			type: LOAD_DEPT_EVENTS,
+			availableEvents: deptEventsData, // should be replaced with data fetched from server/db
+		});
+	};
+	return thunkFetch(urlArr, consumerFunc);
+};
 
 
+export const fetchTimeTables = () => {
+		const urlArr = [{ url: endpoints.getData('timeTables'), init: {} }];
+		const consumerFunc = (arrOfRespJsonS, { idToken, userId, dispatch, state }) => {
+			const previousDataArrays = [state.dataReducer.availableEvents];
 
-export const fetchCourses = () => {
-  return ({
-    type: LOAD_COURSES,
-    availableCourses: courses,// should be replaced with data fetched from server/db
-  });
-}
+			let timeTablesData;
+			const allAreOkay = arrOfRespJsonS.every((jsonObj) => jsonObj && !jsonObj.error);
+
+			for (const [index, respJson] of arrOfRespJsonS.entries()) {
+				const initialArr = respJson && !respJson.error ? [] : previousDataArrays[index];
+
+				if (respJson && !respJson.error) {
+					for (const key in respJson) {
+						const item = respJson[key];
+						initialArr.push(new Timetable(item));
+					}
+				}
+				switch (index) {
+					case 0: {
+						timeTablesData = initialArr;
+						break;
+					}
+				}
+			}
+
+			dispatch({
+				type: LOAD_TIMETABLES,
+				availableTimetables: timeTablesData, // should be replaced with data fetched from server/db
+			});
+		};
+		return thunkFetch(urlArr, consumerFunc);
+
+};
+
+export const fetchStudents = () => {
+	return {
+		type: LOAD_COURSES,
+		availableCourses: courses, // should be replaced with data fetched from server/db
+	};
+};
+
+export const fetchStaff = () => {
+	return {
+		type: LOAD_COURSES,
+		availableCourses: courses, // should be replaced with data fetched from server/db
+	};
+};
+
+export const fetchHalls = () => {
+	return {
+		type: LOAD_HALLS,
+		availableCourses: courses, // should be replaced with data fetched from server/db
+	};
+};
 
 export const fetchDeptData = () => {
- 
-  return ({
-    type: LOAD_DEPT_DATA,// should  all be replaced with data fetched from server/db
-    availableStudents: students,
-    availableStaff: staff,
-    availableHalls: halls,
-    availableCourses: courses,
-    availableEvents: events,
-    availableTimetables: timetables,
-  });
-}
+	return {
+		type: LOAD_DEPT_DATA, // should  all be replaced with data fetched from server/db
+		availableStudents: students,
+		availableStaff: staff,
+		availableHalls: halls,
+		availableCourses: courses,
+		availableEvents: events,
+		availableTimetables: timetables,
+	};
+};
+
+
 
 export const addItem = (itemDataObj, actionType) => {
 	//console.warn(userEmail, userPassword);
 	return async (dispatch) => {
-    
 		if (true) {
 			//change
 			let response;

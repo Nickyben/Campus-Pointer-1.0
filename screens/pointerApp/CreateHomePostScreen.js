@@ -12,6 +12,7 @@ import {
 	SafeAreaView,
 	Keyboard,
 	Switch,
+	KeyboardAvoidingView,
 } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
@@ -122,6 +123,8 @@ const CreateHomePostScreen = ({
 		});
 	}, [sendPostHandler]);
 
+	
+
 	return (
 		<View style={styles.screen}>
 			<View style={{ padding: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -176,19 +179,21 @@ const CreateHomePostScreen = ({
 					</View>
 				)}
 				{isOfficial && (
-					<Form
-						id={'homePostOfficialForm'}
-						items={homePostOfficialFormItems}
-						hideInputIcons
-						submitTitle={'POST'}
-						formErrorMsg={'Please provide valid credentials!'}
-						formAction={sendOfficialHomePostHandler}
-						style={{
-							borderColor: '#ccc',
-							borderWidth: 2,
-						}}
-						//rectInputs
-					/>
+					<>
+						<Form
+							id={'homePostOfficialForm'}
+							items={homePostOfficialFormItems}
+							hideInputIcons
+							submitTitle={'POST'}
+							formErrorMsg={'Please provide valid credentials!'}
+							formAction={sendOfficialHomePostHandler}
+							style={{
+								borderColor: '#ccc',
+								borderWidth: 2,
+							}}
+							//rectInputs
+						/>
+					</>
 				)}
 			</KeyboardAwareScrollView>
 

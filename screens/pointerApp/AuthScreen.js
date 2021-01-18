@@ -22,6 +22,7 @@ import Btn from '../../components/UI/Btn';
 import { login } from '../../store/actions/authActions';
 import AuthLoadingScreen from './AuthLoadingScreen';
 import { StatusBar } from 'expo-status-bar';
+import ErrorScreen from './ErrorScreen';
 
 const loginInputItems = [
 	{
@@ -57,7 +58,7 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 	const dispatch = useDispatch();
 
 	const authHandler = async (inputValues) => {
-		//console.log(inputValues)
+	//console.warn(inputValues)
 		const { loginRegNumberOrEmailAddress, loginPassword } = inputValues;
 		let action = login(loginRegNumberOrEmailAddress, loginPassword);
 
@@ -71,27 +72,38 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 		}
 	};
 
-	useEffect(() => {
-		if (error) {
-			navigation.navigate('ErrorStack', {
-				screen: 'ErrorOverview',
-				params: {
-					messageHead: error.toLowerCase().includes('network')
-						? 'Network Connection Failed'
-						: 'Error Occurred',
-					messageBody: error,
-					image: null,
-				},
-			});
-		}
-	}, [error]);
+	// useEffect(() => {
+	// 	if (error) {
+	// 		navigation.navigate('ErrorStack', {
+	// 			screen: 'ErrorOverview',
+	// 			params: {
+	// 				messageHead: error.toLowerCase().includes('network')
+	// 					? 'Network Connection Failed'
+	// 					: 'Error Occurred',
+	// 				messageBody: error,
+	// 				image: null,
+	// 			},
+	// 		});
+	// 	}
+	// }, [error]);
 
 	if (isLoading) {
 		return <AuthLoadingScreen />;
 	}
 
 	if (error) {
-		//return <ErrorScreen />;
+		return (
+			<ErrorScreen
+				errorObj={{
+					messageHead: error.toLowerCase().includes('network')
+						? 'Network Connection Failed'
+						: 'Error Occurred',
+					messageBody: error,
+					image: null,
+				}}
+				retryFunc={()=>setError(null)}
+			/>
+		);
 	}
 
 	return (
@@ -112,6 +124,7 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 							id={formId}
 							title={'Login'}
 							items={loginInputItems}
+							requiresAllInputs
 							//formStateGetter={getLoginFormState}
 							submitTitle={'LOGIN'}
 							formErrorMsg={'Please provide valid credentials!'}

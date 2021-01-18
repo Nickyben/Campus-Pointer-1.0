@@ -1,6 +1,6 @@
 class Event {
-  constructor(id, title, type, date, time, venue, image, semester, session, 
-    association,department, faculty, university) {
+  constructor({id, title, type, date, time, venue, image, semester, session, 
+    association,department, faculty, university}) {
     this.id = id;
     this.title = title;
     this.type = type;  //eg social, sports, academic, project, general,association

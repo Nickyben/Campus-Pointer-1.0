@@ -3,6 +3,7 @@ import { REGISTER_COURSES, MARK_COURSE, MARK_ALL_COURSES } from "../actions/cour
 const initialState = {
   registeredCourses: [],
   approvedCourses: [],
+  pendingCourses:[],
   addedCourses: [],
   droppedCourses: [],
   excessCreditCourses: [],
@@ -73,14 +74,7 @@ export default (state = initialState, action) => {
         }
       }
 
-    // return (
-    //   {
-    //     ...state,
-    //     markedAllCourses: action.markedAllCourses.every(course =>
-    //       state.markedAllCourses.includes(course)) ?
-    //       state.markedAllCourses.filter(course => !action.markedAllCourses.includes(course)) :
-    //       withoutThoseInSection.concat(action.markedAllCourses),
-    //   });
+   
 
   }
   return state;

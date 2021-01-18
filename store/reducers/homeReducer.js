@@ -4,7 +4,7 @@ import HomePost from "../../models/homePost";
  
 
 const initialState = {
-  availablePosts: homePosts,//[],
+  availablePosts: homePosts,//[], //this should initially be from the Async storage
   availableGeneralLikes: [], // use this for network
   availableLikes: [], //this is for the user and not general(network)
   availableComments: []

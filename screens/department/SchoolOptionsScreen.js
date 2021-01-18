@@ -15,79 +15,46 @@ import TimetableScreen from './TimetableScreen';
 import { fetchDeptData } from '../../store/actions/dataActions';
 
 const SchoolOptionsScreen = ({ navigation, route: { params: { title, } } }) => {
-  const dispatch = useDispatch();
-  const loadData = useCallback(async () => {
-    //   setError(null);
-    //   setIsRefreshing(true)
-    //try {
-    await dispatch(fetchDeptData());
-    //   } 
-    //catch (err) {
-    //     setError(err.message);
-    //   }
-    //   setIsRefreshing(false);
-  }, [dispatch]);//setIsLoading is handled already by react,
+	
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', loadData);
-    //clean up function to run when effect is about to rerun or when component is destroyed or unmounted
-    return (() => {
-      unsubscribe();
-    });
-  }, [loadData]);
+	const Temp = () => (
+		<View style={styles.screen2}>
+			<Text style={styles.screenText}>
+				Hmm... Looks like the <Text style={styles.highlight}>{title}</Text> screen is unavailable!
+			</Text>
+			<Text style={styles.screenText2}>Please update the App to the latest version.</Text>
+		</View>
+	);
 
-  useEffect(//will run only when the component loads and not again unless dependencies change
-    //don't use async keyword here, instead, use .then() after the dispatch()
-    () => {
-      //     setIsLoading(true);
-      loadData().then(() => {
-        //       setIsLoading(false);
-      });
-    }
-    , [loadData]);
+	let Screen;
 
-
-
-
-  const Temp = () => (
-    <View style={styles.screen2}>
-      <Text style={styles.screenText}>Hmm... Looks like the <Text style={styles.highlight}>{title}</Text> screen is unavailable!</Text>
-      <Text style={styles.screenText2}>Please update the App to the latest version.</Text>
-    </View>)
-
-  let Screen;
-
-  switch (title) {
-    case 'Courses':
-      Screen = CoursesScreen;
-      break;
-    case 'Calendar and Events':
-      Screen = EventsTableScreen;
-      break;
-    case 'Timetable':
-      Screen = TimetableScreen;
-      break;
-    case 'Fees':
-      Screen = Temp;
-      break;
-    case 'Library':
-      Screen = Temp;
-      break;
-    case 'Labs and Research':
-      Screen = Temp;
-      break;
-    default:
-      Screen = Temp;
-
-  }
-  return (
-    <View style={styles.screen}>
-      <Screen
-        navig={navigation}
-        source={{ option: title, }}
-      />
-    </View>
-  );
+	switch (title) {
+		case 'Courses':
+			Screen = CoursesScreen;
+			break;
+		case 'Calendar and Events':
+			Screen = EventsTableScreen;
+			break;
+		case 'Timetable':
+			Screen = TimetableScreen;
+			break;
+		case 'Fees':
+			Screen = Temp;
+			break;
+		case 'Library':
+			Screen = Temp;
+			break;
+		case 'Labs and Research':
+			Screen = Temp;
+			break;
+		default:
+			Screen = Temp;
+	}
+	return (
+		<View style={styles.screen}>
+			<Screen navig={navigation} source={{ option: title }} />
+		</View>
+	);
 };
 export const screenOptions = ({ navigation, route: { params } }) => {
   const notificationIcon = Platform.OS == 'android' ? 'md-notifications' : 'ios-notifications';

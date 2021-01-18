@@ -21,6 +21,7 @@ import Form from '../../components/UI/Form';
 import Btn from '../../components/UI/Btn';
 import TouchIcon from '../../components/UI/TouchIcon';
 import { StatusBar } from 'expo-status-bar';
+import ErrorScreen from './ErrorScreen';
 //import * as authActions from '../../store/actions/authAction';
 
 const forgotPWInputItems = [
@@ -74,20 +75,20 @@ const ForgotPasswordScreen = ({ navigation }) => {
 		}
 	};
 
-	useEffect(() => {
-		if (error) {
-			navigation.navigate('ErrorStack', {
-				screen: 'ErrorOverview',
-				params: {
+	if (error) {
+		return (
+			<ErrorScreen
+				errorObj={{
 					messageHead: error.toLowerCase().includes('network')
 						? 'Network Connection Failed'
 						: 'Error Occurred',
 					messageBody: error,
 					image: null,
-				},
-			});
-		}
-	}, [error]);
+				}}
+				retryFunc={() => setError(null)}
+			/>
+		);
+	}
 
 	return (
 		<>
@@ -129,7 +130,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
 							id={'forgotPasswordForm'}
 							title={'Send password reset email'}
 							items={forgotPWInputItems}
-							//formStateGetter={getForgotPwFormState}
+							requiresAllInputs
 							submitTitle={'Send Email'}
 							formErrorMsg={'Please provide valid credentials!'}
 							formAction={authHandler}

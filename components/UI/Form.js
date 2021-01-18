@@ -93,6 +93,7 @@ const Form = ({
 	onSubmit,
 	rectInputs,
 	hideInputIcons,
+	requiresAllInputs,
 	formAction,
 	formStateGetter,
 	submitTitle,
@@ -124,7 +125,7 @@ const Form = ({
 			initialInputValidities[input.id] = true;
 		} else {
 			initialInputValues[input.id] = '';
-			initialInputValidities[input.id] = input.required? false: true;
+			initialInputValidities[input.id] = requiresAllInputs || input.required ? false : true;
 		}
 
 		initialInputFocuses[input.id] = false;
@@ -182,7 +183,6 @@ const Form = ({
 			try {
 				//dispatching happens here
 
-				
 				if (
 					objToArr(formState.inputValues).every((value) => value.length !== 0) ||
 					objToArr(formState.inputValidities).every((bool) => bool)
@@ -269,6 +269,7 @@ const Form = ({
 							<Input
 								key={input.id + index}
 								{...input}
+								required={requiresAllInputs}
 								hideIcon={hideInputIcons}
 								rectInput={rectInputs}
 								onInputChange={formInputHandler}
@@ -280,7 +281,7 @@ const Form = ({
 										? ''
 										: formState.inputValues[input.id]
 								}
-								formHasError={formState.formHasError && formState.showFormStatus && formHasSomeEntry}
+								formHasError={formState.formHasError && formState.showFormStatus }//&& formHasSomeEntry}
 								submitted={formState.formIsSubmitted && (!doNotClearInputs || input.password)}
 							/>
 						);
