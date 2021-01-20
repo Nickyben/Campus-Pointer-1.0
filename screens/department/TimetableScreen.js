@@ -342,7 +342,7 @@ const TimetableScreen = ({ navig }) => {
 		daysRowsArr.length !== 0 && (
 			<TimeTableTabNav.Navigator
 				initialLayout={{ width: Dimensions.get('window').width }}
-				initialRouteName={'Tue'} //screenOptions={defaultTabStacksOpts}
+				initialRouteName={today} //screenOptions={defaultTabStacksOpts}
 				tabBarOptions={{
 					activeTintColor: Colors.primary,
 					inactiveTintColor: '#246',
@@ -361,7 +361,7 @@ const TimetableScreen = ({ navig }) => {
 						fontSize: 12,
 					},
 				}}>
-        
+
 				<TimeTableTabNav.Screen name={daysRowsArr[0].day} component={TableComponent} />
 
 				<TimeTableTabNav.Screen name={daysRowsArr[1].day} component={TableComponent} />

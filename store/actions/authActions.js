@@ -1,12 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { endpoints } from '../../src/firebase';
 
-
 // export const SIGNUP = 'SIGNUP';
 // export const LOGIN = 'LOGIN';
 export const AUTHENTICATE = 'AUTHENTICATE';
 export const INDICATE_TRIED_TO_AUTO_LOGIN = 'INDICATE_TRIED_TO_AUTO_LOGIN';
 export const LOGOUT = 'LOGOUT';
+export const UPDATE_USER_APP_DATA = 'UPDATE_USER_APP_DATA';
 
 let timer;
 
@@ -14,8 +14,34 @@ export const tryAutoLogin = () => {
 	return { type: INDICATE_TRIED_TO_AUTO_LOGIN }; ///???
 };
 
-export const authenticate = (idToken, userId, expiryTime, pushToken, userEmail) => {
-	return (dispatch) => {
+const fetchUserAppData = (idToken, userId) => {
+	//from backend or provider
+	return {};
+};
+
+export const updateUserAppData = () => {
+	return async (dispatch, getState) => {
+		const { idToken, userId, pushToken, userEmail } = getState().authReducer;
+		let userData;
+		try {
+			userData = await AsyncStorage.getItem('userData');
+		} catch (e) {
+			// error reading value
+		}
+		const userDataObj = userData != null ? JSON.parse(userData) : null;
+		const {expiryDate} = userDataObj; //added pushToken
+		const expiryDateObj = new Date(expiryDate);
+		const expiryTime = expiryDateObj.getTime() - new Date().getTime();
+
+		//const
+		dispatch(authenticate(idToken, userId, expiryTime, pushToken, userEmail, fetchUserAppData(idToken, userId)));
+	};
+};
+
+export const authenticate = (idToken, userId, expiryTime, pushToken, userEmail, userAppData) => {
+	const fetchedUserAppData = userAppData ? userAppData : fetchUserAppData(idToken, userId);
+
+	return async (dispatch) => {
 		dispatch(setLogoutTimer(expiryTime)); // check well!!!!
 		dispatch({
 			type: AUTHENTICATE,
@@ -23,7 +49,11 @@ export const authenticate = (idToken, userId, expiryTime, pushToken, userEmail) 
 			userId: userId,
 			userEmail: userEmail,
 			pushToken,
+			userAppData: fetchedUserAppData,
 		});
+
+		const expiryDate = new Date(new Date().getTime() + expiryTime);
+		saveDataToStorage(idToken, userId, expiryDate, pushToken, userEmail, fetchedUserAppData); //just like you stored it in redux store(mem), but here, in the device storage
 	};
 };
 
@@ -99,9 +129,6 @@ export const signup = (userEmail, userPassword) => {
 					responseData.email
 				)
 			);
-			//dispatch({ type: SIGNUP, token: responseData.idToken, userId: responseData.localId });
-			const expiryDate = new Date(new Date().getTime() + parseInt(responseData.expiresIn) * 1000);
-			saveDataToStorage(responseData.idToken, responseData.localId, expiryDate, 'pushToken', responseData.email); //just like you stored it in redux store(mem), but here, in the device storage
 		} else {
 			//console.log('EMPTY FIELDS');
 			throw new Error('PLEASE FILL IN ALL FIELDS!');
@@ -117,20 +144,17 @@ export const login = (userEmail, userPassword) => {
 		if (userEmail && userPassword) {
 			let response;
 			try {
-				response = await fetch(
-					endpoints.login,
-					{
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({
-							email: userEmail,
-							password: userPassword,
-							returnSecureToken: true,
-						}),
-					}
-				);
+				response = await fetch(endpoints.login, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						email: userEmail,
+						password: userPassword,
+						returnSecureToken: true,
+					}),
+				});
 			} catch (err) {
 				if (err.message.toLowerCase().includes('network'))
 					throw new Error(
@@ -180,10 +204,6 @@ export const login = (userEmail, userPassword) => {
 					responseData.email
 				)
 			);
-
-			//getting the future date/time when the token expires
-			const expiryDate = new Date(new Date().getTime() + parseInt(responseData.expiresIn) * 1000);
-			saveDataToStorage(responseData.idToken, responseData.localId, expiryDate, 'pushToken', responseData.email); //just like you stored it in redux store(mem), but here, in the device storage
 		} else {
 			//console.log('EMPTY FIELDS');
 			throw new Error('PLEASE FILL IN ALL FIELDS!');
@@ -214,18 +234,19 @@ const setLogoutTimer = (tokenExpiryTime) => {
 	};
 };
 
-const saveDataToStorage = async (idToken, userId, tokenExpiry, pushToken, emailAddress) => {
+const saveDataToStorage = async (idToken, userId, tokenExpiry, pushToken, emailAddress, userAppData) => {
 	try {
 		const jsonValue = JSON.stringify({
 			idToken: idToken,
 			userId: userId,
 			expiryDate: tokenExpiry.toISOString(),
 			userEmail: emailAddress,
-			//pushToken: ....,//check if this is possible
+			userAppData,
+			pushToken, //check if this is possible
 		});
 		await AsyncStorage.setItem('userData', jsonValue);
 	} catch (e) {
-		throw new Error('There was a problem with storage in your device!');
+		throw new Error('There was a problem with storage on your device!');
 	}
 };
 
@@ -235,20 +256,17 @@ export const verifyPassword = (userEmail, userPassword) => {
 		if (userEmail && userPassword) {
 			let response;
 			try {
-				response = await fetch(
-					endpoints.login,
-					{
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({
-							email: userEmail,
-							password: userPassword,
-							returnSecureToken: true,
-						}),
-					}
-				);
+				response = await fetch(endpoints.login, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						email: userEmail,
+						password: userPassword,
+						returnSecureToken: true,
+					}),
+				});
 			} catch (err) {
 				if (err.message.toLowerCase().includes('network'))
 					throw new Error(

@@ -1,15 +1,14 @@
-import {
-	INDICATE_TRIED_TO_AUTO_LOGIN,
-	AUTHENTICATE,
-	LOGOUT,
-} from '../actions/authActions';
+import students from '../../data/students';
+import { INDICATE_TRIED_TO_AUTO_LOGIN, AUTHENTICATE, LOGOUT } from '../actions/authActions';
 
 const initialState = {
 	idToken: null,
-  userId: null,
+	userId: null,
 	pushToken: null,
-	userEmail:null,
+	userEmail: null,
 	triedAutoLogin: false,
+	//for now
+	userAppData: students.find((s) => s.id === 'studentUserId'), //null,
 };
 
 export default (state = initialState, action) => {
@@ -25,21 +24,23 @@ export default (state = initialState, action) => {
 				//isLoading: false,
 			};
 		}
-		case AUTHENTICATE:
+		case AUTHENTICATE: {
 			return {
 				...state,
 				idToken: action.idToken,
 				userId: action.userId,
+				pushToken: action.pushToken,
+				userEmail: action.userEmail,
+				//userAppData: action.userAppData,
 				triedAutoLogin: true,
 			};
-		
-		case LOGOUT:
+		}
+		case LOGOUT: {
 			return {
-				// ...initialState
 				...initialState,
 				triedAutoLogin: true,
 			};
-
+		}
 		default:
 			return state;
 	}

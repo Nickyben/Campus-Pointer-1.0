@@ -24,7 +24,7 @@ const AutoLoginScreen = ({}) => {
 				return;
 			}
 			const userDataObj = userData != null ? JSON.parse(userData) : null;
-			const { idToken, userId, expiryDate, pushToken, userEmail } = userDataObj; //added pushToken
+			const { idToken, userId, expiryDate, pushToken, userEmail, userAppData } = userDataObj; //added pushToken
 			const expiryDateObj = new Date(expiryDate); //converting the ISOString back to an obj
 			if (expiryDateObj <= new Date() || !idToken || !userId) {
 				//checking if the expiry date is past or now or (token or userId cant be found)
@@ -36,10 +36,11 @@ const AutoLoginScreen = ({}) => {
 			const expiryTime = expiryDateObj.getTime() - new Date().getTime();
 
 			// props.navigation.navigate('Shop');
-			dispatch(authenticate(idToken, userId, expiryTime, pushToken, userEmail));
+			dispatch(authenticate(idToken, userId, expiryTime, pushToken, userEmail, userAppData));
 		};
 
 		tryLogin();
+
 	}, [dispatch]);
 
 

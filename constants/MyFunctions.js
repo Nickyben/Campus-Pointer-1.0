@@ -184,7 +184,7 @@ export const thunkFetch = (arrOfFetchUrlAndInitObjs, responseDataConsumer) => {
 
 			responseDataConsumer(arrOfResponseJsonS, { idToken, userId, dispatch, state },);
 		} catch (err) {
-			console.warn(err);
+			//console.warn(err);
 			let errMsg;
 			const hasToDoWith = (keyword) => {
 				return err.message.toLowerCase().includes(keyword);

@@ -1,7 +1,10 @@
 import HomePost from '../models/homePost';
 import { rand } from '../constants/MyFunctions';
+import HomePostComment, { HomePostLike } from '../models/homeComment';
+import students from './students';
+import { useLinkBuilder } from '@react-navigation/native';
 
-const content = () => {
+const getContent = () => {
 	let posts = [
 		[
 			'US on Visa to Nigerians',
@@ -83,12 +86,17 @@ const content = () => {
 	];
 
 	const contentArr = [];
+	const comments = [];
+	const likes = [];
 	for (let s = 1; s <= 22; s++) {
 		const postArr = rand(posts);
 		const author = rand(authors);
+		const commentAuthorType = rand(['staff', 'admin', 'postAuthor']);
+
+		const postId = Math.random().toString();
 		contentArr.push(
 			new HomePost({
-				id: Math.random().toString(),
+				id: postId,
 				title: postArr[0],
 				type: postArr[1],
 				date: new Date(),
@@ -100,10 +108,37 @@ const content = () => {
 				responses: postArr[3],
 			})
 		);
+		for (let r = 1; r <= parseInt(Math.random() * 15000); r++) {
+			comments.push(
+				new HomePostComment({
+					id: postId + new Date().toLocaleDateString() + Math.random().toString(),
+					ownPostId: postId,
+					date: new Date(),
+					authorType: commentAuthorType,
+					author: rand(students),
+					text: rand(postArr[3]),
+				})
+			);
+		}
+
+		for (let r = 1; r <= parseInt(Math.random() * 15000); r++) {
+			likes.push(
+				new HomePostLike({
+					id: Math.random().toString() + new Date().toLocaleDateString(),
+					date: new Date(),
+					postId,
+					liker: rand(students),
+				})
+			);
+		}
 	}
-	return contentArr;
+	return [contentArr, comments, likes];
 };
 
-const homePosts = content().reverse();
+const content = getContent();
+const homePosts = content[0].reverse();
+export const comments = content[1];
+export const likes = content[2];
 
+//console.log(likes)
 export default homePosts;

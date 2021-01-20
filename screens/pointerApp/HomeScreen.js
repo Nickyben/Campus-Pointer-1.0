@@ -16,7 +16,7 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 import HeaderBtn from '../../components/UI/HeaderBtn';
 import Colors from '../../constants/Colors';
-import { fetchHomeData, likePost, sharePost, commentPost } from '../../store/actions/homeActions';
+import { fetchHomeData, likePost, sharePost, commentPost, fetchHomeReactions } from '../../store/actions/homeActions';
 import TouchIcon from '../../components/UI/TouchIcon';
 import { rand, shuffle, getSince } from '../../constants/MyFunctions';
 import Btn from '../../components/UI/Btn';
@@ -42,15 +42,12 @@ const _Item = ({
 	const { name, office, post } = author ? author : {};
 	const isStudent = true; //for now
 	const commentAuthorType = isStudent ? 'student' : rand(['staff', 'admin', 'postAuthor']);
-	const theUser = isStudent
-		? useSelector((state) => state.dataReducer.availableStudents.find((s) => s.id === 'studentUserId'))
-		: useSelector((state) => state.dataReducer.availableStudents.find((s) => s.id === 'staffUserId'));
+	const theUser = useSelector((state) => state.authReducer.userAppData);
 	const isLiked = useSelector((state) => state.homeReducer.availableLikes).includes(id);
 	const numOfLikes = useSelector((state) => state.homeReducer.availableGeneralLikes.filter((l) => l.postId === id))
 		.length;
 	const postComments = useSelector((state) => state.homeReducer.availableComments.filter((c) => c.ownPostId === id));
 	const isCommented = !!postComments.find((c) => c.author.id === theUser.id && c.ownPostId === id);
-
 	const [isReplyingPost, setIsReplyingPost] = useState(false);
 	const [suggestedComments, setSuggestedComments] = useState(shuffle(responses));
 
@@ -85,7 +82,7 @@ const _Item = ({
 					<View style={styles.authorImageContainer}>
 						<Touch
 							onTouch={() => {
-								console.log("touched author's image");
+								console.warn("touched author's image");
 							}}
 							style={{}}>
 							<Image source={image} style={styles.authorImage} />
@@ -167,7 +164,7 @@ const _Item = ({
 								onTouch={showResponsesHandler.bind(this, id)}
 								name={'chatboxes'}
 								size={22}
-								color={isReplyingPost ? Colors.primary : '#bcd'}
+								color={isCommented ? Colors.primary :isReplyingPost? Colors.accent:  '#bcd'}
 							/>
 						</View>
 
@@ -220,7 +217,8 @@ const _Item = ({
 										return (
 											<Btn
 												bgColor={'#fff'}
-												borderColor={Colors.primary}
+												textColor={Colors.accent}
+												borderColor={Colors.accent}
 												key={i}
 												onPress={commentHandler.bind(this, id, theUser, commentAuthorType, r)}
 												style={{
@@ -239,7 +237,8 @@ const _Item = ({
 										return (
 											<Btn
 												bgColor={'#fff'}
-												borderColor={Colors.primary}
+												textColor={Colors.accent}
+												borderColor={Colors.accent}
 												key={i}
 												onPress={commentHandler.bind(this, id, theUser, commentAuthorType, r)}
 												style={{
@@ -277,6 +276,8 @@ const HomeScreen = ({ navigation }) => {
 		setIsRefreshing(true);
 		try {
 			await dispatch(fetchHomeData());
+			//await dispatch(fetchHomeReactions('likes'));
+			//await dispatch(fetchHomeReactions('comments'));
 		} catch (err) {
 			setError(err.message);
 		}
@@ -301,7 +302,7 @@ const HomeScreen = ({ navigation }) => {
 				setIsLoading(false);
 			});
 		},
-		[dispatch, loadData]
+		[loadData]
 	);
 
 	// useLayoutEffect(()=>{
