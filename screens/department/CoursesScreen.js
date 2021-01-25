@@ -28,6 +28,7 @@ import { markCourse, markAllCourses } from '../../store/actions/courseAppActions
 import ErrorScreen from '../pointerApp/ErrorScreen';
 import LoadingScreen from '../pointerApp/LoadingScreen';
 import { RefreshControl } from 'react-native';
+import listEmptyComponent from '../../components/pointerComponents/listEmptyComponent';
 
 const MyItem = ({ Register, content, content: { id, courseTitle, courseCode, creditUnits }, onSelect, style }) => {
 	const [isMarked, setIsMarked] = useState(false);
@@ -115,15 +116,15 @@ const SectionItem = ({ onCollapse, courses, title, Register, showingSection }) =
 		}
 	}, [isMarked, isClicked]);
 
-	const [showSection, setShowSection] = useState(false);
-
+	//const [showSection, setShowSection] = useState(false);
+	const showSection = showingSection === title;
 	const showSectionHandler = (title) => {
 		showSection === true ? onCollapse('empty') : onCollapse(title);
 	};
 
-	useEffect(() => {
-		setShowSection((p) => showingSection === title);
-	}, [showingSection]);
+	// useEffect(() => {
+	// 	setShowSection((p) => showingSection === title);
+	// }, [showingSection]);
 
 	return (
 		<View style={{ backgroundColor: Colors.switchPrimary }}>
@@ -347,50 +348,21 @@ const CoursesScreen = ({ navig, source, submitCourses }) => {
 		return <LoadingScreen />;
 	}
 
-	const listEmptyComponent = (itemName, notFoundText) => {
-		if (isRefreshing) {
-			return <LoadingScreen />;
-		}
-		return (
-			<View style={styles.centered}>
-				<Text
-					style={{
-						fontFamily: 'OpenSansBold',
-						fontSize: 17,
-						color: '#333',
-						//textAlign: 'justify',
-					}}>
-					{notFoundText ? notFoundText : `Oops! No ${itemName ? itemName : 'items'} Found!`}
-				</Text>
-				<Btn
-					fontSize={15}
-					style={{
-						marginVertical: 10,
-					}}
-					onPress={loadData}>
-					Retry
-				</Btn>
-			</View>
-		);
-	};
+
 
 	return (
 		<View style={styles.screen}>
 			<SectionList
 				refreshControl={
-					<RefreshControl
-						colors={[Colors.primary,]}
-						refreshing={isRefreshing}
-						onRefresh={loadCourses}
-					/>
+					<RefreshControl colors={[Colors.primary]} refreshing={isRefreshing} onRefresh={loadCourses} />
 				}
-				
 				sections={COURSES}
 				keyExtractor={(item, index) => item + index}
 				renderItem={renderItem}
 				renderSectionHeader={renderSectionHeader}
 				extraData={{ markedCourses, showingSection }}
-				ListEmptyComponent={listEmptyComponent}
+				contentContainerStyle={{ ...styles.listContainer, flex: COURSES.length === 0 ? 1 : 0 }}
+				ListEmptyComponent={listEmptyComponent.bind(this, { onRetry: loadCourses, isRefreshing })}
 			/>
 		</View>
 	);
@@ -431,6 +403,9 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		padding: 15,
 		justifyContent: 'space-between',
+	},
+	listContainer: {
+		paddingBottom: 10,
 	},
 	listText: {
 		marginLeft: 10,

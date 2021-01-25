@@ -14,6 +14,9 @@ import ErrorScreen from '../pointerApp/ErrorScreen';
 import LoadingScreen from '../pointerApp/LoadingScreen';
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions } from 'react-native';
+import { RefreshControl } from 'react-native';
+import Btn from '../../components/UI/Btn';
+import listEmptyComponent from '../../components/pointerComponents/listEmptyComponent';
 
 const TimeTableTabNav = createMaterialTopTabNavigator();
 
@@ -37,16 +40,16 @@ const defaultNavOptions = (props) => {
 	};
 };
 
-const PeriodComponent = ({ day, p, index, onNavigate, showingTitle, hideOthers }) => {
-	const [showCourseTitle, setShowCourseTitle] = useState(false);
-
+const PeriodComponent = ({ day, period, index, onNavigate, showingTitle, hideOthers }) => {
+	//const [showCourseTitle, setShowCourseTitle] = useState(showingTitle === index);
+	const showCourseTitle = showingTitle === index;
 	const courseTitleHandler = (index) => {
 		showCourseTitle === true ? hideOthers('') : hideOthers(index);
 	};
 
-	useEffect(() => {
-		setShowCourseTitle((p) => showingTitle === index);
-	}, [showingTitle, index]);
+	// useEffect(() => {
+	// 	setShowCourseTitle((p) => showingTitle === index);
+	// }, [showingTitle, index]);
 
 	const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 	const to_date = new Date().toDateString();
@@ -60,19 +63,19 @@ const PeriodComponent = ({ day, p, index, onNavigate, showingTitle, hideOthers }
 	const hourNow = new Date().getHours();
 	const meridian = hourNow >= 12 ? 'pm' : 'am';
 	const currentHour = hourNow > 12 ? hourNow - 12 + meridian : hourNow + meridian;
-	const periodHour = p.time.split(' - ')[0];
+	const periodHour = period.time.split(' - ')[0];
 
 	const isPresentPeriod = currentHour === periodHour && isToday;
 
 	return (
 		<>
 			<View style={{ flexDirection: 'row' }}>
-				<View style={{ width: '2%', backgroundColor: p.color, height: '100%' }}></View>
+				<View style={{ width: '2%', backgroundColor: period.color, height: '100%' }}></View>
 				<View
 					style={{
 						...styles.periodContainer,
-						backgroundColor: isPresentPeriod ? p.color + '22' : '#fff',
-						borderColor: isPresentPeriod ? p.color + '22' : '#e3e6e7',
+						backgroundColor: isPresentPeriod ? period.color + '22' : '#fff',
+						borderColor: isPresentPeriod ? period.color + '22' : '#e3e6e7',
 					}}>
 					<View
 						style={{
@@ -80,9 +83,9 @@ const PeriodComponent = ({ day, p, index, onNavigate, showingTitle, hideOthers }
 							alignItems: 'center',
 						}}>
 						<Text
-							onPress={onNavigate.bind(this, p.course.id, 'course', p.course)}
+							onPress={onNavigate.bind(this, period.course.id, 'course', period.course)}
 							style={{ ...styles.periodText, marginRight: 5, color: '#00a7e7' }}>
-							{p.course.courseCode}
+							{period.course.courseCode}
 						</Text>
 
 						<TouchIcon
@@ -90,12 +93,12 @@ const PeriodComponent = ({ day, p, index, onNavigate, showingTitle, hideOthers }
 							touched={() => showCourseTitle && showingTitle === index}
 							toggleIcons={['arrow-dropright', 'arrow-dropdown']}
 							size={23}
-							color={p.color}
+							color={period.color}
 							onTouch={courseTitleHandler.bind(this, index)}
 						/>
 					</View>
 
-					<Text style={{ ...styles.periodText2, color: '#777' }}>{p.time}</Text>
+					<Text style={{ ...styles.periodText2, color: '#777' }}>{period.time}</Text>
 
 					<View
 						style={{
@@ -103,34 +106,34 @@ const PeriodComponent = ({ day, p, index, onNavigate, showingTitle, hideOthers }
 							alignItems: 'center',
 						}}>
 						<Text
-							onPress={onNavigate.bind(this, p.venue.id, 'hall', p.venue)}
+							onPress={onNavigate.bind(this, period.venue.id, 'hall', period.venue)}
 							style={{ ...styles.periodText2, marginRight: 5 }}>
-							{p.venue.fullName}
+							{period.venue.fullName}
 						</Text>
 						<TouchIcon
 							name="arrow-dropright"
 							size={23}
-							color={p.color}
-							onTouch={onNavigate.bind(this, p.venue.id, 'hall', p.venue)}
+							color={period.color}
+							onTouch={onNavigate.bind(this, period.venue.id, 'hall', period.venue)}
 						/>
 					</View>
 				</View>
 			</View>
 
 			{showCourseTitle && showingTitle === index && (
-				<View style={{ backgroundColor: p.color }}>
+				<View style={{ backgroundColor: period.color }}>
 					<Text
-						onPress={onNavigate.bind(this, p.course.id, 'course', p.course)}
+						onPress={onNavigate.bind(this, period.course.id, 'course', period.course)}
 						style={{
 							...styles.periodText,
 							width: '100%',
-							backgroundColor: p.color,
+							backgroundColor: period.color,
 							padding: 15,
 							paddingLeft: 40,
 							marginRight: 5,
 							color: '#f3f6f7',
 						}}>
-						Course Title: {p.course.courseTitle}
+						Course Title: {period.course.courseTitle}
 					</Text>
 				</View>
 			)}
@@ -139,31 +142,30 @@ const PeriodComponent = ({ day, p, index, onNavigate, showingTitle, hideOthers }
 };
 
 //day, periods, navig
-const TableComponent = ({}) => {
+const TableComponent = ({ route: { name } }) => {
 	const lecturesTimetable = useSelector((s) =>
 		s.dataReducer.availableTimetables.find(
 			(t) => t.timetableType === 'Lectures' && t.department === 'Computer Engineering'
 		)
 	);
 	const [showTitle, setShowTitle] = useState(-1);
+	const [isLoading, setIsLoading] = useState(false);
+	const [isRefreshing, setIsRefreshing] = useState(false);
+	const [error, setError] = useState();
+
+	const dispatch = useDispatch();
 	const daysRowsArr = lecturesTimetable ? lecturesTimetable.dayRows : []; //an obj
 	const navig = useNavigation();
 	const to_date = new Date().toDateString();
 	const today = to_date.split(' ')[0];
+
 	const schoolWeekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-	const dayIndex = schoolWeekDays.indexOf(today);
+	const dayIndex = schoolWeekDays.indexOf(name);
 	const day = daysRowsArr[dayIndex].day;
 	const periods = daysRowsArr[dayIndex].periods;
 
-	const titlesHandler = (index) => {
-		//console.log(index+ 'da')
-		setShowTitle((p) => index);
-	};
-
 	const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-	// const to_date = new Date().toDateString();
 	const todayTimeStamp = +new Date().getTime();
-	// const today = to_date.split(' ')[0];
 	const isWeekend = weekdays.indexOf(today) > 4;
 	const diff = !isWeekend
 		? weekdays.indexOf(day) - weekdays.indexOf(today)
@@ -175,6 +177,10 @@ const TableComponent = ({}) => {
 	const meridian = hourNow >= 12 ? 'pm' : 'am';
 	const currentHour = hourNow > 12 ? hourNow - 12 + meridian : hourNow + meridian;
 
+	const titlesHandler = (index) => {
+		//console.log(index+ 'da')
+		setShowTitle((p) => index);
+	};
 	const presentPeriod = periods.find((p) => {
 		const periodHour = p.time.split(' - ')[0];
 		return currentHour === periodHour && isToday;
@@ -189,6 +195,57 @@ const TableComponent = ({}) => {
 		}
 	};
 
+	const loadData = useCallback(async () => {
+		setError(null);
+		setIsRefreshing(true);
+		try {
+			await dispatch(fetchTimeTables());
+		} catch (err) {
+			setError(err.message);
+		}
+		setIsRefreshing(false);
+	}, [dispatch]); //setIsLoading is handled already by react,
+
+	// useEffect(() => {
+	//   const unsubscribe = navig.addListener('focus', loadData);
+	//   //clean up function to run when effect is about to rerun or when component is destroyed or unmounted
+	//   return (() => {
+	//     unsubscribe();
+	//   });
+	// }, [loadData]);
+
+	useEffect(
+		//will run only when the component loads and not again unless dependencies change
+		//don't use async keyword here, instead, use .then() after the dispatch()
+		() => {
+			setIsLoading(true);
+			loadData().then(() => {
+				setIsLoading(false);
+			});
+		},
+		[loadData]
+	);
+
+	if (error) {
+		return (
+			<ErrorScreen
+				errorObj={{
+					messageHead: error.toLowerCase().includes('network') ? 'Network Error' : 'Error Occurred',
+					messageBody: error,
+					image: null,
+				}}
+				retryFunc={loadData}
+			/>
+		);
+	}
+
+	if (isLoading) {
+		return <LoadingScreen />;
+	}
+
+	if (periods.length === 0) {
+		return listEmptyComponent({ onRetry: loadData, isRefreshing, itemName: 'timetable' });
+	}
 	return (
 		<View style={{ flex: 1, backgroundColor: '#fff' }}>
 			<View style={styles.bar}>
@@ -227,6 +284,13 @@ const TableComponent = ({}) => {
 			</View>
 
 			<ScrollView
+				refreshControl={
+					<RefreshControl
+						colors={periods.map((p) => p.color)}
+						refreshing={isRefreshing}
+						onRefresh={loadData}
+					/>
+				}
 				style={{
 					backgroundColor: '#fafcfd',
 					paddingTop: 20,
@@ -237,7 +301,7 @@ const TableComponent = ({}) => {
 						key={i}
 						index={i}
 						day={day}
-						p={p}
+						period={p}
 						onNavigate={navigateHandler}
 						showingTitle={showTitle}
 						hideOthers={titlesHandler}
@@ -248,131 +312,43 @@ const TableComponent = ({}) => {
 	);
 };
 
-const TimetableScreen = ({ navig }) => {
-	const lecturesTimetable = useSelector((s) =>
-		s.dataReducer.availableTimetables.find(
-			(t) => t.timetableType === 'Lectures' && t.department === 'Computer Engineering'
-		)
-	);
-
-	const [isLoading, setIsLoading] = useState(false);
-	const [isRefreshing, setIsRefreshing] = useState(false);
-	const [error, setError] = useState();
-
-	const daysRowsArr = lecturesTimetable ? lecturesTimetable.dayRows : []; //an obj
+const TimetableScreen = ({}) => {
+	const schoolWeekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 	const to_date = new Date().toDateString();
 	const today = to_date.split(' ')[0];
-	const dispatch = useDispatch();
-	const loadData = useCallback(async () => {
-		setError(null);
-		setIsRefreshing(true);
-		try {
-			await dispatch(fetchTimeTables());
-		} catch (err) {
-			setError(err.message);
-		}
-		setIsRefreshing(false);
-	}, [dispatch]); //setIsLoading is handled already by react,
-
-	// useEffect(() => {
-	//   const unsubscribe = navig.addListener('focus', loadData);
-	//   //clean up function to run when effect is about to rerun or when component is destroyed or unmounted
-	//   return (() => {
-	//     unsubscribe();
-	//   });
-	// }, [loadData]);
-
-	useEffect(
-		//will run only when the component loads and not again unless dependencies change
-		//don't use async keyword here, instead, use .then() after the dispatch()
-		() => {
-			setIsLoading(true);
-			loadData().then(() => {
-				setIsLoading(false);
-			});
-		},
-		[loadData]
-	);
-
-	const listEmptyComponent = (itemName, notFoundText) => {
-		if (isRefreshing) {
-			return <LoadingScreen />;
-		}
-		return (
-			<View style={styles.centered}>
-				<Text
-					style={{
-						fontFamily: 'OpenSansBold',
-						fontSize: 17,
-						color: '#333',
-						//textAlign: 'justify',
-					}}>
-					{notFoundText ? notFoundText : `Oops! No ${itemName ? itemName : 'items'} Found!`}
-				</Text>
-				<Btn
-					fontSize={15}
-					style={{
-						marginVertical: 10,
-					}}
-					onPress={loadData}>
-					Retry
-				</Btn>
-			</View>
-		);
-	};
-
-	if (error) {
-		return (
-			<ErrorScreen
-				errorObj={{
-					messageHead: error.toLowerCase().includes('network') ? 'Network Error' : 'Error Occurred',
-					messageBody: error,
-					image: null,
-				}}
-				retryFunc={loadData}
-			/>
-		);
-	}
-
-	if (isLoading) {
-		return <LoadingScreen />;
-	}
 
 	return (
-		daysRowsArr.length !== 0 && (
-			<TimeTableTabNav.Navigator
-				initialLayout={{ width: Dimensions.get('window').width }}
-				initialRouteName={today} //screenOptions={defaultTabStacksOpts}
-				tabBarOptions={{
-					activeTintColor: Colors.primary,
-					inactiveTintColor: '#246',
-					indicatorStyle: {
-						backgroundColor: Colors.primary,
-					},
-					// activeBackgroundColor: 'white',
-					// inactiveBackgroundColor: '#effdff',
-					showIcon: false,
-					showLabel: true,
-					// tabStyle:{
+		<TimeTableTabNav.Navigator
+			initialLayout={{ width: Dimensions.get('window').width }}
+			initialRouteName={today} //screenOptions={defaultTabStacksOpts}
+			tabBarOptions={{
+				activeTintColor: Colors.primary,
+				inactiveTintColor: '#246',
+				indicatorStyle: {
+					backgroundColor: Colors.primary,
+				},
+				// activeBackgroundColor: 'white',
+				// inactiveBackgroundColor: '#effdff',
+				showIcon: false,
+				showLabel: true,
+				// tabStyle:{
 
-					// },
-					labelStyle: {
-						fontFamily: 'OpenSansBold',
-						fontSize: 12,
-					},
-				}}>
+				// },
+				labelStyle: {
+					fontFamily: 'OpenSansBold',
+					fontSize: 12,
+				},
+			}}>
+			<TimeTableTabNav.Screen name={schoolWeekDays[0]} component={TableComponent} />
 
-				<TimeTableTabNav.Screen name={daysRowsArr[0].day} component={TableComponent} />
+			<TimeTableTabNav.Screen name={schoolWeekDays[1]} component={TableComponent} />
 
-				<TimeTableTabNav.Screen name={daysRowsArr[1].day} component={TableComponent} />
+			<TimeTableTabNav.Screen name={schoolWeekDays[2]} component={TableComponent} />
 
-				<TimeTableTabNav.Screen name={daysRowsArr[2].day} component={TableComponent} />
+			<TimeTableTabNav.Screen name={schoolWeekDays[3]} component={TableComponent} />
 
-				<TimeTableTabNav.Screen name={daysRowsArr[3].day} component={TableComponent} />
-
-				<TimeTableTabNav.Screen name={daysRowsArr[4].day} component={TableComponent} />
-			</TimeTableTabNav.Navigator>
-		)
+			<TimeTableTabNav.Screen name={schoolWeekDays[4]} component={TableComponent} />
+		</TimeTableTabNav.Navigator>
 	);
 };
 

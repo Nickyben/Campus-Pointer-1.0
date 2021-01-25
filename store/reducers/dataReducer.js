@@ -8,7 +8,8 @@ import {
 	LOAD_STUDENTS,
 	LOAD_DEPT_DATA,
 	LOAD_HOME_DATA,
-  LOAD_DEPT_EVENTS,
+	LOAD_DEPT_EVENTS,
+	LOAD_HALLS,
 } from '../actions/dataActions';
 
 import courses from '../../data/courses'; // should be replaced with data fetched from server/db and departments
@@ -34,12 +35,6 @@ const initialState = {
 
 export default (state = initialState, action) => {
 	switch (action.type) {
-		case LOAD_COURSES: {
-			return {
-				...state,
-				availableCourses: action.availableCourses,
-			};
-		}
 		case LOAD_DEPT_DATA: {
 			return {
 				...state,
@@ -49,10 +44,39 @@ export default (state = initialState, action) => {
 				// availableTimetables: action.availableTimetables,
 			};
 		}
-		case LOAD_DEPT_EVENTS: {
+
+		case LOAD_STAFF: {
+			return {
+				...state,
+				availableStaff: action.availableStaff,
+			};
+		}
+
+		case LOAD_STUDENTS: {
+			return {
+				...state,
+				availableStudents: action.availableStudents,
+			};
+		}
+
+		case LOAD_HALLS: {
+			return {
+				...state,
+				availableHalls: action.availableHalls,
+			};
+		}
+
+		case LOAD_COURSES: {
 			return {
 				...state,
 				availableCourses: action.availableCourses,
+			};
+		}
+
+		case LOAD_DEPT_EVENTS: {
+			return {
+				...state,
+				availableEvents: action.availableEvents,
 			};
 		}
 	}

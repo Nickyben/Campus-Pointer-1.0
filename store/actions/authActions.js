@@ -8,6 +8,8 @@ export const INDICATE_TRIED_TO_AUTO_LOGIN = 'INDICATE_TRIED_TO_AUTO_LOGIN';
 export const LOGOUT = 'LOGOUT';
 export const UPDATE_USER_APP_DATA = 'UPDATE_USER_APP_DATA';
 
+export const authActionTypes = [AUTHENTICATE, INDICATE_TRIED_TO_AUTO_LOGIN, LOGOUT, UPDATE_USER_APP_DATA];
+
 let timer;
 
 export const tryAutoLogin = () => {
@@ -29,7 +31,7 @@ export const updateUserAppData = () => {
 			// error reading value
 		}
 		const userDataObj = userData != null ? JSON.parse(userData) : null;
-		const {expiryDate} = userDataObj; //added pushToken
+		const { expiryDate } = userDataObj; //added pushToken
 		const expiryDateObj = new Date(expiryDate);
 		const expiryTime = expiryDateObj.getTime() - new Date().getTime();
 

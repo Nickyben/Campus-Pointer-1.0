@@ -24,23 +24,25 @@ import Card from '../../components/UI/Card';
 import { fetchChatMessages } from '../../store/actions/messageActions';
 import { useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import LoadingScreen from './LoadingScreen';
+import ErrorScreen from './ErrorScreen';
+import { RefreshControl } from 'react-native';
+import listEmptyComponent from '../../components/pointerComponents/listEmptyComponent';
 
-const _Item = ({ content: { id, messages }, onSelect, index}) => {
+const _Item = ({ content: { id, messages }, onSelect, index }) => {
 	const navigation = useNavigation();
-	const { type, date, senderId, receiverId, text, groupId } =
+	const { type, date, senderId, receiverId, sender, receiver, text, groupId } =
 		messages && messages.sort((m1, m2) => m2.date.getTime() - m1.date.getTime())[0]; //[messages.length - 1];
 
-	const sender = useSelector((s) => s.dataReducer.availableStudents.find((s) => s.id === senderId));
-	const receiver = useSelector((s) => s.dataReducer.availableStudents.find((s) => s.id === receiverId));
-
-	const randNum = useRef(rand([0, 0, 0, 1, 2, 3, 4, 5, 6])); // for now
+	const randNum = useRef(rand([0, 0, 0, 0, 1, 2, 3, 4, 5, 6])); // for now
 	const unreadMsgs = randNum.current;
-	const chatPerson = sender && receiver && senderId === 'studentUserId' ? receiver : sender;
-	const { image, fullName, level, office, post } = chatPerson;
+	const chatPerson = sender && receiver && (senderId === 'studentUserId' ? receiver : sender);
+
+	const { image, fullName, level, office, post, department } = chatPerson || {};
 	const when = getWhen(date)[2];
 
 	const viewChatHandler = () => {
-		navigation.navigate('MsgChatDetail', { chatId: id, fullName });
+		navigation.navigate('MsgChatDetail', { chatId: id, image, fullName, level, office, post, department });
 	};
 
 	return (
@@ -62,12 +64,12 @@ const _Item = ({ content: { id, messages }, onSelect, index}) => {
 							height: styles.image.height,
 							borderRadius: styles.image.borderRadius,
 						}}>
-						<Image source={image} style={styles.image} />
+						{image && <Image source={image} style={styles.image} />}
 					</Touch>
 				</View>
 
 				<View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
-					<View style={{}}>
+					<View style={{ flex: 1 }}>
 						<View style={{ ...styles.details }}>
 							<View style={{ flexDirection: 'row' }}>
 								{fullName && <Text style={{ ...styles.detailsText }}>{fullName}</Text>}
@@ -122,27 +124,24 @@ const MessagesScreen = ({
 }) => {
 	//const userMsgs = useSelector(s => s.messageReducer.availableMessages);
 	//const chatPersonIds = useSelector(s => s.messageReducer.availableChatPersonsId);
-	const chatMsgs = useSelector((s) => s.messageReducer.availableChatMsgs).sort((m2, m1) => {
-//messages.sort((m1, m2) => m2.date.getTime() - m1.date.getTime())[0];
-		let m1Last = m1.messages.sort((m1, m2) => m2.date.getTime() - m1.date.getTime())[0];
-		let m2Last = m2.messages.sort((m1, m2) => m2.date.getTime() - m1.date.getTime())[0]
-		return m1Last.date.getTime() - m2Last.date.getTime();
-	});
+	const chatMsgs = useSelector((s) => s.messageReducer.availableChatMsgs)
+	const [isLoading, setIsLoading] = useState(false);
+	const [isRefreshing, setIsRefreshing] = useState(false);
+	const [error, setError] = useState();
 	const dispatch = useDispatch();
 
 	const renderItem = (
 		{ item, index } //auto gets data in obj form , I deStructured it in params
-	) => <_Item content={item} onSelect={() => {}}  index={index} />;
+	) => <_Item content={item} onSelect={() => {}} index={index} />;
 	const loadChatMessages = useCallback(async () => {
-		//   setError(null);
-		//   setIsRefreshing(true)
-		//try {
-		await dispatch(fetchChatMessages());
-		//   }
-		//catch (err) {
-		//     setError(err.message);
-		//   }
-		//   setIsRefreshing(false);
+		setError(null);
+		setIsRefreshing(true);
+		try {
+			await dispatch(fetchChatMessages());
+		} catch (err) {
+			setError(err.message);
+		}
+		setIsRefreshing(false);
 	}, [dispatch]); //setIsLoading is handled already by react,
 
 	useEffect(() => {
@@ -158,17 +157,37 @@ const MessagesScreen = ({
 		//will run only when the component loads and not again unless dependencies change
 		//don't use async keyword here, instead, use .then() after the dispatch()
 		() => {
-			//     setIsLoading(true);
+			setIsLoading(true);
 			loadChatMessages().then(() => {
-				//       setIsLoading(false);
+				setIsLoading(false);
 			});
 		},
 		[loadChatMessages]
 	);
-	//console.log(messages.filter((m, i) => i < 20))
+
+	if (error) {
+		return (
+			<ErrorScreen
+				errorObj={{
+					messageHead: error.toLowerCase().includes('network') ? 'Network Error' : 'Error Occurred',
+					messageBody: error,
+					image: null,
+				}}
+				retryFunc={loadChatMessages}
+			/>
+		);
+	}
+
+	if (isLoading) {
+		return <LoadingScreen />;
+	}
+
 	return (
 		<View style={styles.screen}>
 			<FlatList
+				refreshControl={
+					<RefreshControl colors={[Colors.primary]} refreshing={isRefreshing} onRefresh={loadChatMessages} />
+				}
 				showsHorizontalScrollIndicator={false}
 				//initialNumToRender, refreshing
 				//remember to render num according to screen dimensions
@@ -177,7 +196,9 @@ const MessagesScreen = ({
 				data={chatMsgs}
 				renderItem={renderItem}
 				contentContainerStyle={styles.listContainer}
+				ListEmptyComponent={listEmptyComponent.bind(this, { onRetry: loadChatMessages, isRefreshing })}
 			/>
+
 			<TouchIcon
 				style={{ bottom: 20, right: 20, position: 'absolute' }}
 				onTouch={() => {

@@ -8,10 +8,10 @@ import Staff from '../../models/staff';
 import Hall from '../../models/hall';
 import Student from '../../models/student';
 import { endpoints } from '../../src/firebase';
-import { thunkFetch } from '../../constants/MyFunctions';
 import Course from '../../models/course';
 import Event from '../../models/event';
 import Timetable from '../../models/timetable';
+import { thunkFetch } from '../../constants/backendFunctions';
 
 export const LOAD_ADMINS = 'LOAD_ADMINS';
 export const LOAD_COURSES = 'LOAD_COURSES'; //Should probably depend on the departments
@@ -25,6 +25,21 @@ export const LOAD_DEPT_DATA = 'LOAD_DEPT_DATA';
 export const LOAD_HOME_DATA = 'LOAD_HOME_DATA';
 export const LOAD_DEPT_EVENTS = 'LOAD_DEPT_EVENTS';
 export const LOAD_TIMETABLES = 'LOAD_TIMETABLES';
+
+export const dataActionTypes = [
+	LOAD_ADMINS,
+	LOAD_COURSES,
+	LOAD_STUDENTS,
+	LOAD_STAFF,
+	LOAD_HALLS,
+	LOAD_DEPARTMENTS,
+	LOAD_FACULTIES,
+	LOAD_ASSOCIATIONS,
+	LOAD_DEPT_DATA,
+	LOAD_HOME_DATA,
+	LOAD_DEPT_EVENTS,
+	LOAD_TIMETABLES,
+];
 
 export const fetchDeptHomeData = () => {
 	const urlArr = [
@@ -220,62 +235,138 @@ export const fetchEvents = () => {
 	return thunkFetch(urlArr, consumerFunc);
 };
 
-
 export const fetchTimeTables = () => {
-		const urlArr = [{ url: endpoints.getData('timeTables'), init: {} }];
-		const consumerFunc = (arrOfRespJsonS, { idToken, userId, dispatch, state }) => {
-			const previousDataArrays = [state.dataReducer.availableEvents];
+	const urlArr = [{ url: endpoints.getData('timeTables'), init: {} }];
+	const consumerFunc = (arrOfRespJsonS, { idToken, userId, dispatch, state }) => {
+		const previousDataArrays = [state.dataReducer.availableEvents];
 
-			let timeTablesData;
-			const allAreOkay = arrOfRespJsonS.every((jsonObj) => jsonObj && !jsonObj.error);
+		let timeTablesData;
+		const allAreOkay = arrOfRespJsonS.every((jsonObj) => jsonObj && !jsonObj.error);
 
-			for (const [index, respJson] of arrOfRespJsonS.entries()) {
-				const initialArr = respJson && !respJson.error ? [] : previousDataArrays[index];
+		for (const [index, respJson] of arrOfRespJsonS.entries()) {
+			const initialArr = respJson && !respJson.error ? [] : previousDataArrays[index];
 
-				if (respJson && !respJson.error) {
-					for (const key in respJson) {
-						const item = respJson[key];
-						initialArr.push(new Timetable(item));
-					}
-				}
-				switch (index) {
-					case 0: {
-						timeTablesData = initialArr;
-						break;
-					}
+			if (respJson && !respJson.error) {
+				for (const key in respJson) {
+					const item = respJson[key];
+					initialArr.push(new Timetable(item));
 				}
 			}
+			switch (index) {
+				case 0: {
+					timeTablesData = initialArr;
+					break;
+				}
+			}
+		}
 
-			dispatch({
-				type: LOAD_TIMETABLES,
-				availableTimetables: timeTablesData, // should be replaced with data fetched from server/db
-			});
-		};
-		return thunkFetch(urlArr, consumerFunc);
-
-};
-
-
-
-export const fetchStudents = () => {
-	return {
-		type: LOAD_COURSES,
-		availableCourses: courses, // should be replaced with data fetched from server/db
+		dispatch({
+			type: LOAD_TIMETABLES,
+			availableTimetables: timeTablesData, // should be replaced with data fetched from server/db
+		});
 	};
+	return thunkFetch(urlArr, consumerFunc);
 };
 
 export const fetchStaff = () => {
-	return {
-		type: LOAD_COURSES,
-		availableCourses: courses, // should be replaced with data fetched from server/db
+	const urlArr = [{ url: endpoints.getData('staff'), init: {} }];
+	const consumerFunc = (arrOfRespJsonS, { idToken, userId, dispatch, state }) => {
+		const previousDataArrays = [state.dataReducer.availableStaff];
+
+		let deptStaffData;
+		const allAreOkay = arrOfRespJsonS.every((jsonObj) => jsonObj && !jsonObj.error);
+
+		for (const [index, respJson] of arrOfRespJsonS.entries()) {
+			const initialArr = respJson && !respJson.error ? [] : previousDataArrays[index];
+
+			if (respJson && !respJson.error) {
+				for (const key in respJson) {
+					const item = respJson[key];
+					initialArr.push(new Staff(item));
+				}
+			}
+			switch (index) {
+				case 0: {
+					deptStaffData = initialArr;
+					break;
+				}
+			}
+		}
+
+		dispatch({
+			type: LOAD_STAFF,
+			availableStaff: deptStaffData,
+		});
 	};
+	return thunkFetch(urlArr, consumerFunc);
 };
 
-export const fetchHalls = () => {
-	return {
-		type: LOAD_HALLS,
-		availableCourses: courses, // should be replaced with data fetched from server/db
+
+export const fetchStudents = () => {
+	const urlArr = [{ url: endpoints.getData('students'), init: {} }];
+	const consumerFunc = (arrOfRespJsonS, { idToken, userId, dispatch, state }) => {
+		const previousDataArrays = [state.dataReducer.availableStudents];
+
+		let deptStudentsData;
+		const allAreOkay = arrOfRespJsonS.every((jsonObj) => jsonObj && !jsonObj.error);
+
+		for (const [index, respJson] of arrOfRespJsonS.entries()) {
+			const initialArr = respJson && !respJson.error ? [] : previousDataArrays[index];
+
+			if (respJson && !respJson.error) {
+				for (const key in respJson) {
+					const item = respJson[key];
+					initialArr.push(new Student(item));
+				}
+			}
+			switch (index) {
+				case 0: {
+					deptStudentsData = initialArr;
+					break;
+				}
+			}
+		}
+
+		dispatch({
+			type: LOAD_STUDENTS,
+			availableStudents: deptStudentsData,
+		});
 	};
+	return thunkFetch(urlArr, consumerFunc);
+};
+
+
+export const fetchHalls = () => {
+	const urlArr = [{ url: endpoints.getData('halls'), init: {} }];
+	const consumerFunc = (arrOfRespJsonS, { idToken, userId, dispatch, state }) => {
+		const previousDataArrays = [state.dataReducer.availableStaff];
+
+		let deptHallsData;
+		const allAreOkay = arrOfRespJsonS.every((jsonObj) => jsonObj && !jsonObj.error);
+
+		for (const [index, respJson] of arrOfRespJsonS.entries()) {
+			const initialArr = respJson && !respJson.error ? [] : previousDataArrays[index];
+
+			if (respJson && !respJson.error) {
+				for (const key in respJson) {
+					const item = respJson[key];
+					initialArr.push(new Staff(item));
+				}
+			}
+			switch (index) {
+				case 0: {
+					deptHallsData = initialArr;
+					break;
+				}
+			}
+		}
+
+		dispatch({
+			type: LOAD_HALLS,
+			availableHalls: deptHallsData,
+		});
+	};
+	return thunkFetch(urlArr, consumerFunc);
 };
 
 export const fetchDeptData = () => {
@@ -289,8 +380,6 @@ export const fetchDeptData = () => {
 		availableTimetables: timetables,
 	};
 };
-
-
 
 export const addItem = (itemDataObj, actionType) => {
 	//console.warn(userEmail, userPassword);

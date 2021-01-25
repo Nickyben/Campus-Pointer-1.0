@@ -18,11 +18,11 @@ import MyPieChart from '../../components/pointerComponents/MyPieChart';
 
 const MyItem = ({ content, reportTitle, studentData, content: { course, gradeData, CA_Sheet, ATD_Sheet, color },
   style, index, onNavigate, showingTitle, hideOthers }) => {
-  const [showCourseTitle, setShowCourseTitle] = useState(false);
-
-  useEffect(() => {
-    setShowCourseTitle(p => showingTitle === course.courseCode);
-  }, [showingTitle]);
+  //const [showCourseTitle, setShowCourseTitle] = useState(false);
+    const showCourseTitle = showingTitle === course.courseCode;
+  // useEffect(() => {
+  //   setShowCourseTitle(p => showingTitle === course.courseCode);
+  // }, [showingTitle]);
 
   const courseTitleHandler = (courseCode) => {
     showCourseTitle === true ?
@@ -177,8 +177,8 @@ const MyItem = ({ content, reportTitle, studentData, content: { course, gradeDat
 
 const SectionHeaderItem = ({ onCollapse, reportTitle, courses, title, showingSection }) => {
 
-  const [showSection, setShowSection] = useState(false);
-
+ // const [showSection, setShowSection] = useState(false);
+	const showSection = showingSection === title;
   const showSectionHandler = (title) => {
     showSection === true ? onCollapse('empty') : onCollapse(title);
   }
@@ -187,9 +187,9 @@ const SectionHeaderItem = ({ onCollapse, reportTitle, courses, title, showingSec
   const isAttendance = !(isResult || isAssessment);
 const resultType= isResult? 'result': isAssessment? 'assessment': 'record'
 
-  useEffect(() => {
-    setShowSection(p => showingSection === title);
-  }, [showingSection]);
+  // useEffect(() => {
+  //   setShowSection(p => showingSection === title);
+  // }, [showingSection]);
 
   return (
     <View style={{ backgroundColor: Colors.switchPrimary }}>

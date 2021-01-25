@@ -461,7 +461,7 @@ export const DeptTabNavigator = () => {
 					paddingBottom: 2,
 				},
 			}}>
-			<DeptTabNav.Screen name="Department" component={DeptStackNavigator} options={{ tabBarBadge: 3 }} />
+			<DeptTabNav.Screen name="Department" component={DeptStackNavigator} />
 			<DeptTabNav.Screen
 				name="Academics"
 				component={SchoolStackNavigator}
@@ -471,6 +471,10 @@ export const DeptTabNavigator = () => {
 				name="Home"
 				component={HomeStackNavigator}
 				//options={stdProfScreenOpts}
+				options={{
+					tabBarBadge: '3',
+					tabBarBadgeStyle: { backgroundColor: Colors.primary, textAlignVertical: 'center' ,},
+				}}
 			/>
 			<DeptTabNav.Screen
 				name="Association"

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useLayoutEffect, useRef, useReducer } from 'react';
 import { HeaderBackButton, HeaderTitle } from '@react-navigation/stack';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import {
@@ -27,35 +27,28 @@ import { sendChatMessage, fetchChatMessages } from '../../store/actions/messageA
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Message from '../../models/message';
 import { useNavigation } from '@react-navigation/native';
-
-const emptyList = ({}) => {
-	return (
-		<View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-			<Text style={{ fontFamily: 'OpenSansBold', fontSize: 17 }}>No messages yet...Start Chatting</Text>
-		</View>
-	);
-};
+import listEmptyComponent from '../../components/pointerComponents/listEmptyComponent';
+import { RefreshControl } from 'react-native';
+import { fetchStaff, fetchStudents } from '../../store/actions/dataActions';
 
 const _Item = ({
 	content: { id, text, date, image, senderId, receiverId, type },
 	onSelect,
-	navig,
 	index,
 	chatId,
 	messages,
-	//	senderIsPrevious,
-	//	senderIsNext,
-	//isLast,
 }) => {
+	const user = useSelector((state) => state.authReducer.userAppData);
+
 	const [longPressed, setLongPressed] = useState(false);
 
 	const next = index > 0 ? index - 1 : 0;
 	const prev = index + 1 >= messages.length ? messages.length - 1 : index + 1;
-	const senderIsPrevious = messages && messages[index].senderId === messages[prev].senderId && index !== prev;
-	const senderIsNext = messages && messages[index].senderId === messages[next].senderId && index !== next;
+	const senderIsPrevious = messages && senderId === messages[prev].senderId && index !== prev;
+	const senderIsNext = messages && senderId === messages[next].senderId && index !== next;
 	const isLast = index === messages.length - 1;
 
-	const isUser = senderId === 'studentUserId';
+	const isUser = senderId === user.id;
 
 	const when = getWhen(date);
 
@@ -80,18 +73,11 @@ const _Item = ({
 				<View
 					style={{
 						...styles.chatBoxContainer,
-						// marginRight: isUser && !senderIsNext ? isUser && senderIsNext ? 0 : -10 : 0,
-						// marginLeft: isUser && !senderIsNext ? 0 : !isUser && senderIsNext ? 0 : -10,
-						// paddingRight: isUser && !senderIsNext ? isUser && senderIsNext ? 0 : 10 : 0,
-						// paddingLeft: isUser && !senderIsNext ? 0 : !isUser && senderIsNext ? 0 : isUser && senderIsNext ? 0 : 10,
 
 						borderBottomLeftRadius: !isUser ? 0 : styles.chatBox.borderRadius,
 						borderBottomRightRadius: isUser ? 0 : styles.chatBox.borderRadius,
 						borderTopLeftRadius: !isUser && senderIsPrevious ? 0 : styles.chatBox.borderRadius,
 						borderTopRightRadius: isUser && senderIsPrevious ? 0 : styles.chatBox.borderRadius,
-
-						// borderTopLeftRadius: shouldHaveCurve && !isUser ? 100 : !isUser && senderIsPrevious ? 0 : styles.chatBox.borderRadius,
-						// borderTopRightRadius: shouldHaveCurve && isUser ? 100 : isUser && senderIsPrevious ? 0 : styles.chatBox.borderRadius,
 						backgroundColor: isUser ? Colors.primary : Colors.primary + '33', // '#e3e6e7',
 					}}>
 					<View
@@ -103,7 +89,6 @@ const _Item = ({
 							borderTopLeftRadius: !isUser && senderIsPrevious ? 0 : styles.chatBox.borderRadius,
 							borderTopRightRadius: isUser && senderIsPrevious ? 0 : styles.chatBox.borderRadius,
 							backgroundColor: isUser ? Colors.primary : Colors.primary + '33', // '#e3e6e7',
-							//backgroundColor: isUser ? Colors.primary : 'transparent'// '#e3e6e7',
 						}}>
 						<Text
 							style={{
@@ -133,103 +118,39 @@ const _Item = ({
 	);
 };
 
-const Messages = ({ chatId }) => {
+const Messages = ({ chatId, newMessages }) => {
 	const dispatch = useDispatch();
 	const scrollViewRef = useRef();
 
 	const navigation = useNavigation();
-	const chat = useSelector((s) => s.messageReducer.availableChatMsgs.find((c) => c.id === chatId), shallowEqual);
-	const msgs = chat ? chat.messages.sort((m1, m2) => m2.date.getTime() - m1.date.getTime()) : [];
-	const messages = msgs;
-	//const [messages, setMessages] = useState([]);
+
+	const chat = useSelector((s) => s.messageReducer.availableChatMsgs.find((c) => c.id === chatId));
+	const msgs = chat ? chat.messages : [];
+	const mergedMsgs = msgs.filter((m) => !newMessages.some((newMsg) => newMsg.id === m.id)).concat(...newMessages);
+	let messages = mergedMsgs.sort((m1, m2) => m2.date.getTime() - m1.date.getTime());
+
+	// const { receiver, sender, senderId, receiverId } = (!!messages && messages.find((m) => !!m)) || {};
+	// const chatPerson =
+	// 	[receiver, sender, senderId, receiverId].every((elem) => !!elem) && (senderId === chatId ? sender : receiver);
+
+	useEffect(() => {
+		messages.forEach((message) => {
+			if (!msgs.some((msg) => msg.id === message.id)) {
+				//	console.warn('done')
+				//	dispatch(sendChatMessage({ newMessage: message }));
+			}
+		});
+	}, [messages, msgs]);
 
 	const renderItem = ({ item, index }) => {
-		// const prev = index > 0 ? index - 1 : 0;
-		// const next = index + 1 >= messages.length ? messages.length - 1 : index + 1;
-		// const senderIsPrev = messages && messages[index].senderId === messages[prev].senderId && index !== prev;
-		// const senderIsNext = messages && messages[index].senderId === messages[next].senderId && index !== next;
-		return (
-			<_Item
-				content={item}
-				index={index}
-				onSelect={() => {}}
-				navig={navigation}
-				chatId={chatId}
-				messages={messages}
-				//	senderIsPrevious={senderIsPrev}
-				//	senderIsNext={senderIsNext}
-				//	isLast={index === messages.length - 1}
-			/>
-		);
+		return <_Item content={item} index={index} onSelect={() => {}} chatId={chatId} messages={messages} />;
 	};
 
 	const scrollToBottom = useCallback(() => {
 		//(contentWidth, contentHeight)
 		//setScrollViewContentDim(p => ({ contentWidth, contentHeight }))
-		scrollViewRef.current.scrollToIndex({ animated: false, duration: 0 , index: 0});
+		scrollViewRef.current.scrollToIndex({ animated: true, duration: 0, index: 0 });
 	}, []);
-
-	// const addMsgHandler = useCallback((msg) => {
-	// 	if (msg.length > 0) {
-	// 		setMessages((p) =>
-	// 			p.concat(
-	// 				new Message(
-	// 					'studentUserId' + chatId + new Date().toLocaleDateString() + Math.random(),
-	// 					'individual',
-	// 					new Date(),
-	// 					'studentUserId',
-	// 					chatId,
-	// 					{
-	// 						text: msg,
-	// 						image: null,
-	// 					},
-	// 					null
-	// 				)
-	// 			)
-	// 		);
-	// 	}
-	// }, []);
-
-	const loadChatMessages = useCallback(async () => {
-		//   setError(null);
-		//   setIsRefreshing(true)
-		//try {
-		await dispatch(fetchChatMessages());
-		//   }
-		//catch (err) {
-		//     setError(err.message);
-		//   }
-		//   setIsRefreshing(false);
-	}, [dispatch]); //setIsLoading is handled already by react,
-
-	useEffect(() => {
-		const unsubscribe = navigation.addListener('focus', loadChatMessages);
-
-		//clean up function to run when effect is about to rerun or when component is destroyed or unmounted
-		return () => {
-			unsubscribe();
-		};
-	}, [loadChatMessages]);
-
-	useEffect(
-		//will run only when the component loads and not again unless dependencies change
-		//don't use async keyword here, instead, use .then() after the dispatch()
-		() => {
-			//     setIsLoading(true);
-			loadChatMessages().then(() => {
-				//       setIsLoading(false);
-			});
-		},
-		[loadChatMessages]
-	);
-
-	// useEffect(() => {
-	// 	addMsgHandler(msg);
-	// }, [msg]);
-
-	// useEffect(() => {
-	// 	setMessages(msgs);
-	// }, [msgs]);
 
 	return (
 		<>
@@ -240,16 +161,19 @@ const Messages = ({ chatId }) => {
 					style={styles.flatList}
 					//onLayout={scrollToBottom}
 					onContentSizeChange={messages.length !== 0 ? scrollToBottom : () => {}}
-					//initialNumToRender, refreshing
+					initialNumToRender={5}
+					//refreshing
 					//remember to render num according to screen dimensions
 					//initialNumToRender={5}
 					keyExtractor={(item, index) => item.id + index}
 					data={messages}
 					renderItem={renderItem}
-					ListEmptyComponent={emptyList}
+					ListEmptyComponent={listEmptyComponent.bind(this, {
+						notFoundText: 'No messages yet...Start Chatting',
+					})}
 					contentContainerStyle={{ ...styles.listContainer, flex: messages.length === 0 ? 1 : 0 }}
-					//	extraData={[msgs, chat]}
-					inverted={messages.length !== 0 ? true: false}
+					extraData={[chat, scrollToBottom, newMessages]}
+					inverted={messages.length !== 0 ? true : false}
 					//initialScrollIndex={messages.length-1}
 				/>
 			}
@@ -258,70 +182,100 @@ const Messages = ({ chatId }) => {
 };
 
 const ChatScreen = ({ navigation, route: { params } }) => {
-	const dispatch = useDispatch();
+	const { chatId, image, fullName, isNewChat, isStudent, isStaff } = params;
 
-	const { chatId, fullName } = params;
-	//const [messages, setMessages] = useState(msgs);
-	const [msg, setMsg] = useState('');
-	const chatPerson = useSelector((s) => s.dataReducer.availableStudents.find((s) => s.id === chatId));
-	const { image, firstName } = chatPerson && chatPerson;
+	const dispatch = useDispatch();
+	const scrollViewRef = useRef();
+
+	const [newMsgs, setNewMsgs] = useState([]);
+	const chat = useSelector((s) => s.messageReducer.availableChatMsgs.find((c) => c.id === chatId));
+	const user = useSelector((state) => state.authReducer.userAppData);
+
+	const newChatPerson =
+		useSelector((s) => s.dataReducer.availableStudents.find((s) => s.id === chatId)) ||
+		useSelector((s) => s.dataReducer.availableStaff.find((s) => s.id === chatId));
+	const [isLoading, setIsLoading] = useState(false);
+	const [isRefreshing, setIsRefreshing] = useState(false);
+	const [error, setError] = useState();
+
+	const msgs = (chat && chat.messages) || [];
+	const { receiver, sender, senderId, receiverId } = (!!msgs && msgs.find((m) => !!m)) || {};
+	let chatPerson =
+		[receiver, sender, senderId, receiverId].every((elem) => !!elem) && (senderId === chatId ? sender : receiver);
+	chatPerson = chatPerson || newChatPerson || {};
+
+	const mergedMsgs = msgs.filter((m) => !newMsgs.some((newMsg) => newMsg.id === m.id)).concat(...newMsgs);
+	let messages = mergedMsgs.sort((m1, m2) => m2.date.getTime() - m1.date.getTime());
 
 	//check if to replace with the dispatching the addChatMessage
 	const sendMsgHandler = useCallback(
-		(msg) => {
+		(msg, callback) => {
+			//console.warn(msg)
 			if (msg.length > 0) {
-				dispatch(
-					sendChatMessage(
-						new Message(
-							'studentUserId' + chatId + new Date().toLocaleDateString() + Math.random(),
-							'individual',
-							new Date(),
-							'studentUserId',
-							chatId,
-							{
-								text: msg,
-								image: null,
-							},
-							null
-						)
-					)
-				);
-				// setMessages((p) =>
-				// 	p.concat(
-				// 		new Message(
-				// 			'studentUserId' + chatId + new Date().toLocaleDateString() + Math.random(),
-				// 			'individual',
-				// 			new Date(),
-				// 			'studentUserId',
-				// 			chatId,
-				// 			{
-				// 				text: msg,
-				// 				image: null,
-				// 			},
-				// 			null
-				// 		)
-				// 	)
-				// )
+				//dispatch(sendChatMessage(chatId, chatPerson, msg));
+				setNewMsgs((p) => [
+					...p,
+					new Message({
+						id: 'studentUserId' + chatId + new Date().toLocaleDateString() + Math.random(),
+						type: 'individual',
+						date: new Date(),
+						senderId: user && user.id,
+						sender: user,
+						receiver: chatPerson,
+						receiverId: chatId,
+						text: msg,
+						image: null,
+						groupId: null,
+					}),
+				]);
+				callback();
 			}
-
-			//scrollToBottom();
 		},
-		[]
+		[chatId, chatPerson]
 	);
 
-	const getMsgHandler = (msg) => {
-		setMsg(msg);
-	};
+	const viewChatPerson = useCallback(() => {
+		//	console.warn(chatId);
+		navigation.navigate('DeptDetails', { itemId: chatId, title: chatPerson.constructor.name });
+	},[chatPerson])
 
-	const viewChatPerson = () => {
-		navigation.navigate('DeptDetails', { item: chatPerson, itemId: chatId, title: chatPerson.constructor.name });
-	};
+//	console.warn('rendered');
+	const loadChatMessages = useCallback(async () => {
+		setError(null);
+		setIsRefreshing(true);
+		try {
+			await dispatch(fetchChatMessages());
+			isNewChat && isStudent && (await dispatch(fetchStaff()));
+			isNewChat && isStaff && (await dispatch(fetchStudents()));
+		} catch (err) {
+			setError(err.message);
+		}
+		setIsRefreshing(false);
+	}, [dispatch, isNewChat, isStaff, isStudent]); //setIsLoading is handled already by react,
 
-	// const scrollToBottom = useCallback(() => {
-	// 	//(contentWidth, contentHeight)
-	// 	//setScrollViewContentDim(p => ({ contentWidth, contentHeight }))
-	// 	scrollViewRef.current.scrollToEnd({ animated: false, duration: 0 });
-	// }, []);
+useEffect(() => {
+	messages.forEach((message) => {
+		if (!msgs.some((msg) => msg.id === message.id)) {
+			//	console.warn('done')
+			dispatch(sendChatMessage({ newMessage: message }));
+		}
+	});
+}, [messages, msgs]);
+
+	useEffect(() => {
+		const unsubscribe = navigation.addListener('focus', loadChatMessages);
+
+		return () => {
+			unsubscribe();
+		};
+	}, [loadChatMessages]);
+
+	useEffect(() => {
+		setIsLoading(true);
+		loadChatMessages().then(() => {
+			setIsLoading(false);
+		});
+	}, [loadChatMessages]);
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
@@ -348,41 +302,58 @@ const ChatScreen = ({ navigation, route: { params } }) => {
 				</View>
 			),
 		});
-	}, [chatPerson, chatId]);
+	}, [chatPerson, chatId, fullName, viewChatPerson]);
 
-	useEffect(() => {
-		
-			sendMsgHandler(msg);
-		//	setMsg('');
-		
-	}, [msg]);
+	
 
-	//console.warn(messages.length)
+	const renderItem = ({ item, index }) => {
+		return <_Item content={item} index={index} onSelect={() => {}} chatId={chatId} messages={messages} />;
+	};
+
+	const scrollToBottom = useCallback(() => {
+			scrollViewRef.current.scrollToIndex({ animated: true, duration: 0, index: 0 });
+	}, []);
+
 	return (
 		<View style={styles.screen}>
-			{/* {messages.length > 0 && (
-				<KeyboardAwareScrollView
-					ref={scrollViewRef}
-					onLayout={scrollToBottom}
-					onContentSizeChange={scrollToBottom}
-					//onKeyboardDidShow={scrollToBottom}
-					//enableOnAndroid={true}
+			{(isLoading || isRefreshing || error) && (
+				<Text
+					style={{
+						...styles.loadingText,
+						backgroundColor: error ? '#ff4444aa' : styles.loadingText.backgroundColor,
+					}}>
+					{error ? ` Error loading messages` : `Loading messages...`}
+				</Text>
+			)}
 
-					style={styles.flatList}
-					contentContainerStyle={styles.listContainer}>
-					{messages.map((msg, index) => {
-						return <RenderItem index={index} item={msg} key={msg.id + index} />;
-					})}
-				</KeyboardAwareScrollView>
-			)} */}
-			<Messages chatId={chatId} />
+			{/* <Messages chatId={chatId} newMessages={newMsgs} /> */}
+			<FlatList
+				ref={scrollViewRef}
+				style={styles.flatList}
+				//onLayout={scrollToBottom}
+				onContentSizeChange={messages.length !== 0 ? scrollToBottom : () => {}}
+				initialNumToRender={5}
+				//refreshing
+				//remember to render num according to screen dimensions
+				//initialNumToRender={5}
+				keyExtractor={(item, index) => item.id + index}
+				data={messages}
+				renderItem={renderItem}
+				ListEmptyComponent={listEmptyComponent.bind(this, {
+					notFoundText: 'No messages yet...Start Chatting',
+				})}
+				contentContainerStyle={{ ...styles.listContainer, flex: messages.length === 0 ? 1 : 0 }}
+				extraData={[chat, scrollToBottom, newMsgs]}
+				inverted={messages.length !== 0 ? true : false}
+				//initialScrollIndex={messages.length-1}
+			/>
 			<ChatInput
 				//onSubmit={pushMsgHandler}
 				expandable
 				expandHeight={100}
 				elevated
 				multiline={true}
-				onSubmit={getMsgHandler}
+				onSubmit={sendMsgHandler}
 			/>
 		</View>
 	);
@@ -422,6 +393,19 @@ const styles = StyleSheet.create({
 		borderColor: '#fff',
 		borderWidth: 3,
 	},
+
+	loadingText: {
+		width: '100%',
+		fontFamily: 'OpenSansBold',
+		fontSize: 14,
+		color: '#fff',
+		backgroundColor: Colors.primary + '77',
+		textAlign: 'center',
+		paddingVertical: 2,
+		position: 'absolute',
+		zIndex: 600,
+	},
+
 	flatList: {
 		marginBottom: 60,
 		flex: 1,

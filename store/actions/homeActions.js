@@ -5,7 +5,7 @@ import dummyHomePosts from '../../data/homePosts';
 import HomePost from '../../models/homePost';
 import HomeComment, { HomePostLike } from '../../models/homeComment';
 import { endpoints } from '../../src/firebase';
-import { thunkFetch } from '../../constants/MyFunctions';
+import { thunkFetch } from '../../constants/backendFunctions';
 import HomePostComment from '../../models/homeComment';
 
 export const SEND_POST = 'SEND_POST';
@@ -20,6 +20,18 @@ export const LOAD_HOME_POST_COMMENTS = 'LOAD_HOME_POST_COMMENTS';
 
 export const COMMENT_POST = 'COMMENT_POST';
 export const DELETE_COMMENT = 'DELETE_COMMENT';
+
+export const homeActionTypes = [
+	SEND_POST,
+	DELETE_POST,
+	LIKE_POST,
+	SHARE_POST,
+	LOAD_HOME_DATA,
+	LOAD_HOME_POST_LIKES,
+	LOAD_HOME_POST_COMMENTS,
+	COMMENT_POST,
+	DELETE_COMMENT,
+];
 
 export const fetchHomeData = () => {
 	const urlArr = [{ url: endpoints.getData('homePosts'), init: {} }];

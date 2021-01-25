@@ -10,7 +10,7 @@
 	"dependencies": {
 		"@react-native-async-storage/async-storage": "^1.13.2",
 		"@react-native-community/masked-view": "0.1.10",
-		"@react-navigation/bottom-tabs": "^5.8.0",
+		"@react-navigation/bottom-tabs": "^5.11.5",
 		"@react-navigation/drawer": "^5.9.0",
 		"@react-navigation/material-top-tabs": "^5.2.16",
 		"@react-navigation/native": "^5.7.3",
@@ -19,7 +19,6 @@
 		"expo-chart-kit": "^1.2.4",
 		"expo-linear-gradient": "^8.2.1",
 		"expo-notifications": "~0.3.3",
-		"expo-status-bar": "^1.0.2",
 		"moment": "^2.27.0",
 		"react": "~16.11.0",
 		"react-dom": "~16.11.0",
@@ -43,11 +42,9 @@
 		"react-navigation": "^4.4.0",
 		"react-navigation-drawer": "^2.5.0",
 		"react-navigation-header-buttons": "^4.0.2",
-		"react-navigation-material-bottom-tabs": "^2.3.0",
-		"react-navigation-stack": "^2.8.2",
-		"react-navigation-tabs": "^2.9.0",
 		"react-redux": "^7.2.1",
 		"redux": "^4.0.5",
+		"redux-ignore": "^1.2.5",
 		"redux-thunk": "^2.3.0"
 	},
 	"devDependencies": {

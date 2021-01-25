@@ -24,12 +24,10 @@ import Touch from '../../components/UI/Touch';
 import LoadingScreen from './LoadingScreen';
 import ErrorScreen from './ErrorScreen';
 import { RefreshControl } from 'react-native';
+import listEmptyComponent from '../../components/pointerComponents/listEmptyComponent';
 
-let TouchableCmp = TouchableOpacity;
-
-if (Platform.OS === 'android' && Platform.Version >= 21) {
-	TouchableCmp = TouchableNativeFeedback;
-}
+const getCount = (postReactionCount) =>
+	postReactionCount >= 1000 ? parseInt(postReactionCount / 1000).toString() + 'K' : postReactionCount;
 
 const _Item = ({
 	content: { id, title, date, type, responses, author, text, image, shares },
@@ -42,29 +40,40 @@ const _Item = ({
 	const { name, office, post } = author ? author : {};
 	const isStudent = true; //for now
 	const commentAuthorType = isStudent ? 'student' : rand(['staff', 'admin', 'postAuthor']);
-	const theUser = useSelector((state) => state.authReducer.userAppData);
+	const user = useSelector((state) => state.authReducer.userAppData);
 	const isLiked = useSelector((state) => state.homeReducer.availableLikes).includes(id);
-	const numOfLikes = useSelector((state) => state.homeReducer.availableGeneralLikes.filter((l) => l.postId === id))
-		.length;
+	const postLikes = useSelector((state) => state.homeReducer.availableGeneralLikes.filter((l) => l.postId === id));
+	const numOfLikes = getCount(postLikes.length);
 	const postComments = useSelector((state) => state.homeReducer.availableComments.filter((c) => c.ownPostId === id));
-	const isCommented = !!postComments.find((c) => c.author.id === theUser.id && c.ownPostId === id);
-	const [isReplyingPost, setIsReplyingPost] = useState(false);
+	const numOfPostComments = getCount(postComments.length);
+	const isCommented = !!postComments.find((c) => c.author.id === user.id && c.ownPostId === id);
+	//const [isReplyingPost, setIsReplyingPost] = useState(false);
+	const isReplyingPost = replyingPostId === id;
 	const [suggestedComments, setSuggestedComments] = useState(shuffle(responses));
 
-	useEffect(() => {
-		setSuggestedComments(shuffle(responses));
-	}, [isReplyingPost]);
+	// useEffect(() => {
+	// 	setSuggestedComments(shuffle(responses));
+	// }, []);
 
-	useEffect(() => {
-		setIsReplyingPost((p) => replyingPostId === id);
-	}, [replyingPostId]);
+	// useEffect(() => {
+	// 	setIsReplyingPost((p) => replyingPostId === id);
+	// }, [replyingPostId]);
 
 	const showResponsesHandler = (id) => {
+		setSuggestedComments(shuffle(responses));
 		isReplyingPost === true ? hideOtherRepliesFunc('') : hideOtherRepliesFunc(id);
 	};
 
-	const commentHandler = (postId, commentPerson, commentPersonType, comment) => {
-		_dispatch(commentPost(postId, commentPerson, commentPersonType, comment));
+	const commentHandler = (postId, commentPerson, commentPersonType, commentText) => {
+		const didExactlyThisBefore = postComments.find(
+			(comment) =>
+				comment.ownPostId === postId &&
+				comment.author === commentPerson &&
+				comment.authorType === commentPersonType &&
+				comment.text === commentText
+		);
+
+		!!didExactlyThisBefore || _dispatch(commentPost(postId, commentPerson, commentPersonType, commentText));
 	};
 
 	const likeHandler = (postId, likePerson) => {
@@ -151,7 +160,7 @@ const _Item = ({
 						<View style={{ ...styles.actionContainer }}>
 							<View style={{ paddingHorizontal: 2 }}>
 								<TouchIcon
-									onTouch={likeHandler.bind(this, id, theUser)}
+									onTouch={likeHandler.bind(this, id, user)}
 									name={'heart'}
 									size={22}
 									color={isLiked ? '#ee4444' : '#bcd'}
@@ -164,7 +173,7 @@ const _Item = ({
 								onTouch={showResponsesHandler.bind(this, id)}
 								name={'chatboxes'}
 								size={22}
-								color={isCommented ? Colors.primary :isReplyingPost? Colors.accent:  '#bcd'}
+								color={isCommented ? Colors.primary : isReplyingPost ? Colors.accent : '#bcd'}
 							/>
 						</View>
 
@@ -179,32 +188,32 @@ const _Item = ({
 							...styles.actionActivities,
 							justifyContent: numOfLikes === 0 && postComments.length > 0 ? 'flex-end' : 'space-between',
 						}}>
-						{numOfLikes > 0 && (
-							<View style={{ flexDirection: 'row' }}>
+						{numOfLikes !== 0 && (
+							<Text
+								style={{ flexDirection: 'row', padding: 5 }}
+								onPress={viewReactionsHandler.bind(this, 'likes', id)}>
 								<Text style={{ ...styles.actionText, color: isLiked ? '#ee4444' : '#456' }}>
 									{numOfLikes}
 								</Text>
-								<Text
-									style={{ ...styles.actionText, color: isLiked ? '#ee4444' : '#678' }}
-									onPress={viewReactionsHandler.bind(this, 'likes', id)}>
+								<Text style={{ ...styles.actionText, color: isLiked ? '#ee4444' : '#678' }}>
 									{' '}
 									Like{numOfLikes === 1 ? '' : 's'}
 								</Text>
-							</View>
+							</Text>
 						)}
 
-						{postComments.length > 0 && (
-							<View style={{ flexDirection: 'row' }}>
+						{numOfPostComments !== 0 && (
+							<Text
+								style={{ flexDirection: 'row', padding: 5 }}
+								onPress={viewReactionsHandler.bind(this, 'comments', id)}>
 								<Text style={{ ...styles.actionText, color: isCommented ? Colors.primary : '#456' }}>
-									{postComments.length}
+									{numOfPostComments}
 								</Text>
-								<Text
-									style={{ ...styles.actionText, color: isCommented ? Colors.primary : '#678' }}
-									onPress={viewReactionsHandler.bind(this, 'comments', id)}>
+								<Text style={{ ...styles.actionText, color: isCommented ? Colors.primary : '#678' }}>
 									{' '}
-									Comment{postComments.length === 1 ? '' : 's'}
+									Comment{numOfPostComments === 1 ? '' : 's'}
 								</Text>
-							</View>
+							</Text>
 						)}
 					</View>
 
@@ -220,7 +229,7 @@ const _Item = ({
 												textColor={Colors.accent}
 												borderColor={Colors.accent}
 												key={i}
-												onPress={commentHandler.bind(this, id, theUser, commentAuthorType, r)}
+												onPress={commentHandler.bind(this, id, user, commentAuthorType, r)}
 												style={{
 													width: '32%',
 													borderRadius: 8,
@@ -240,7 +249,7 @@ const _Item = ({
 												textColor={Colors.accent}
 												borderColor={Colors.accent}
 												key={i}
-												onPress={commentHandler.bind(this, id, theUser, commentAuthorType, r)}
+												onPress={commentHandler.bind(this, id, user, commentAuthorType, r)}
 												style={{
 													width: '32%',
 													borderRadius: 8,
@@ -276,8 +285,8 @@ const HomeScreen = ({ navigation }) => {
 		setIsRefreshing(true);
 		try {
 			await dispatch(fetchHomeData());
-			//await dispatch(fetchHomeReactions('likes'));
-			//await dispatch(fetchHomeReactions('comments'));
+			await dispatch(fetchHomeReactions('likes'));
+			await dispatch(fetchHomeReactions('comments'));
 		} catch (err) {
 			setError(err.message);
 		}
@@ -330,33 +339,6 @@ const HomeScreen = ({ navigation }) => {
 		/>
 	);
 
-	const listEmptyComponent = (itemName, notFoundText) => {
-		if (isRefreshing) {
-			return <LoadingScreen />;
-		}
-		return (
-			<View style={styles.centered}>
-				<Text
-					style={{
-						fontFamily: 'OpenSansBold',
-						fontSize: 17,
-						color: '#333',
-						//textAlign: 'justify',
-					}}>
-					{notFoundText ? notFoundText : `Oops! No ${itemName ? itemName : 'items'} Found!`}
-				</Text>
-				<Btn
-					fontSize={15}
-					style={{
-						marginVertical: 10,
-					}}
-					onPress={loadData}>
-					Retry
-				</Btn>
-			</View>
-		);
-	};
-
 	if (error) {
 		return (
 			<ErrorScreen
@@ -386,7 +368,7 @@ const HomeScreen = ({ navigation }) => {
 				data={homePosts}
 				renderItem={renderItem}
 				contentContainerStyle={{ ...styles.listContainer, flex: homePosts.length === 0 ? 1 : 0 }}
-				ListEmptyComponent={listEmptyComponent}
+				ListEmptyComponent={listEmptyComponent.bind(this, { onRetry: loadData, isRefreshing })}
 			/>
 			{
 				//if user is authorized to post
@@ -421,7 +403,7 @@ export const screenOptions = (navProps) => {
 
 	return {
 		headerTitle: (props) => (
-			<HeaderButtons HeaderButtonComponent={HeaderBtn}>
+			<HeaderButtons HeaderButtonComponent={HeaderBtn} >
 				<Item
 					tile="Menu"
 					iconName={homeIcon} //this should rather be the app's logo!!
@@ -430,7 +412,7 @@ export const screenOptions = (navProps) => {
 			</HeaderButtons>
 		),
 		headerRight: (props) => (
-			<HeaderButtons HeaderButtonComponent={HeaderBtn}>
+			<HeaderButtons HeaderButtonComponent={HeaderBtn} >
 				<Item tile="Search" iconName={searchIcon} onPress={() => {}} />
 
 				<Item
@@ -448,6 +430,7 @@ export const screenOptions = (navProps) => {
 		headerLeft: (props) => (
 			<HeaderButtons HeaderButtonComponent={HeaderBtn}>
 				<Item
+
 					tile="Menu"
 					iconName={menuIcon}
 					onPress={() => {

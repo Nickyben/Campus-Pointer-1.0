@@ -88,9 +88,8 @@ const ChatInput = ({
 
 	const gainedFocusHandler = () => {};
 
-	const msgPushHandler = async () => {
-		setChatInputState((p) => ({ value: '', validity: false }));
-		onSubmit(chatInputState.value);
+	const msgPushHandler =  () => {
+		onSubmit(chatInputState.value, () => setChatInputState((p) => ({ value: '', validity: false })));
 	};
 
 	const elevateStyle = elevated

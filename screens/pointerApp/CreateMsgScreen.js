@@ -24,18 +24,26 @@ import Touch from '../../components/UI/Touch';
 import Card from '../../components/UI/Card';
 import { fetchChatMessages } from '../../store/actions/messageActions';
 import ChatInput from '../../components/UI/ChatInput';
+import { useNavigation } from '@react-navigation/native';
 
-const _Item = ({ content: { id, messages }, onSelect, navig, index, searchWord }) => {
+const _Item = ({ content: { id }, onSelect, index, searchWord }) => {
+	const navigation = useNavigation();
 	const chatPerson = useSelector((s) => s.dataReducer.availableStudents.find((s) => s.id === id));
 	const { image, fullName, level, office, post, department } = chatPerson && chatPerson;
-	
+	const isNewChat =  !useSelector((s) => s.messageReducer.availableChatMsgs.find((c) => c.id === id));
+
 
 	const viewChatHandler = () => {
-		//console.log('from here')
-		navig.navigate('MsgChatDetail', { chatId: id, fullName });
+		//FOR NOW!!
+		navigation.navigate('MsgChatDetail', {
+			chatId: id,
+			image,
+			fullName,
+			isNewChat,
+			isStudent: chatPerson.constructor.name === 'Student',
+			isStaff: chatPerson.constructor.name === 'Staff',
+		});
 	};
-
-
 
 	return (
 		<Touch
@@ -138,17 +146,22 @@ const CreateMsgScreen = ({
 	//const userMsgs = useSelector(s => s.messageReducer.availableMessages);
 	//const chatPersonIds = useSelector(s => s.messageReducer.availableChatPersonsId);
 	const chatMessages = useSelector((s) => s.messageReducer.availableChatMsgs);
-	const searchStudents = useSelector((s) => s.dataReducer.availableStudents);
+
+	//FETCH THIS DIRECTLY FROM SERVER DURING QUERYING
+	const searchStudents = useSelector((s) => s.dataReducer.availableStudents); //for now
 	const [chatMsgs, setChatMsgs] = useState([]);
 	const [searchWord, setSearchWord] = useState('');
 	const dispatch = useDispatch();
 
 	const renderItem = (
 		{ item, index } //auto gets data in obj form , I deStructured it in params
-	) => <_Item content={item} onSelect={() => {}} navig={navigation} index={index} searchWord={searchWord} />;
+	) => <_Item content={item} onSelect={() => {}} index={index} searchWord={searchWord} />;
 
 	const loadSearchesHandler = (text) => {
 		if (text) {
+			//FETCH THE LARGE ARE FROM SERVER ASYNC
+			//OR MUCH BETTER RUN THE FILTERING or QUERY ON THE BACKEND
+
 			setChatMsgs((p) => {
 				return searchStudents
 					.filter(
@@ -205,7 +218,6 @@ const CreateMsgScreen = ({
 	useEffect(() => {
 		setChatMsgs(chatMessages);
 	}, []);
-
 
 	return (
 		<View style={styles.screen}>
@@ -319,9 +331,6 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		color: '#678',
 	},
-
-
-
 });
 
 export default CreateMsgScreen;

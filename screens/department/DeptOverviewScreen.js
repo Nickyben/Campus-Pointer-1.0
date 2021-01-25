@@ -25,6 +25,7 @@ import { fetchDeptData, fetchDeptHomeData } from '../../store/actions/dataAction
 import LoadingScreen from '../pointerApp/LoadingScreen';
 import ErrorScreen from '../pointerApp/ErrorScreen';
 import { RefreshControl } from 'react-native';
+import listEmptyComponent from '../../components/pointerComponents/listEmptyComponent';
 
 const _Item = ({
 	content: { id, fullName, image, designation, office, level, capacity },
@@ -177,7 +178,7 @@ const DeptOverviewScreen = ({ navigation }) => {
 									content={hod}
 									onSelect={() => {
 										navigation.navigate('DeptDetails', {
-											item: hod,
+										
 											itemId: hod.id,
 											title: hod.constructor.name,
 										});
@@ -255,7 +256,6 @@ const DeptOverviewScreen = ({ navigation }) => {
 				onSelect={() => {
 					//console.log(item.constructor.name);
 					navigation.navigate('DeptDetails', {
-						item: item,
 						itemId: item.id,
 						title: item.constructor.name,
 					});
@@ -264,32 +264,7 @@ const DeptOverviewScreen = ({ navigation }) => {
 		);
 	};
 
-	const listEmptyComponent = (itemName, notFoundText) => {
-		if (isRefreshing) {
-			return <LoadingScreen />;
-		}
-		return (
-			<View style={styles.centered}>
-				<Text
-					style={{
-						fontFamily: 'OpenSansBold',
-						fontSize: 17,
-						color: '#333',
-						//textAlign: 'justify',
-					}}>
-					{notFoundText ? notFoundText : `Oops! No ${itemName ? itemName : 'items'} Found!`}
-				</Text>
-				<Btn
-					fontSize={15}
-					style={{
-						marginVertical: 10,
-					}}
-					onPress={loadData}>
-					Retry
-				</Btn>
-			</View>
-		);
-	};
+
 
 	if (error) {
 		return (
@@ -319,7 +294,7 @@ const DeptOverviewScreen = ({ navigation }) => {
 				data={screenItems}
 				renderItem={renderScreenItems}
 				style={styles.scrollView}
-				ListEmptyComponent={listEmptyComponent.bind()}
+				ListEmptyComponent={listEmptyComponent.bind(this, { onRetry: loadData, isRefreshing })}
 			/>
 		</View>
 	);

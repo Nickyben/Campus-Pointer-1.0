@@ -20,7 +20,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import Form from '../../components/UI/Form';
 import Btn from '../../components/UI/Btn';
 import TouchIcon from '../../components/UI/TouchIcon';
-import { StatusBar } from 'expo-status-bar';
 import { signup } from '../../store/actions/authActions';
 import AuthLoadingScreen from './AuthLoadingScreen';
 import ErrorScreen from './ErrorScreen';

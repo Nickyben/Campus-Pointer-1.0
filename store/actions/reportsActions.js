@@ -5,7 +5,7 @@ import attendances from '../../data/attendances';
 
 
 export const LOAD_RESULT_DATA= 'LOAD_RESULT_DATA';
-
+export const reportsActionTypes = [LOAD_RESULT_DATA];
 
 export const fetchReportsData = () =>{
   return(

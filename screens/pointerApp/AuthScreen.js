@@ -21,7 +21,6 @@ import Form from '../../components/UI/Form';
 import Btn from '../../components/UI/Btn';
 import { login } from '../../store/actions/authActions';
 import AuthLoadingScreen from './AuthLoadingScreen';
-import { StatusBar } from 'expo-status-bar';
 import ErrorScreen from './ErrorScreen';
 
 const loginInputItems = [

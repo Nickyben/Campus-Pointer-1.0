@@ -1,6 +1,7 @@
 import students from '../../data/students';
 import { INDICATE_TRIED_TO_AUTO_LOGIN, AUTHENTICATE, LOGOUT } from '../actions/authActions';
 
+
 const initialState = {
 	idToken: null,
 	userId: null,
