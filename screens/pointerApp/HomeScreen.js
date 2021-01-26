@@ -30,14 +30,15 @@ const getCount = (postReactionCount) =>
 	postReactionCount >= 1000 ? parseInt(postReactionCount / 1000).toString() + 'K' : postReactionCount;
 
 const _Item = ({
-	content: { id, title, date, type, responses, author, text, image, shares },
+	content: { id, title, date, type, responses, author, text, image },
 	onSelect,
 	replyingPostId,
 	hideOtherRepliesFunc,
 	navig,
 }) => {
 	const _dispatch = useDispatch();
-	const { name, office, post } = author ? author : {};
+	const { fullName, office, post } = author ? author : {};
+	const authorImage = author && author.image;
 	const isStudent = true; //for now
 	const commentAuthorType = isStudent ? 'student' : rand(['staff', 'admin', 'postAuthor']);
 	const user = useSelector((state) => state.authReducer.userAppData);
@@ -94,27 +95,42 @@ const _Item = ({
 								console.warn("touched author's image");
 							}}
 							style={{}}>
-							<Image source={image} style={styles.authorImage} />
+							<Image source={authorImage} style={styles.authorImage} />
 						</Touch>
 					</View>
 
-					<View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
-						<View style={{ flexDirection: 'row' }}>
-							<View style={{ ...styles.authorDetails }}>
-								<View style={{ flexDirection: 'row' }}>
-									{name && (
-										<Text style={{ ...styles.authorDetailsText, color: '#00a7e7' }}>{name}</Text>
-									)}
-									<Text style={{ ...styles.authorDetailsText2, marginLeft: 10 }}>
-										~{getSince(date)[2]}
+					<View
+						style={{
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+							flex: 1,
+						}}>
+						{/* <View style={{  flex:1}}> */}
+						<View style={{ ...styles.authorDetails, flex: 7 }}>
+							<View style={{ flexDirection: 'row', overflow: 'hidden' }}>
+								{fullName && (
+									<Text
+										numberOfLines={1}
+										style={{ ...styles.authorDetailsText, color: '#00a7e7', flex: 1 }}>
+										{fullName}
 									</Text>
-								</View>
+								)}
+								<Text
+									numberOfLines={1}
+									style={{ ...styles.authorDetailsText2, marginLeft: 10, flex: 1 }}>
+									~{getSince(date)[2]}
+									{' ago'} 
+								</Text>
+							</View>
+							<View>
 								{office && <Text style={styles.authorDetailsText2}>{office}</Text>}
 								{post && <Text style={styles.authorDetailsText2}>{post}</Text>}
 							</View>
 						</View>
 
-						<View style={styles.actionContainer}>
+						{/* </View> */}
+
+						<View style={{ ...styles.actionContainer, flex: 1, justifyContent: 'center' }}>
 							<TouchIcon name={'more'} size={22} color={'#789'} />
 						</View>
 					</View>
@@ -179,7 +195,6 @@ const _Item = ({
 
 						<View style={styles.actionContainer}>
 							<TouchIcon name={'share'} size={22} color={'#bcd'} />
-							<Text style={styles.actionText}>{shares}</Text>
 						</View>
 					</View>
 
@@ -403,7 +418,7 @@ export const screenOptions = (navProps) => {
 
 	return {
 		headerTitle: (props) => (
-			<HeaderButtons HeaderButtonComponent={HeaderBtn} >
+			<HeaderButtons HeaderButtonComponent={HeaderBtn}>
 				<Item
 					tile="Menu"
 					iconName={homeIcon} //this should rather be the app's logo!!
@@ -412,7 +427,7 @@ export const screenOptions = (navProps) => {
 			</HeaderButtons>
 		),
 		headerRight: (props) => (
-			<HeaderButtons HeaderButtonComponent={HeaderBtn} >
+			<HeaderButtons HeaderButtonComponent={HeaderBtn}>
 				<Item tile="Search" iconName={searchIcon} onPress={() => {}} />
 
 				<Item
@@ -430,7 +445,6 @@ export const screenOptions = (navProps) => {
 		headerLeft: (props) => (
 			<HeaderButtons HeaderButtonComponent={HeaderBtn}>
 				<Item
-
 					tile="Menu"
 					iconName={menuIcon}
 					onPress={() => {

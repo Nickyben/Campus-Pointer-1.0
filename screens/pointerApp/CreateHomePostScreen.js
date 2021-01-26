@@ -15,10 +15,9 @@ import {
 	KeyboardAvoidingView,
 } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-
 import HeaderBtn from '../../components/UI/HeaderBtn';
 import Colors from '../../constants/Colors';
-import { fetchHomeData, likePost, sharePost, commentPost } from '../../store/actions/homeActions';
+import { fetchHomeData, likePost, sharePost, commentPost, sendHomePost } from '../../store/actions/homeActions';
 import TouchIcon from '../../components/UI/TouchIcon';
 import { rand, shuffle, getSince, getWhen } from '../../constants/MyFunctions';
 import Btn from '../../components/UI/Btn';
@@ -29,6 +28,10 @@ import ChatInput from '../../components/UI/ChatInput';
 import Form from '../../components/UI/Form';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DropdownPicker from '../../components/UI/DropdownPicker';
+import AlertBox from '../../components/pointerComponents/AlertBox';
+import { Alert } from 'react-native';
+import HomePost from '../../models/homePost';
+import { homePostResponses } from '../../data/homePosts';
 
 const homePostOfficialFormItems = [
 	{
@@ -86,15 +89,29 @@ const CreateHomePostScreen = ({
 		params: {},
 	},
 }) => {
-	const user = useSelector((s) => s.dataReducer.availableStudents.find((s) => s.id === 'studentUserId'));
+	const user = useSelector((state) => state.authReducer.userAppData);
 	//	const [postObj, setPostObj] = useState({ title, type, date, source, author, featuredAuthor, body, responses });
 	const [isOfficial, setIsOfficial] = useState(false);
-	const [postText, setPostText] = useState('')
+	const [postText, setPostText] = useState('');
+	const [showAlert, setShowAlert] = useState(false);
 	const { image } = user && user;
 	const dispatch = useDispatch();
 	const sendPostHandler = () => {
-		console.warn(postText);
-		navigation.goBack();
+		dispatch(sendHomePost(
+			{
+				title: 'Unofficial Post',
+				type: 'Personal',
+				source: `Device`,
+				author: user,
+				featuredAuthor: user,
+				image: require('../../assets/images/hall2.jpg'),
+				responses: rand(homePostResponses),
+				text: postText
+
+			}
+		))
+		//setShowAlert(true);
+			navigation.goBack();
 	};
 
 	const sendOfficialHomePostHandler = (inputValues) => {
@@ -102,31 +119,33 @@ const CreateHomePostScreen = ({
 		navigation.goBack();
 	};
 	const getPostTextHandler = (text) => {
-		setPostText(text)
+		setPostText(text);
 	};
 
 	const enableOfficialPostHandler = (newValue) => {
-		//console.warn(newValue)
 		setIsOfficial((p) => newValue);
 		//dispatch(enableNotifications('notificationsSwitch', newValue))
 	};
 
 	useLayoutEffect(() => {
-		const noPostText =  postText.length=== 0;
+		const noPostText = postText.length === 0;
 		navigation.setOptions({
 			headerRight: () => (
 				<View style={{ paddingRight: 10, flexDirection: 'row', alignItems: 'center' }}>
 					<Text style={{ ...styles.headerText, marginRight: 10 }}>Drafts</Text>
-					{!isOfficial && <Btn disabled={noPostText} onPress={sendPostHandler}>Post</Btn>}
+					{!isOfficial && (
+						<Btn disabled={noPostText} onPress={sendPostHandler}>
+							Post
+						</Btn>
+					)}
 				</View>
 			),
 		});
 	}, [sendPostHandler]);
 
-	
-
 	return (
 		<View style={styles.screen}>
+			<AlertBox show={showAlert} text={postText }  onFinishShow={useCallback(()=> setShowAlert(false))}/>
 			<View style={{ padding: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
 				<Text style={styles.postTypeText}>Official Post</Text>
 				<Switch

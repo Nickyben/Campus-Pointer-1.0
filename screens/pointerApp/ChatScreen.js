@@ -317,7 +317,7 @@ useEffect(() => {
 	return (
 		<View style={styles.screen}>
 			{(isLoading || isRefreshing || error) && (
-				<Text
+				<Text 
 					style={{
 						...styles.loadingText,
 						backgroundColor: error ? '#ff4444aa' : styles.loadingText.backgroundColor,
@@ -340,7 +340,7 @@ useEffect(() => {
 				data={messages}
 				renderItem={renderItem}
 				ListEmptyComponent={listEmptyComponent.bind(this, {
-					notFoundText: 'No messages yet...Start Chatting',
+					notFoundText: 'You have no messages yet...Start Chatting',
 				})}
 				contentContainerStyle={{ ...styles.listContainer, flex: messages.length === 0 ? 1 : 0 }}
 				extraData={[chat, scrollToBottom, newMsgs]}

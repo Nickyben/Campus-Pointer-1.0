@@ -2,7 +2,16 @@ import HomePost from '../models/homePost';
 import { rand } from '../constants/MyFunctions';
 import HomePostComment, { HomePostLike } from '../models/homeComment';
 import students from './students';
-import { useLinkBuilder } from '@react-navigation/native';
+
+export const homePostResponses = [
+	['Helpful', 'Wow!', 'Interesting', 'Amazing', 'WorldClass', 'Good info'],
+	['Helpful', 'Wow!', 'Interesting', 'Amazing', 'Resourceful', 'Good info'],
+	['Helpful', 'Wow!', 'Interesting', 'Amazing', 'Brilliant', 'Good info'],
+	['Really helpful', 'Helpful', 'Interesting', "I'll attend", 'Brilliant', 'Good info'],
+	['Noted', 'Helpful', 'Interesting', "I'll attend", 'Brilliant', 'Good info'],
+	['Noted', 'Helpful', 'Interesting', "I'll attend", 'Brilliant', 'Good info'],
+	['Really helpful', 'Helpful', 'Interesting', 'Amazing', 'Brilliant', 'Resourceful'],
+];
 
 const getContent = () => {
 	let posts = [
@@ -43,32 +52,6 @@ const getContent = () => {
 			'Department staff meeting to hold on Friday. No afternoon lectures will hold',
 		],
 	];
-	const authors = [
-		{ name: 'Dr.A. B. Someone', designation: 'Senior Staff', office: 'HOD' },
-		{ name: 'Prof.C.D. Anyone', designation: 'Senior Staff', office: 'Staff Adviser' },
-		{ name: 'Nicholas Ikechukwu', level: 400, office: 'President' },
-		{ name: 'Bernard Nickyben', level: 400, post: 'Course Rep' },
-		{ name: 'Nick Chukwuka', level: 200, post: ' Assistant Course Rep' },
-		{ name: 'Anyone Somebody', level: 400, office: 'VicePresident' },
-	];
-	const types = ['Global', 'International', 'National', 'University', 'Faculty', 'Departmental', 'General']; //'Personal', 'Official'
-	const responses = [
-		['Helpful', 'Wow!', 'Interesting', 'Amazing', 'WorldClass', 'Good info'],
-		['Helpful', 'Wow!', 'Interesting', 'Amazing', 'Resourceful', 'Good info'],
-		['Helpful', 'Wow!', 'Interesting', 'Amazing', 'Brilliant', 'Good info'],
-		['Really helpful', 'Helpful', 'Interesting', "I'll attend", 'Brilliant', 'Good info'],
-		['Noted', 'Helpful', 'Interesting', "I'll attend", 'Brilliant', 'Good info'],
-		['Noted', 'Helpful', 'Interesting', "I'll attend", 'Brilliant', 'Good info'],
-		['Really helpful', 'Helpful', 'Interesting', 'Amazing', 'Brilliant', 'Resourceful'],
-	];
-	posts = posts.map((p, i) => {
-		types.map((t, i) => {
-			if (p[1] === types[i]) {
-				p.push(responses[i]);
-			}
-		});
-		return p;
-	});
 
 	const images = [
 		require('../assets/images/news1.jpg'),
@@ -85,6 +68,38 @@ const getContent = () => {
 		null,
 	];
 
+	const authorImages = images
+		.filter((im) => !!im)
+		.concat(
+			require('../assets/images/femaleStaff.png'),
+			require('../assets/images/femaleStudent.png'),
+			require('../assets/images/maleStaff.png'),
+			require('../assets/images/maleStudent.png')
+		);
+	const authors = [
+		{ fullName: 'Dr.A. B. Someone', designation: 'Senior Staff', office: 'HOD', image: rand(authorImages) },
+		{
+			fullName: 'Prof.C.D. Anyone',
+			designation: 'Senior Staff',
+			office: 'Staff Adviser',
+			image: rand(authorImages),
+		},
+		{ fullName: 'Nicholas Ikechukwu', level: 400, office: 'President', image: rand(authorImages) },
+		{ fullName: 'Bernard Nickyben', level: 400, post: 'Course Rep', image: rand(authorImages) },
+		{ fullName: 'Nick Chukwuka', level: 200, post: ' Assistant Course Rep', image: rand(authorImages) },
+		{ fullName: 'Anyone Somebody', level: 400, office: 'VicePresident', image: rand(authorImages) },
+	];
+	const types = ['Global', 'International', 'National', 'University', 'Faculty', 'Departmental', 'General']; //'Personal', 'Official'
+
+	posts = posts.map((p, i) => {
+		types.map((t, i) => {
+			if (p[1] === types[i]) {
+				p.push(homePostResponses[i]);
+			}
+		});
+		return p;
+	});
+
 	const contentArr = [];
 	const comments = [];
 	const likes = [];
@@ -99,7 +114,7 @@ const getContent = () => {
 				id: postId,
 				title: postArr[0],
 				type: postArr[1],
-				date: new Date(),
+				date: new Date(new Date().getTime() - 1000 * 60 * (s * 15000)),
 				source: postArr[1], //for now, should be local, twitter,facebook, website,link etc
 				author: author,
 				featuredAuthor: author,
@@ -113,7 +128,7 @@ const getContent = () => {
 				new HomePostComment({
 					id: postId + new Date().toLocaleDateString() + Math.random().toString(),
 					ownPostId: postId,
-					date: new Date(),
+					date: new Date(new Date().getTime() - 1000 * 60 * (r * 15)),
 					authorType: commentAuthorType,
 					author: rand(students),
 					text: rand(postArr[3]),
@@ -125,7 +140,7 @@ const getContent = () => {
 			likes.push(
 				new HomePostLike({
 					id: Math.random().toString() + new Date().toLocaleDateString(),
-					date: new Date(),
+					date: new Date(new Date().getTime() - 1000 * 60 * (r * 15)),
 					postId,
 					liker: rand(students),
 				})
@@ -140,5 +155,5 @@ const homePosts = content[0].reverse();
 export const comments = content[1];
 export const likes = content[2];
 
-//console.log(likes)
-export default homePosts;
+
+export default homePosts.sort((p1, p2) => p2.date.getTime() - p1.date.getTime());

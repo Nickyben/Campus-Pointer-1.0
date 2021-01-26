@@ -141,11 +141,11 @@ const content = (department = null) => {
 				new Student({
 					id: 'studentUserId',
 
-					firstName: 'StudentUserFirstName',
+					firstName: 'Nicholas',
 
-					lastName: 'StudentUserLastName',
+					lastName: 'Ikechukwu',
 
-					regNumber: 'studentUserRegNumber',
+					regNumber: 'MOUAU/DEPT/YR/NUM',
 
 					gender: 'male',
 
@@ -167,7 +167,7 @@ const content = (department = null) => {
 
 					mostRecentResult: null,
 
-					image: require('../assets/images/maleStudent.png'),
+					image: require('../assets/images/me.jpg'),
 
 					honours: honours,
 

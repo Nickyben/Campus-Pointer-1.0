@@ -1,1 +1,5 @@
 if hasPaidSchoolFeesOrAppFee => grant access to some actions that require backend billing
+
+ensure you manage ids and names from backend
+
+work on oversflows eg names, texts etc

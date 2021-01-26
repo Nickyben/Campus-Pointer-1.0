@@ -18,7 +18,6 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 import HeaderBtn from '../../components/UI/HeaderBtn';
 import Card from '../../components/UI/Card';
-import { FlatList } from 'react-native-gesture-handler';
 import TouchCard from '../../components/UI/TouchCard';
 import Colors from '../../constants/Colors';
 import TouchIcon from '../../components/UI/TouchIcon';

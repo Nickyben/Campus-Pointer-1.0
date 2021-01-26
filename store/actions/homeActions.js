@@ -101,23 +101,23 @@ export const fetchHomeReactions = (reactionType) => {
 	return thunkFetch(urlArr, consumerFunc);
 };
 
-export const sendPost = (postObj) => {
+export const sendHomePost = (postObj) => {
 	const getThunkAsyncFunc = async () => {
 		let pushToken;
-		try {
-			let notificationsPermStatusObj = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-			if (notificationsPermStatusObj.status !== 'granted') {
-				notificationsPermStatusObj = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-			}
-			if (notificationsPermStatusObj.status !== 'granted') {
-				pushToken = null;
-				//alert
-			} else {
-				pushToken = (await Notifications.getExpoPushTokenAsync()).data;
-			}
-		} catch (err) {
-			throw new Error('Request was not processed!');
-		}
+		// try {
+		// 	let notificationsPermStatusObj = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+		// 	if (notificationsPermStatusObj.status !== 'granted') {
+		// 		notificationsPermStatusObj = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+		// 	}
+		// 	if (notificationsPermStatusObj.status !== 'granted') {
+		// 		pushToken = null;
+		// 		//alert
+		// 	} else {
+		// 		pushToken = (await Notifications.getExpoPushTokenAsync()).data;
+		// 	}
+		// } catch (err) {
+		// 	throw new Error('Request was not processed!');
+		// }
 
 		const urlArr = [
 			{
@@ -144,7 +144,7 @@ export const sendPost = (postObj) => {
 				id: responseData.name,
 				pushToken: pushToken,
 				ownerId: userId,
-				...postObj,
+				homePostItem: postObj,
 			});
 		};
 
@@ -153,7 +153,19 @@ export const sendPost = (postObj) => {
 	};
 
 	const thunkAsyncFunc = getThunkAsyncFunc();
-	return thunkAsyncFunc;
+	//return thunkAsyncFunc;
+
+	return {
+		type: SEND_POST,
+	//	id: responseData.name,
+		//pushToken: pushToken,
+		//ownerId: userId,
+		homePostItem: new HomePost({
+			id: Math.random().toString() + new Date().getTime().toString(),
+			date: new Date(),
+			...postObj,
+		}),
+	};
 };
 
 export const deletePost = (postId, postAuthorId) => {

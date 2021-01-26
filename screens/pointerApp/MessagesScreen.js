@@ -195,7 +195,7 @@ const MessagesScreen = ({
 				keyExtractor={(item, index) => item.id}
 				data={chatMsgs}
 				renderItem={renderItem}
-				contentContainerStyle={styles.listContainer}
+				contentContainerStyle={{ ...styles.listContainer, flex: chatMsgs.length === 0 ? 1 : 0 }}
 				ListEmptyComponent={listEmptyComponent.bind(this, { onRetry: loadChatMessages, isRefreshing })}
 			/>
 
