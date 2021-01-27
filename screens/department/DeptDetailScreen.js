@@ -157,7 +157,7 @@ const DeptDetailScreen = ({
 				style={styles.scroll}>
 				<View style={styles.container}>
 					<View style={styles.row}>
-						<View style={{ ...styles.detailImageContainer }}>
+						<View style={{ ...styles.detailImageContainer, }}>
 							{image ? (
 								<Image
 									style={{
@@ -411,9 +411,8 @@ const styles = StyleSheet.create({
 		width: '100%',
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: 'white', //,Colors.primary,//
+		backgroundColor: Colors.primary + '33',//'white', //,
 		paddingVertical: 10,
-		paddingBottom: 20,
 		paddingHorizontal: 10,
 	},
 	detailImage: {

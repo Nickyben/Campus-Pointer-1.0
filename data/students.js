@@ -145,7 +145,7 @@ const content = (department = null) => {
 
 					lastName: 'Ikechukwu',
 
-					regNumber: 'MOUAU/DEPT/YR/NUM',
+					regNumber: 'MOUAU/DEPT/YR/NUMBER',
 
 					gender: 'male',
 
@@ -159,7 +159,7 @@ const content = (department = null) => {
 
 					university: universities[0],
 
-					post: 'Course Rep',
+					post: null,
 
 					office: 'President',
 

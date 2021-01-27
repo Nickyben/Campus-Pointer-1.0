@@ -237,9 +237,9 @@ const ChatScreen = ({ navigation, route: { params } }) => {
 	const viewChatPerson = useCallback(() => {
 		//	console.warn(chatId);
 		navigation.navigate('DeptDetails', { itemId: chatId, title: chatPerson.constructor.name });
-	},[chatPerson])
+	}, [chatPerson]);
 
-//	console.warn('rendered');
+	//	console.warn('rendered');
 	const loadChatMessages = useCallback(async () => {
 		setError(null);
 		setIsRefreshing(true);
@@ -253,14 +253,18 @@ const ChatScreen = ({ navigation, route: { params } }) => {
 		setIsRefreshing(false);
 	}, [dispatch, isNewChat, isStaff, isStudent]); //setIsLoading is handled already by react,
 
-useEffect(() => {
-	messages.forEach((message) => {
-		if (!msgs.some((msg) => msg.id === message.id)) {
-			//	console.warn('done')
-			dispatch(sendChatMessage({ newMessage: message }));
-		}
-	});
-}, [messages, msgs]);
+	useEffect(() => {
+		let dispatchClear;
+		messages.forEach((message) => {
+			if (!msgs.some((msg) => msg.id === message.id)) {
+				dispatchClear = setTimeout(() => {
+					dispatch(sendChatMessage({ newMessage: message }));
+				}, 0);
+			}
+		});
+
+		return () => clearTimeout(dispatchClear);
+	}, [messages, msgs]);
 
 	useEffect(() => {
 		const unsubscribe = navigation.addListener('focus', loadChatMessages);
@@ -304,20 +308,18 @@ useEffect(() => {
 		});
 	}, [chatPerson, chatId, fullName, viewChatPerson]);
 
-	
-
 	const renderItem = ({ item, index }) => {
 		return <_Item content={item} index={index} onSelect={() => {}} chatId={chatId} messages={messages} />;
 	};
 
 	const scrollToBottom = useCallback(() => {
-			scrollViewRef.current.scrollToIndex({ animated: true, duration: 0, index: 0 });
+		scrollViewRef.current.scrollToIndex({ animated: true, duration: 0, index: 0 });
 	}, []);
 
 	return (
 		<View style={styles.screen}>
 			{(isLoading || isRefreshing || error) && (
-				<Text 
+				<Text
 					style={{
 						...styles.loadingText,
 						backgroundColor: error ? '#ff4444aa' : styles.loadingText.backgroundColor,

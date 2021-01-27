@@ -7,6 +7,7 @@ import Colors from '../../constants/Colors';
 import ItemIcon from '../../components/UI/ItemIcon';
 import TouchIcon from '../../components/UI/TouchIcon';
 import Touch from '../../components/UI/Touch';
+import { useSelector } from 'react-redux';
 
 
 const sections = [
@@ -58,7 +59,8 @@ const sections = [
  
 const SettingsScreen = ({ navigation }) => {
   const [showThemeModes, setShowThemeModes] = useState()
-  let image;
+  const user = useSelector(state=> state.authReducer.userAppData);
+  let image = user && user.image;
 
   const viewSettingHandler = (title) => {
     navigation.navigate('SettingsDetails', { settingTitle: title });
@@ -261,7 +263,7 @@ const styles = StyleSheet.create({
   profileContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.primary + 'aa',
     width: '100%',
     height: 250,
   },

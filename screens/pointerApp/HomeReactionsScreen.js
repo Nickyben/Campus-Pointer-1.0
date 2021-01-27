@@ -34,15 +34,19 @@ const _Item = ({
 	const isComments = reactionType === 'comments';
 	const isLikes = reactionType === 'likes';
 
-	const viewReactPersonHandler = (item, personId, title) => {
-		navig.navigate('DeptDetails', { item: item, itemId: item.id, title: title });
-	};
+	
 	const reactPerson = isLikes ? liker : author;
 	const { image, fullName, level, office, post } = isLikes ? liker : author;
+	
+	const viewReactPersonHandler = ( personId, title) => {
+		navig.navigate('DeptDetails', { itemId: personId, title: title });
+	};
+	
+	
 	return (
 		<Touch
 			useIos
-			onTouch={viewReactPersonHandler.bind(this, reactPerson, reactPerson.id, reactPerson.constructor.name)}
+			onTouch={viewReactPersonHandler.bind(this,  reactPerson.id, reactPerson.constructor.name)}
 			style={{
 				backgroundColor: '#fff',
 			}}>

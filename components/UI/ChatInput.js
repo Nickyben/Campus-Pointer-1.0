@@ -22,7 +22,6 @@ const ChatInput = ({
 	onSubmit,
 	onInputChange,
 	defaultPosition,
-	expandable,
 	expandHeight,
 	elevated,
 	style,
@@ -150,9 +149,9 @@ const ChatInput = ({
 						secureTextEntry={!!password}
 						placeholder={placeholder ? placeholder : 'Start typing message'}
 						style={{ ...styles.input, ...inputStyle,
-						 maxHeight:!expandable? 50:expandHeight?expandHeight: 200	, minHeight: 50  }}
+						 maxHeight:!others.multiline? 50:expandHeight?expandHeight: 200	, minHeight: 50  }}
 						value={chatInputState.value}
-						
+						maxLength={maxLength}
 						onChangeText={textChangeHandler}
 						onBlur={lostFocusHandler}
 						onFocus={gainedFocusHandler}

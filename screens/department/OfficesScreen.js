@@ -78,7 +78,7 @@ const OfficesScreen = ({ navig }) => {
 
   const renderItem = ({ item }) => (//auto gets data in obj form , I deStructured it in params
     <_Item content={item} onSelect={() => {
-      navig.navigate('DeptDetails', { item: item, itemId: item.id, title: item.constructor.name })
+      navig.navigate('DeptDetails', {  itemId: item.id, title: item.constructor.name })
     }} />
   );
 

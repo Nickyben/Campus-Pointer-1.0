@@ -55,7 +55,8 @@ const inputReducer = (state, action) => {
 	return state;
 };
 
-const Input = ({
+const Input = (
+	{
 	id,
 	initialValue,
 	initialValidity,
@@ -70,6 +71,7 @@ const Input = ({
 	inputType,
 	minLength,
 	maxLength,
+expandHeight,
 	style,
 	inputContainerStyle,
 	inputStyle,
@@ -119,6 +121,7 @@ const Input = ({
 		inputType,
 		minLength,
 		maxLength,
+		expandHeight,
 		style,
 		inputContainerStyle,
 		inputStyle,
@@ -267,7 +270,6 @@ const Input = ({
 			<>
 				<DropdownPicker
 					{...props}
-					
 					pickerLabel={label}
 					pickerHeader={toTitleCase(label)}
 					onChooseOption={textChangeHandler}
@@ -278,7 +280,7 @@ const Input = ({
 					style={style}
 					value={newValue}
 				/>
-				<ValidityResponse/>
+				<ValidityResponse />
 			</>
 		);
 	}
@@ -321,13 +323,18 @@ const Input = ({
 						/>
 					</View>
 				)}
-
 				<TextInput
 					{...props}
+					maxLength={maxLength}
 					keyboardType={email ? 'email-address' : phoneNumber ? 'phone-pad' : 'default'}
 					secureTextEntry={!!password && !showPassword}
 					placeholder={placeholder ? placeholder : 'placeholder'}
-					style={{ ...styles.input, ...inputStyle }}
+					style={{
+						...styles.input,
+						...inputStyle,
+						maxHeight: !others.multiline ? 50 :  expandHeight ? expandHeight : 200,
+						minHeight: 50,
+					}}
 					value={newValue}
 					onChangeText={textChangeHandler}
 					onBlur={lostFocusHandler}

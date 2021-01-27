@@ -119,7 +119,7 @@ const _Item = ({
 									numberOfLines={1}
 									style={{ ...styles.authorDetailsText2, marginLeft: 10, flex: 1 }}>
 									~{getSince(date)[2]}
-									{' ago'} 
+									{' ago'}
 								</Text>
 							</View>
 							<View>
@@ -151,11 +151,12 @@ const _Item = ({
 						</View>
 
 						<Text
+							numberOfLines={10}
 							style={{
 								...styles.infoText,
 								fontFamily: 'OpenSansRegular',
-								fontSize: 13,
-								color: '#333',
+								fontSize: 15,
+								color: '#111',
 								flex: 3,
 							}}>
 							{text}
@@ -373,22 +374,10 @@ const HomeScreen = ({ navigation }) => {
 
 	return (
 		<View style={styles.screen}>
-			<FlatList
-				refreshControl={
-					<RefreshControl colors={[Colors.primary]} refreshing={isRefreshing} onRefresh={loadData} />
-				}
-				showsHorizontalScrollIndicator={false}
-				//initialNumToRender, refreshing
-				keyExtractor={(item, index) => item.id}
-				data={homePosts}
-				renderItem={renderItem}
-				contentContainerStyle={{ ...styles.listContainer, flex: homePosts.length === 0 ? 1 : 0 }}
-				ListEmptyComponent={listEmptyComponent.bind(this, { onRetry: loadData, isRefreshing })}
-			/>
 			{
 				//if user is authorized to post
 				<TouchIcon
-					style={{ bottom: 20, right: 20, position: 'absolute', zIndex: 1500 }}
+					style={styles.createPostBtn}
 					onTouch={() => {
 						navigation.navigate('MessageStack', {
 							screen: 'CreateHomePost',
@@ -404,6 +393,18 @@ const HomeScreen = ({ navigation }) => {
 					color={'#fff'}
 				/>
 			}
+			<FlatList
+				refreshControl={
+					<RefreshControl colors={[Colors.primary]} refreshing={isRefreshing} onRefresh={loadData} />
+				}
+				showsHorizontalScrollIndicator={false}
+				//initialNumToRender, refreshing
+				keyExtractor={(item, index) => item.id}
+				data={homePosts}
+				renderItem={renderItem}
+				contentContainerStyle={{ ...styles.listContainer, flex: homePosts.length === 0 ? 1 : 0 }}
+				ListEmptyComponent={listEmptyComponent.bind(this, { onRetry: loadData, isRefreshing })}
+			/>
 		</View>
 	);
 };
@@ -470,6 +471,7 @@ const styles = StyleSheet.create({
 	listContainer: {
 		paddingBottom: 10,
 	},
+	createPostBtn: { bottom: 20, right: 20, position: 'absolute', zIndex: 1500 },
 	row: {
 		//borderTopColor: '#fbfeff',
 		//borderBottomColor: '#e3e6e7',

@@ -77,8 +77,8 @@ const homePostOfficialFormItems = [
 		label: 'Post text',
 		placeholder: 'Let us know about...',
 		// hideIcon: true,
-		//required: true,
-		//minLength: 5,
+		multiline: true,
+		maxLength: 200,
 		//errorMsg: 'Source must be at least 5 characters',
 	},
 ];
@@ -97,8 +97,8 @@ const CreateHomePostScreen = ({
 	const { image } = user && user;
 	const dispatch = useDispatch();
 	const sendPostHandler = () => {
-		dispatch(sendHomePost(
-			{
+		dispatch(
+			sendHomePost({
 				title: 'Unofficial Post',
 				type: 'Personal',
 				source: `Device`,
@@ -106,16 +106,28 @@ const CreateHomePostScreen = ({
 				featuredAuthor: user,
 				image: require('../../assets/images/hall2.jpg'),
 				responses: rand(homePostResponses),
-				text: postText
-
-			}
-		))
+				text: postText,
+			})
+		);
 		//setShowAlert(true);
-			navigation.goBack();
+		navigation.goBack();
 	};
 
 	const sendOfficialHomePostHandler = (inputValues) => {
-		console.warn(inputValues);
+		const { homePostSource, homePostText, homePostTitle, homePostType } = inputValues || {};
+		dispatch(
+			sendHomePost({
+				title: homePostTitle,
+				type: homePostType,
+				source: homePostSource,
+				author: user,
+				featuredAuthor: user,
+				image: require('../../assets/images/hall.jpg'),
+				responses: rand(homePostResponses),
+				text: homePostText || '',
+			})
+		);
+
 		navigation.goBack();
 	};
 	const getPostTextHandler = (text) => {
@@ -132,7 +144,7 @@ const CreateHomePostScreen = ({
 		navigation.setOptions({
 			headerRight: () => (
 				<View style={{ paddingRight: 10, flexDirection: 'row', alignItems: 'center' }}>
-					<Text style={{ ...styles.headerText, marginRight: 10 }}>Drafts</Text>
+					{noPostText && <Text style={{ ...styles.headerText, marginRight: 10 }}>Drafts</Text>}
 					{!isOfficial && (
 						<Btn disabled={noPostText} onPress={sendPostHandler}>
 							Post
@@ -143,9 +155,51 @@ const CreateHomePostScreen = ({
 		});
 	}, [sendPostHandler]);
 
+	useEffect(() => {
+		let navBackTimeout;
+		let unsubscribeNavBeforeRemove = navigation.addListener('beforeRemove', (e) => {
+			if (!postText) {
+				e.preventDefault();
+				// If we don't have unsaved changes, then we don't need to do anything
+				Keyboard.dismiss();
+
+				navBackTimeout = setTimeout(() => {
+					navigation.dispatch(e.data.action);
+				}, 500);
+			}
+			if (!postText) return;
+
+			// Prevent default behavior of leaving the screen
+			e.preventDefault();
+
+			// Prompt the user before leaving the screen
+			Alert.alert('Discard text?', 'You typed some text. Are you sure to discard them and leave the screen?', [
+				{ text: 'Cancel', style: 'cancel', onPress: () => {} },
+				{
+					text: 'Discard',
+					style: 'destructive',
+					// If the user confirmed, then we dispatch the action we blocked earlier
+					// This will continue the action that had triggered the removal of the screen
+					onPress: () => {
+						Keyboard.dismiss();
+						navBackTimeout = setTimeout(() => {
+							navigation.dispatch(e.data.action);
+						}, 500);
+						//navigation.dispatch(e.data.action)
+					},
+				},
+			]);
+		});
+
+		return () => {
+			unsubscribeNavBeforeRemove();
+			clearTimeout(navBackTimeout);
+		};
+	}, [navigation, postText]);
+
 	return (
 		<View style={styles.screen}>
-			<AlertBox show={showAlert} text={postText }  onFinishShow={useCallback(()=> setShowAlert(false))}/>
+			<AlertBox show={showAlert} text={postText} onFinishShow={useCallback(() => setShowAlert(false))} />
 			<View style={{ padding: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
 				<Text style={styles.postTypeText}>Official Post</Text>
 				<Switch
@@ -192,7 +246,6 @@ const CreateHomePostScreen = ({
 							onInputChange={getPostTextHandler}
 							maxLength={200}
 							multiline={true}
-							expandable
 							autoFocus
 						/>
 					</View>

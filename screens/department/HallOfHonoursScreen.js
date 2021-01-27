@@ -124,7 +124,7 @@ const HallOfHonoursScreen = ({ navig }) => {
   const renderItem = (category, { item, }) => (//auto gets data in obj form , I deStructured it in params
     <_Item content={item} category={category} onSelect={() => {
       //console.log(item.constructor.name);
-      navig.navigate('DeptDetails', { item: item, itemId: item.id, title: item.constructor.name })
+      navig.navigate('DeptDetails', { itemId: item.id, title: item.constructor.name })
     }} />
   );
 

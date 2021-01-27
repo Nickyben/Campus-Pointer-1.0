@@ -68,14 +68,15 @@ const getContent = () => {
 		null,
 	];
 
-	const authorImages = images
-		.filter((im) => !!im)
-		.concat(
-			require('../assets/images/femaleStaff.png'),
-			require('../assets/images/femaleStudent.png'),
-			require('../assets/images/maleStaff.png'),
-			require('../assets/images/maleStudent.png')
-		);
+	const authorImages = [
+		require('../assets/images/femaleStaff.png'),
+		require('../assets/images/femaleStudent.png'),
+		require('../assets/images/femaleStudent.png'),
+		require('../assets/images/maleStaff.png'),
+		require('../assets/images/maleStaff.png'),
+		require('../assets/images/maleStudent.png'),
+		require('../assets/images/me.jpg'),
+	];
 	const authors = [
 		{ fullName: 'Dr.A. B. Someone', designation: 'Senior Staff', office: 'HOD', image: rand(authorImages) },
 		{
@@ -154,6 +155,5 @@ const content = getContent();
 const homePosts = content[0].reverse();
 export const comments = content[1];
 export const likes = content[2];
-
 
 export default homePosts.sort((p1, p2) => p2.date.getTime() - p1.date.getTime());
