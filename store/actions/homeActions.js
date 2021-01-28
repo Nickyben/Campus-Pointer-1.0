@@ -157,7 +157,7 @@ export const sendHomePost = (postObj) => {
 
 	return {
 		type: SEND_POST,
-	//	id: responseData.name,
+		//	id: responseData.name,
 		//pushToken: pushToken,
 		//ownerId: userId,
 		homePostItem: new HomePost({
@@ -168,88 +168,49 @@ export const sendHomePost = (postObj) => {
 	};
 };
 
-export const deletePost = (postId, postAuthorId) => {
-	return async (dispatch, getState) => {
-		//async code
-		const idToken = getState().authReducer.idToken;
-		const userId = getState().authReducer.userId;
-		try {
-			let response;
-			try {
-				//CHECK IF YOU CAN ALSO GET THE PUSH TOKEN FOR THAT DEVICE
-				//edit the api url based on the action type
-				response = await fetch(endpoints.deleteData(`myProducts/${postId}`, idToken), {
+export const deletePost = ({postId}) => {
+	const getThunkAsyncFunc = async () => {
+		let pushToken;
+
+		const urlArr = [
+			{
+				url: endpoints.postData('homePosts'),
+				init: {
 					method: 'DELETE',
-				});
-			} catch (err) {
-				requestErrorHandler(err);
-			}
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({}),
+				},
+			},
+		];
 
-			if (response && !response.ok) {
-				//edit this according to the api docs
-				const responseErrorData = await response.json();
-				const respErrMsg = responseErrorData.error.message;
-				let errMsg;
-
-				//EDIT THIS BASED ON THE DOCUMENTATION
-				switch (respErrMsg) {
-					case 'EMAIL_NOT_FOUND': {
-						errMsg = `There is no account with email ${userEmail}, please create an account!`;
-						break;
-					}
-
-					case 'INVALID_PASSWORD': {
-						errMsg = `The password you entered is incorrect`;
-						break;
-					}
-
-					case 'USER_DISABLED': {
-						errMsg = `We are so sorry but, this account has been disabled!`;
-						break;
-					}
-					default:
-						errMsg = 'Hmm...Something went wrong!';
-				}
-
-				//make sure to handle all errors, example: network error
-				//console.warn(errMsg);
-				throw new Error(errMsg);
-			} else {
-				if (!response) throw new Error('NO RESPONSE');
-			}
-
-			const responseData = await response.json(); //waits form the response before continuing with other exe below
-
+		const consumerFunc = (arrOfRespJsonS, { idToken, userId, dispatch }) => {
+			const responseData = arrOfRespJsonS[0];
 			dispatch({
 				type: DELETE_POST,
-				postId: postId,
-				postAuthorId: postAuthorId,
+				id: responseData.name,
+				pushToken: pushToken,
+				ownerId: userId,
+				homePostItem: postObj,
 			});
-		} catch (err) {
-			let errMsg;
-			switch (err) {
-				case 'EMAIL_NOT_FOUND': {
-					errMsg = `There is no account with email ${userEmail}, please create an account!`;
-					break;
-				}
+		};
 
-				case 'INVALID_PASSWORD': {
-					errMsg = `The password you entered is incorrect`;
-					break;
-				}
+		const thunkAsyncFunc = thunkFetch(urlArr, consumerFunc);
+		return thunkAsyncFunc;
+	};
 
-				case 'USER_DISABLED': {
-					errMsg = `We are so sorry but, this account has been disabled!`;
-					break;
-				}
-				default:
-					errMsg = 'Hmm...Something went wrong!';
-			}
-			throw new Error(errMsg);
-		}
+	const thunkAsyncFunc = getThunkAsyncFunc();
+	//return thunkAsyncFunc;
+console.warn(postId)
+	return {
+		type: DELETE_POST,
+		//	id: responseData.name,
+		//pushToken: pushToken,
+		//ownerId: userId,
+		postId: postId,
 	};
 };
-
 export const likePost = (postId, liker) => {
 	return {
 		type: LIKE_POST,

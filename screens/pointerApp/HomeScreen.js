@@ -16,7 +16,14 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 import HeaderBtn from '../../components/UI/HeaderBtn';
 import Colors from '../../constants/Colors';
-import { fetchHomeData, likePost, sharePost, commentPost, fetchHomeReactions } from '../../store/actions/homeActions';
+import {
+	fetchHomeData,
+	likePost,
+	sharePost,
+	commentPost,
+	fetchHomeReactions,
+	deletePost,
+} from '../../store/actions/homeActions';
 import TouchIcon from '../../components/UI/TouchIcon';
 import { rand, shuffle, getSince } from '../../constants/MyFunctions';
 import Btn from '../../components/UI/Btn';
@@ -25,23 +32,26 @@ import LoadingScreen from './LoadingScreen';
 import ErrorScreen from './ErrorScreen';
 import { RefreshControl } from 'react-native';
 import listEmptyComponent from '../../components/pointerComponents/listEmptyComponent';
+import { useNavigation } from '@react-navigation/native';
+import MyModal from '../../components/pointerComponents/MyModal';
 
 const getCount = (postReactionCount) =>
 	postReactionCount >= 1000 ? parseInt(postReactionCount / 1000).toString() + 'K' : postReactionCount;
 
 const _Item = ({
 	content: { id, title, date, type, responses, author, text, image },
-	onSelect,
+	onOptionsClick,
 	replyingPostId,
 	hideOtherRepliesFunc,
-	navig,
 }) => {
+	const navig = useNavigation();
 	const _dispatch = useDispatch();
 	const { fullName, office, post } = author ? author : {};
 	const authorImage = author && author.image;
 	const isStudent = true; //for now
 	const commentAuthorType = isStudent ? 'student' : rand(['staff', 'admin', 'postAuthor']);
 	const user = useSelector((state) => state.authReducer.userAppData);
+	const isUserPost = author.id === user.id;
 	const isLiked = useSelector((state) => state.homeReducer.availableLikes).includes(id);
 	const postLikes = useSelector((state) => state.homeReducer.availableGeneralLikes.filter((l) => l.postId === id));
 	const numOfLikes = getCount(postLikes.length);
@@ -59,6 +69,46 @@ const _Item = ({
 	// useEffect(() => {
 	// 	setIsReplyingPost((p) => replyingPostId === id);
 	// }, [replyingPostId]);
+
+	const [showOptionsModal, setShowOptionsModal] = useState(false);
+
+	const postOptions = [
+		{
+			title: 'Delete post',
+			onClick: () => {
+				_dispatch(deletePost({postId: id}));
+				setShowOptionsModal(false)
+			},
+		},
+		{
+			title: 'Archive post',
+			onClick: () => {
+				console.warn('Working');
+			},
+		},
+		{
+			title: 'Pin post',
+			onClick: () => {
+				console.warn('Working');
+			},
+		},
+		{
+			title: 'Share post',
+			onClick: () => {
+				console.warn('Working');
+			},
+		},
+		{
+			title: 'Report author',
+			onClick: () => {
+				console.warn('Working');
+			},
+		},
+	];
+
+	const displayPostOptions = ({ id, isUserPost }) => {
+		setShowOptionsModal(true);
+	};
 
 	const showResponsesHandler = (id) => {
 		setSuggestedComments(shuffle(responses));
@@ -131,7 +181,12 @@ const _Item = ({
 						{/* </View> */}
 
 						<View style={{ ...styles.actionContainer, flex: 1, justifyContent: 'center' }}>
-							<TouchIcon name={'more'} size={22} color={'#789'} />
+							<TouchIcon
+								name={'more'}
+								size={22}
+								color={'#789'}
+								onTouch={displayPostOptions.bind(this, { id, isUserPost })}
+							/>
 						</View>
 					</View>
 				</View>
@@ -279,21 +334,42 @@ const _Item = ({
 					)}
 				</View>
 			</View>
+			<MyModal
+				bottomAlertBox
+				showModal={showOptionsModal}
+				handleRequestClose={() => {
+					setShowOptionsModal(false);
+				}}>
+				{postOptions
+					.filter((op) =>!( !isUserPost && op.title === 'Delete post'))
+					.map(({ title, onClick }, index) => {
+						return (
+							<Touch key={index} onTouch={onClick} style={{ alignItems: 'baseline' }}>
+								<Text style={styles.alertBoxText}>{title}</Text>
+							</Touch>
+						);
+					})}
+			</MyModal>
 		</View>
 	);
 };
 
 const HomeScreen = ({ navigation }) => {
+	const user = useSelector((state) => state.authReducer.userAppData);
+
+	const homePosts = useSelector((state) => state.homeReducer.availablePosts);
+	// const [showHeader, setShowHeader] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isRefreshing, setIsRefreshing] = useState(false);
 	const [error, setError] = useState();
-	const homePosts = useSelector((state) => state.homeReducer.availablePosts);
-	// const [showHeader, setShowHeader] = useState(false);
 	const [replyingPost, setReplyingPost] = useState('');
 
 	const hideOtherRepliesHandler = (post) => {
 		setReplyingPost((p) => post);
 	};
+
+	// 	setShowOptionsModal({ id, show: true, isUserPost });
+	// };
 	const dispatch = useDispatch();
 
 	const loadData = useCallback(async () => {
@@ -351,7 +427,6 @@ const HomeScreen = ({ navigation }) => {
 			onSelect={() => {}}
 			hideOtherRepliesFunc={hideOtherRepliesHandler}
 			replyingPostId={replyingPost}
-			navig={navigation}
 		/>
 	);
 
@@ -371,9 +446,21 @@ const HomeScreen = ({ navigation }) => {
 	if (isLoading) {
 		return <LoadingScreen />;
 	}
-
+	// console.warn(showOptionsModal.isUserPost)
 	return (
 		<View style={styles.screen}>
+			<FlatList
+				refreshControl={
+					<RefreshControl colors={[Colors.primary]} refreshing={isRefreshing} onRefresh={loadData} />
+				}
+				showsHorizontalScrollIndicator={false}
+				//initialNumToRender, refreshing
+				keyExtractor={(item, index) => item.id}
+				data={homePosts}
+				renderItem={renderItem}
+				contentContainerStyle={{ ...styles.listContainer, flex: homePosts.length === 0 ? 1 : 0 }}
+				ListEmptyComponent={listEmptyComponent.bind(this, { onRetry: loadData, isRefreshing })}
+			/>
 			{
 				//if user is authorized to post
 				<TouchIcon
@@ -393,18 +480,6 @@ const HomeScreen = ({ navigation }) => {
 					color={'#fff'}
 				/>
 			}
-			<FlatList
-				refreshControl={
-					<RefreshControl colors={[Colors.primary]} refreshing={isRefreshing} onRefresh={loadData} />
-				}
-				showsHorizontalScrollIndicator={false}
-				//initialNumToRender, refreshing
-				keyExtractor={(item, index) => item.id}
-				data={homePosts}
-				renderItem={renderItem}
-				contentContainerStyle={{ ...styles.listContainer, flex: homePosts.length === 0 ? 1 : 0 }}
-				ListEmptyComponent={listEmptyComponent.bind(this, { onRetry: loadData, isRefreshing })}
-			/>
 		</View>
 	);
 };
@@ -586,6 +661,16 @@ const styles = StyleSheet.create({
 		//alignItems: 'flex-end',
 		padding: 5,
 		paddingHorizontal: 10,
+	},
+	alertBoxText: {
+		fontFamily: 'OpenSansBold',
+		fontSize: 17,
+		color: '#333',
+		//backgroundColor: '#ffc',
+		//	textAlign: 'center',
+		padding: 15,
+		paddingHorizontal: 40,
+		//width: '100%',
 	},
 });
 

@@ -1,4 +1,4 @@
-import { LIKE_POST, LOAD_HOME_DATA, COMMENT_POST, SEND_POST } from '../actions/homeActions';
+import { LIKE_POST, LOAD_HOME_DATA, COMMENT_POST, SEND_POST, DELETE_COMMENT, DELETE_POST } from '../actions/homeActions';
 import homePosts, { comments, likes } from '../../data/homePosts';
 import HomePost from '../../models/homePost';
 
@@ -67,6 +67,20 @@ export default (state = initialState, action) => {
 				...state,
 				availablePosts: updatedPosts,
 			};
+		}
+		case DELETE_POST: {
+			console.warn(`reducer ${action.postId}`)
+				const prev = [...state.availablePosts];
+				const updatedPosts = [
+					...prev
+						.filter((p) => p.id !== action.postId)
+						.sort((p1, p2) => p2.date.getTime() - p1.date.getTime()),
+				];
+
+				return {
+					...state,
+					availablePosts: updatedPosts,
+				};
 		}
 	}
 	return state;

@@ -3,3 +3,9 @@ if hasPaidSchoolFeesOrAppFee => grant access to some actions that require backen
 ensure you manage ids and names from backend
 
 work on oversflows eg names, texts etc
+
+make use of listeners prop of Tab.screen eg: listeners={{
+    tabPress: e => {
+      // Prevent default action
+      e.preventDefault();
+    },

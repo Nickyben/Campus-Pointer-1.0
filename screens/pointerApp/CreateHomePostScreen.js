@@ -94,6 +94,7 @@ const CreateHomePostScreen = ({
 	const [isOfficial, setIsOfficial] = useState(false);
 	const [postText, setPostText] = useState('');
 	const [showAlert, setShowAlert] = useState(false);
+	const [isSubmission, setIsSubmission] = useState(false);
 	const { image } = user && user;
 	const dispatch = useDispatch();
 	const sendPostHandler = () => {
@@ -110,7 +111,7 @@ const CreateHomePostScreen = ({
 			})
 		);
 		//setShowAlert(true);
-		navigation.goBack();
+		setIsSubmission(true);
 	};
 
 	const sendOfficialHomePostHandler = (inputValues) => {
@@ -127,8 +128,7 @@ const CreateHomePostScreen = ({
 				text: homePostText || '',
 			})
 		);
-
-		navigation.goBack();
+		setIsSubmission(true);
 	};
 	const getPostTextHandler = (text) => {
 		setPostText(text);
@@ -157,6 +157,7 @@ const CreateHomePostScreen = ({
 
 	useEffect(() => {
 		let navBackTimeout;
+
 		let unsubscribeNavBeforeRemove = navigation.addListener('beforeRemove', (e) => {
 			if (!postText) {
 				e.preventDefault();
@@ -165,9 +166,9 @@ const CreateHomePostScreen = ({
 
 				navBackTimeout = setTimeout(() => {
 					navigation.dispatch(e.data.action);
-				}, 500);
+				}, 200);
+				return;
 			}
-			if (!postText) return;
 
 			// Prevent default behavior of leaving the screen
 			e.preventDefault();
@@ -184,18 +185,26 @@ const CreateHomePostScreen = ({
 						Keyboard.dismiss();
 						navBackTimeout = setTimeout(() => {
 							navigation.dispatch(e.data.action);
-						}, 500);
+						}, 200);
 						//navigation.dispatch(e.data.action)
 					},
 				},
 			]);
 		});
 
+		if (isSubmission) {
+			unsubscribeNavBeforeRemove();
+			Keyboard.dismiss();
+			navBackTimeout = setTimeout(() => {
+				navigation.goBack();
+			}, 200);
+		}
+
 		return () => {
 			unsubscribeNavBeforeRemove();
 			clearTimeout(navBackTimeout);
 		};
-	}, [navigation, postText]);
+	}, [navigation, postText, isSubmission]);
 
 	return (
 		<View style={styles.screen}>

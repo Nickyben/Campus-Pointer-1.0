@@ -4,9 +4,9 @@ export const endpoints = {
 	signUp: `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${''}`,
 	login: `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${''}`,
 	update: `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${''}`,
-	getData: (node) => `https://pointer-1-0.firebaseio.com/${node}.json`, //change the project name in the url
-	postData: (node, idToken) => `https://pointer-1-0.firebaseio.com/${node}.json?auth=${idToken}`,
-	deleteData: (node, idToken) => `https://pointer-1-0.firebaseio.com/${node}.json?auth=${idToken}`,
+	getData: (node) => 'http://www.facebook.com', //'`https://pointer-1-0.firebaseio.com/${node}.json`, //change the project name in the url
+	postData: (node, idToken) => 'http://www.facebook.com', //'`https://pointer-1-0.firebaseio.com/${node}.json?auth=${idToken}`,
+	deleteData: (node, idToken) => 'http://www.facebook.com', //'`https://pointer-1-0.firebaseio.com/${node}.json?auth=${idToken}`,
 };
 var firebaseConfig = {
 	apiKey: 'AIzaSyAaqVEzZzq5RDJ9QJwmYazriA5S9GKy8bc',
