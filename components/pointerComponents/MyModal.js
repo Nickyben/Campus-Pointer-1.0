@@ -61,6 +61,7 @@ const MyModal = ({
 										borderBottomRightRadius: topAlertBox ? 15 : 0,
 										backgroundColor: '#fff', //Colors.primary + '77',
 										paddingHorizontal: 0,
+										
 									}}>
 									<ScrollView style={{}}>{children}</ScrollView>
 								</Card>

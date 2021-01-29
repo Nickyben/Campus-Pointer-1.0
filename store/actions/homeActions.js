@@ -168,7 +168,7 @@ export const sendHomePost = (postObj) => {
 	};
 };
 
-export const deletePost = ({postId}) => {
+export const deletePost = ({ postId }) => {
 	const getThunkAsyncFunc = async () => {
 		let pushToken;
 
@@ -190,9 +190,7 @@ export const deletePost = ({postId}) => {
 			dispatch({
 				type: DELETE_POST,
 				id: responseData.name,
-				pushToken: pushToken,
-				ownerId: userId,
-				homePostItem: postObj,
+				postId: postId,
 			});
 		};
 
@@ -202,7 +200,6 @@ export const deletePost = ({postId}) => {
 
 	const thunkAsyncFunc = getThunkAsyncFunc();
 	//return thunkAsyncFunc;
-console.warn(postId)
 	return {
 		type: DELETE_POST,
 		//	id: responseData.name,

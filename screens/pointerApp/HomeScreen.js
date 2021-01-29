@@ -71,13 +71,27 @@ const _Item = ({
 	// }, [replyingPostId]);
 
 	const [showOptionsModal, setShowOptionsModal] = useState(false);
+	const [showConfirmModal, setShowConfirmModal] = useState({ show: false, selectedOption: '' });
 
 	const postOptions = [
 		{
 			title: 'Delete post',
+			confirm: {
+				header: 'Delete',
+				text: 'Do you really want to delete this post?',
+				cancel: 'No',
+				okay: 'Yes',
+				onOkay: () => {
+					_dispatch(deletePost({ postId: id }));
+					setShowConfirmModal({show:false,selectedOption: ''});
+				},
+				onCancel: () => {
+					setShowConfirmModal({show:false,selectedOption: ''});
+				},
+			},
 			onClick: () => {
-				_dispatch(deletePost({postId: id}));
-				setShowOptionsModal(false)
+				setShowOptionsModal(false);
+				setShowConfirmModal({ show: true, selectedOption: 'Delete post' });
 			},
 		},
 		{
@@ -105,6 +119,9 @@ const _Item = ({
 			},
 		},
 	];
+
+	const clickedAlertOption =
+		!!showConfirmModal.show && postOptions.find((op) => op.title === showConfirmModal.selectedOption);
 
 	const displayPostOptions = ({ id, isUserPost }) => {
 		setShowOptionsModal(true);
@@ -335,20 +352,35 @@ const _Item = ({
 				</View>
 			</View>
 			<MyModal
-				bottomAlertBox
-				showModal={showOptionsModal}
+				headerText={showConfirmModal.show && clickedAlertOption && clickedAlertOption.confirm.header}
+				bottomAlertBox={showOptionsModal}
+				showModal={showOptionsModal || showConfirmModal.show}
 				handleRequestClose={() => {
 					setShowOptionsModal(false);
+					setShowConfirmModal({ show: false, selectedOption: '' });
 				}}>
-				{postOptions
-					.filter((op) =>!( !isUserPost && op.title === 'Delete post'))
-					.map(({ title, onClick }, index) => {
-						return (
-							<Touch key={index} onTouch={onClick} style={{ alignItems: 'baseline' }}>
-								<Text style={styles.alertBoxText}>{title}</Text>
-							</Touch>
-						);
-					})}
+				{showOptionsModal &&
+					postOptions
+						.filter((op) => !(!isUserPost && op.title === 'Delete post'))
+						.map(({ title, onClick }, index) => {
+							return (
+								<Touch key={index} onTouch={onClick} style={{ alignItems: 'baseline' }}>
+									<Text style={styles.alertBoxText}>{title}</Text>
+								</Touch>
+							);
+						})}
+				{!!clickedAlertOption && (
+					<View style={{}}>
+						<Text style={{...styles.alertBoxText,textAlign: 'center', paddingHorizontal:20, }} onPress={clickedAlertOption.confirm.onOkay}>
+							{clickedAlertOption.confirm.text}
+						</Text>
+
+						<View style={{flexDirection: 'row', justifyContent: 'space-around', paddingHorizontal:20, marginTop: 30}}>
+							<Text onPress={clickedAlertOption.confirm.onCancel} style={styles.confirmBtn}>{clickedAlertOption.confirm.cancel}</Text>
+							<Text onPress={clickedAlertOption.confirm.onOkay} style={styles.confirmBtn}>{clickedAlertOption.confirm.okay}</Text>
+						</View>
+					</View>
+				)}
 			</MyModal>
 		</View>
 	);
@@ -672,6 +704,16 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 40,
 		//width: '100%',
 	},
+	confirmBtn: {
+		fontFamily: 'OpenSansBold',
+		fontSize: 15,
+		color: '#333',
+		//backgroundColor: '#ffc',
+		//	textAlign: 'center',
+		padding: 5,
+	},
+
+	
 });
 
 export default HomeScreen;

@@ -69,7 +69,6 @@ export default (state = initialState, action) => {
 			};
 		}
 		case DELETE_POST: {
-			console.warn(`reducer ${action.postId}`)
 				const prev = [...state.availablePosts];
 				const updatedPosts = [
 					...prev
