@@ -375,7 +375,7 @@ const _Item = ({
 							{clickedAlertOption.confirm.text}
 						</Text>
 
-						<View style={{flexDirection: 'row', justifyContent: 'space-around', paddingHorizontal:20, marginTop: 30}}>
+						<View style={{flexDirection: 'row', justifyContent: 'space-around', paddingHorizontal:20, marginTop: 10}}>
 							<Text onPress={clickedAlertOption.confirm.onCancel} style={styles.confirmBtn}>{clickedAlertOption.confirm.cancel}</Text>
 							<Text onPress={clickedAlertOption.confirm.onOkay} style={styles.confirmBtn}>{clickedAlertOption.confirm.okay}</Text>
 						</View>
@@ -708,9 +708,9 @@ const styles = StyleSheet.create({
 		fontFamily: 'OpenSansBold',
 		fontSize: 15,
 		color: '#333',
-		//backgroundColor: '#ffc',
+		// backgroundColor: '#ff5',
 		//	textAlign: 'center',
-		padding: 5,
+		padding: 15,
 	},
 
 	
