@@ -200,7 +200,7 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 									</View>
 								</View> */}
 					</KeyboardAwareScrollView>
-					<Text style={styles.versionText}> pointer v 1.0 .0 </Text>
+					{/* <Text style={styles.versionText}> pointer v 1.0 .0 </Text> */}
 				</View>
 			</ImageBackground>
 			{/* {<ErrorScreen />} */}

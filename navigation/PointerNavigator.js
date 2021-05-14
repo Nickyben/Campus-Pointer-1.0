@@ -540,7 +540,7 @@ const PointerDrawerNav = createDrawerNavigator();
 
 export const PointerDrawerNavigator = () => {
 	const dispatch = useDispatch();
-	const user = useSelector((s) => s.dataReducer.availableStudents.find((s) => s.id === 'studentUserId'));
+	const user = useSelector((s) => s.authReducer.userAppData);
 	const { image } = user && user;
 
 	return (

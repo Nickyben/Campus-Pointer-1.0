@@ -172,6 +172,7 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 					<View
 						style={{
 							paddingHorizontal: 20,
+							paddingBottom:20,
 						}}>
 						<Btn
 							fontSize={15}
@@ -190,32 +191,9 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 							Login instead
 						</Btn>
 					</View>
-					{/* <View style={styles.actions}>
-									<View style={styles.btn}>
-										{isLoading ? (
-											<ActivityIndicator color={Colors.primary} size={22} />
-										) : (
-											<Button
-												title={isSignup ? 'Signup' : 'Login'}
-												color={Colors.primary}
-												onPress={authHandler}
-											/>
-										)}
-									</View>
-									<View style={styles.btn}>
-										<Button
-											title={`Switch to ${isSignup ? 'Login' : 'Signup'}`}
-											color={'#ee2277'}
-											onPress={() => {
-												setIsSignup((prevState) => {
-													return !prevState;
-												});
-											}}
-										/>
-									</View>
-								</View> */}
+				
 				</KeyboardAwareScrollView>
-				<Text style={styles.versionText}> pointer v 1.0 .0 </Text>
+				{/* <Text style={styles.versionText}> pointer v 1.0 .0 </Text> */}
 			</View>
 
 			{/* {<ErrorScreen />} */}
@@ -278,6 +256,8 @@ const styles = StyleSheet.create({
 		paddingTop: 10,
 		padding: 20,
 		flex: 1,
+		// backgroundColor: 'blue',
+
 		//	width: '100%',
 		//height: '100%',
 		//justifyContent: 'space-between'

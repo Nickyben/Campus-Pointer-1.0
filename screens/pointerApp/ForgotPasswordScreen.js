@@ -54,7 +54,6 @@ const ForgotPasswordScreen = ({ navigation }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const dispatch = useDispatch();
 
-	
 	const authHandler = async () => {
 		let action;
 		if (isVerifyCode) {
@@ -116,7 +115,10 @@ const ForgotPasswordScreen = ({ navigation }) => {
 
 				<KeyboardAwareScrollView
 					showsVerticalScrollIndicator={false}
-					contentContainerStyle={{ ...styles.formContainerScroll }}>
+					style={{ ...styles.formContainerScroll }}
+					enableOnAndroid={true}
+					// style={styles.formContainer}
+					>
 					<View style={styles.welcomeContainer}>
 						<Text style={styles.welcomeText1}>
 							{isVerifyCode ? 'Code Verification' : 'Forgot Password?'}
@@ -203,7 +205,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		paddingTop: 40,
 		padding: 20,
-		//	backgroundColor: 'blue',
+		// backgroundColor: 'blue',
 		//justifyContent: 'center',
 
 		//	width: '100%',
@@ -213,7 +215,9 @@ const styles = StyleSheet.create({
 		//bottom: 0,
 		//position: 'absolute',
 	},
-
+	formContainer: {
+	
+	},
 	welcomeContainer: {
 		width: '100%',
 		//	height: '50%',

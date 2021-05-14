@@ -167,7 +167,7 @@ const content = (department = null) => {
 
 					mostRecentResult: null,
 
-					image: require('../assets/images/me.jpg'),
+					image: require('../assets/images/Me2.jpg'),
 
 					honours: honours,
 

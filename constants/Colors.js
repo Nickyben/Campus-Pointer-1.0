@@ -60,8 +60,8 @@ export const darkTheme = {
 
 
 
-primary = lightTheme.primary[0]; //0,2,3,5
-accent = lightTheme.accent[0];//0,2,3,5
+primary = lightTheme.primary[1]; //0,2,3,5
+accent = lightTheme.accent[1];//0,2,3,5
 accent2 = '#ef7f0a';
 white = '#ffffff';
 black = '#000000';
@@ -86,7 +86,7 @@ error = '#ffeeee';
 warning = '#ffddaa'
 divider = '#ddd';
 
-if (Platform.OS == 'ios') {
+if (Platform.OS == 'android') {
   switchPrimary = primary;
   switchPrimary2 = primary2;
   switchAccent = accent;
