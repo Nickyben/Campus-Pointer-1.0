@@ -38,8 +38,9 @@ const _Item = ({ content: { courseTitle, courseCode }, onSelect }) => (
 );
 
 const StudentProfileScreen = ({ navigation }) => {
-  const studentUser = useSelector(state => state.dataReducer.availableStudents
-  ).find(s => s.id === 'studentUserId');
+  // const studentUser = useSelector(state => state.dataReducer.availableStudents
+  // ).find(s => s.id === 'studentUserId');
+  const studentUser = useSelector((state) => state.authReducer.userAppData);
   const presentCourses = useSelector(state => state.dataReducer.availableCourses)
     .filter(c => c.courseLevel === +studentUser.level)
 
@@ -77,10 +78,15 @@ const StudentProfileScreen = ({ navigation }) => {
     }
     , [dispatch, loadData]);
 
-  const {id, regNumber, department, level, faculty, image} = studentUser ? studentUser : {};//presentCourses
+  const {id, userRegNumber, userEmail, userName, regNumber, department, level, faculty, image} = studentUser ? studentUser : {};//presentCourses
   const details = [
-    ['Reg. No.', regNumber], ['Level', level], ['Faculty', faculty], ['Department', department],
-    ['Session', '2020/2021'],
+		['Reg. No.', userRegNumber],
+		['Level', level],
+		['Faculty', faculty],
+		['Department', department],
+		['Email', userEmail],
+		['UserName', userName],
+		['Session', '2020/2021'],
   ];
 
   const renderItem = ({ item }) => (//auto gets data in obj form , I deStructured it in params

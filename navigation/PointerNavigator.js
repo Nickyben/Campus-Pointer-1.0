@@ -68,9 +68,11 @@ import AuthSignup, { screenOptions as authSignupScreenOptions } from '../screens
 
 import ErrorScreen, { screenOptions as errorScreenOptions } from '../screens/pointerApp/ErrorScreen';
 
+//home plus
 import CreateHomePostScreen, {
 	screenOptions as createHomePostScreenOpts,
 } from '../screens/pointerApp/CreateHomePostScreen';
+import { logout } from '../store/actions/authActions';
 
 let TouchableCmp = TouchableOpacity;
 
@@ -400,7 +402,7 @@ export const AuthStackNavigator = () => {
 		</AuthStackNav.Navigator>
 	);
 };
-
+ 
 const ErrorStackNav = createStackNavigator();
 
 export const ErrorStackNavigator = () => {
@@ -538,13 +540,13 @@ const StackOfTabNavigator = () => {
 
 const PointerDrawerNav = createDrawerNavigator();
 
-export const PointerDrawerNavigator = () => {
+export const PointerDrawerNavigator = ({onLogout}) => {
 	const dispatch = useDispatch();
 	const user = useSelector((s) => s.authReducer.userAppData);
 	const { image } = user && user;
 
 	return (
-		<PointerDrawerNav.Navigator
+		<PointerDrawerNav.Navigator 
 			drawerType={'slide'}
 			drawerLabel="Menu"
 			drawerContent={(props) => {
@@ -654,10 +656,7 @@ export const PointerDrawerNavigator = () => {
 												//color={color}
 											/>
 										)}
-										onPress={() => {
-											//dispatch(authActions.logout());
-											//props.navigation.navigate('Auth')//already handled by the renderer(AppNavigator) of the ShopNavigator @ app.js
-										}}
+										onPress={onLogout}
 									/>
 								</View>
 							</View>

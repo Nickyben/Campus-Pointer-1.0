@@ -32,7 +32,7 @@ const forgotPWInputItems = [
 			iconName: 'at',
 		},
 		email: true,
-		errorMsg: 'Please provide a valid email or reg. Number',
+		errorMsg: 'Please provide a valid email ',
 	},
 ];
 
@@ -95,7 +95,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
 				style={{
 					...styles.container,
 				}}>
-				<View style={{ marginVertical: 50, alignItems: 'center', flexDirection: 'row', padding: 30 }}>
+				<View style={{ marginTop: 30, alignItems: 'center', flexDirection: 'row', padding: 20, paddingVertical:10 }}>
 					<TouchIcon
 						name={'arrow-back'}
 						size={25}
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
 	formContainerScroll: {
 		flex: 1,
 		paddingTop: 40,
-		padding: 20,
+		padding: 10,
 		// backgroundColor: 'blue',
 		//justifyContent: 'center',
 

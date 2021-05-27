@@ -16,7 +16,7 @@ export const tryAutoLogin = () => {
 	return { type: INDICATE_TRIED_TO_AUTO_LOGIN }; ///???
 };
 
-const fetchUserAppData = (idToken, userId) => {
+const reFetchUserAppData = async (idToken, userId) => {
 	//from backend or provider
 	return {};
 };
@@ -36,14 +36,13 @@ export const updateUserAppData = () => {
 		const expiryTime = expiryDateObj.getTime() - new Date().getTime();
 
 		//const
-		dispatch(authenticate(idToken, userId, expiryTime, pushToken, userEmail, fetchUserAppData(idToken, userId)));
+		dispatch(authenticate(idToken, userId, expiryTime, pushToken, userEmail, reFetchUserAppData(idToken, userId)));
 	};
 };
 
 export const authenticate = (idToken, userId, expiryTime, pushToken, userEmail, userAppData) => {
-	const fetchedUserAppData = userAppData ? userAppData : fetchUserAppData(idToken, userId);
-
 	return async (dispatch) => {
+		const fetchedUserAppData = userAppData ? userAppData : await reFetchUserAppData(idToken, userId);
 		dispatch(setLogoutTimer(expiryTime)); // check well!!!!
 		dispatch({
 			type: AUTHENTICATE,
@@ -59,12 +58,11 @@ export const authenticate = (idToken, userId, expiryTime, pushToken, userEmail, 
 	};
 };
 
-export const signup = (userEmail, userPassword) => {
-	//console.log(userEmail, userPassword);
+export const signup = ({ userEmail, userPassword, userRegNumber, userName }) => {
 	return async (dispatch) => {
 		//this fetch request creates an new user and returns info about the new account
 
-		if (userEmail && userPassword) {
+		if (userEmail && userPassword && userRegNumber && userName) {
 			//SEND REQUEST FOR SIGNUP
 
 			let response;
@@ -119,6 +117,13 @@ export const signup = (userEmail, userPassword) => {
 			}
 
 			const responseData = await response.json();
+			const userAppData = await uploadUserAppData({
+				userName,
+				userEmail,
+				userRegNumber,
+				idToken: responseData.idToken,
+				userId: responseData.localId,
+			});
 
 			//LOGGING IN AFTER SIGN-UP???!!!
 			dispatch(
@@ -128,7 +133,8 @@ export const signup = (userEmail, userPassword) => {
 					responseData.localId,
 					parseInt(responseData.expiresIn) * 1000,
 					'pushToken',
-					responseData.email
+					responseData.email,
+					userAppData
 				)
 			);
 		} else {
@@ -185,7 +191,7 @@ export const login = (userEmail, userPassword) => {
 						break;
 					}
 					default:
-						errMsg = 'Hmm...Something went wrong!';
+						errMsg = 'Hmm...Something went wrong!'; //respErrMsg
 				}
 
 				//make sure to handle all errors, example: network error
@@ -196,6 +202,8 @@ export const login = (userEmail, userPassword) => {
 			const responseData = await response.json();
 			//console.log(responseData)
 
+			const userAppData = await fetchUserAppData({ userId: responseData.localId });
+
 			dispatch(
 				authenticate(
 					//CHECK IF YOU CAN STORE THE USERS PUSH TOKEN EACH TIME THEY LOGIN(even for auto login) (SINCE THEIR PUSH TOKEN SHOULD CHANGE ON EVERY NEW DEVICE)
@@ -203,7 +211,8 @@ export const login = (userEmail, userPassword) => {
 					responseData.localId,
 					parseInt(responseData.expiresIn) * 1000,
 					'pushToken',
-					responseData.email
+					responseData.email,
+					userAppData
 				)
 			);
 		} else {
@@ -213,11 +222,13 @@ export const login = (userEmail, userPassword) => {
 	};
 };
 
-export const logout = async () => {
-	clearLogoutTimer();
-	await AsyncStorage.removeItem('userData'); //you can still choose to wait for this
-	return {
-		type: LOGOUT,
+export const logout = () => {
+	return async (dispatch) => {
+		clearLogoutTimer();
+		await AsyncStorage.removeItem('userData'); //you can still choose to wait for this
+		dispatch({
+			type: LOGOUT,
+		});
 	};
 };
 
@@ -250,6 +261,81 @@ const saveDataToStorage = async (idToken, userId, tokenExpiry, pushToken, emailA
 	} catch (e) {
 		throw new Error('There was a problem with storage on your device!');
 	}
+};
+
+const fetchUserAppData = async ({ userId }) => {
+	// return async(dispatch, getState) => {
+	// 	//async code
+	// const userId = getState().authRed.userId;
+	try {
+		//the u1 will be replaced with a specific authenticated user
+		const response = await fetch(endpoints.getData(`userAppData/${userId}`), {
+			method: 'GET', //already the default, hence is unnecessary
+		});
+
+		//optional
+		if (!response.ok) {
+			throw new Error('Something went wrong!');
+		}
+
+		const responseData = await response.json(); //waits form the response before continuing with other exe below
+		if (!responseData) throw new Error('Something went wrong!');
+
+		let userAppData;
+		for (const key in responseData) {
+			const itemObj = responseData[key];
+			userAppData = {
+				signupId: itemObj.signupId,
+				userName: itemObj.userName,
+				userEmail: itemObj.userEmail,
+				userRegNumber: itemObj.userRegNumber,
+				signupDate: new Date(itemObj.signupDate),
+			};
+		}
+		return userAppData;
+	} catch (err) {
+		//send to custom analytics server
+		throw err; //handle this on the screen file
+	}
+	// };
+};
+
+const uploadUserAppData = async ({ userName, userEmail, userRegNumber, idToken, userId }) => {
+	// return async (dispatch, getState) => {
+	// const idToken = getState().authRed.idToken;
+	// const userId = getState().authRed.userId;
+	const date = new Date();
+	let response;
+	try {
+		response = await fetch(endpoints.postData(`userAppData/${userId}`, idToken), {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				userName,
+				userEmail,
+				userRegNumber,
+				signupDate: date.toISOString(),
+			}),
+		});
+	} catch (err) {
+		throw new Error(err);
+	}
+	if (!response.ok) {
+		console.warn(response);
+		throw new Error(response.error);
+	}
+	const responseData = await response.json(); //waits form the response before continuing the exe
+	if (!responseData) throw new Error('Something went wrong with response');
+	const userAppData = {
+		signupId: responseData.name,
+		userName,
+		userEmail,
+		userRegNumber,
+		signupDate: date,
+	};
+	return userAppData;
 };
 
 export const verifyPassword = (userEmail, userPassword) => {

@@ -11,3 +11,19 @@ make use of listeners prop of Tab.screen eg: listeners={{
       // Prevent default action
       e.preventDefault();
     },
+
+    	Check for web===>	"react-native-elements": "^3.0.0-alpha.1",
+		"react-native-tab-view": "^2.15.1",
+"react-navigation": "^4.4.0",
+		"react-navigation-drawer": "^2.5.0",
+    	"react-native-svg": "12.1.0",
+		"react-native-svg-charts": "^5.4.0",
+    "react-native-image-slider-box": "^1.0.12",
+		"react-native-image-slider-show": "^1.0.3",
+		"react-native-keyboard-aware-scroll-view": "^0.9.3",
+    "react-native-calendars": "^1.403.0",
+		"react-native-chart-kit": "^6.6.1",
+
+
+
+    Thanks. Looks like the issue is with the react-native/Libraries/NewAppScreen. After removing it, the application is working fine 

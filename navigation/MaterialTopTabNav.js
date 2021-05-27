@@ -9,7 +9,6 @@ import HeaderBtn from '../components/UI/HeaderBtn';
 import FacultyOverviewScreen from '../screens/pointerApp/FacultyOverviewScreen'
 import Colors from '../constants/Colors';
 
-
 const defaultNavOptions = (props) => {
   //console.log(props);
   return ({

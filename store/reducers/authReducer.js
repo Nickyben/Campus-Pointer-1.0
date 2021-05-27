@@ -1,7 +1,7 @@
 import students from '../../data/students';
 import { INDICATE_TRIED_TO_AUTO_LOGIN, AUTHENTICATE, LOGOUT } from '../actions/authActions';
 
-
+const testUser = students.find((s) => s.id === 'studentUserId')
 const initialState = {
 	idToken: null,
 	userId: null,
@@ -9,7 +9,7 @@ const initialState = {
 	userEmail: null,
 	triedAutoLogin: false,
 	//for now
-	userAppData: students.find((s) => s.id === 'studentUserId'), //null,
+	userAppData:{} , //null,
 };
 
 export default (state = initialState, action) => {
@@ -32,7 +32,7 @@ export default (state = initialState, action) => {
 				userId: action.userId,
 				pushToken: action.pushToken,
 				userEmail: action.userEmail,
-				//userAppData: action.userAppData,
+				userAppData: {...action.userAppData, ...testUser}, //comment for dummy data
 				triedAutoLogin: true,
 			};
 		}

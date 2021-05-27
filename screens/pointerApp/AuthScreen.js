@@ -110,10 +110,10 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 			{/* <StatusBar /> */}
 			<ImageBackground source={require('../../assets/images/news1.jpg')} style={styles.imageBackground}>
 				<View
-					style={{
-						...styles.container,
-						height: '85%',
-					}}>
+					style={
+						[styles.container,]
+						//	height: '85%',
+					}>
 					<View style={styles.welcomeContainer}>
 						<Text style={styles.welcomeText1}>Welcome to Pointer</Text>
 						<Text style={styles.welcomeText2}> Make your campus life easy and fun! </Text>
@@ -154,7 +154,8 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 									navigation.navigate('ForgotPassword', {});
 								}}
 								borderColor={Colors.primary}
-								bgColor={'#fff'}>
+								bgColor={'#f3f6f7'}
+								textColor={Colors.primary}>
 								Forgot Password ?
 							</Btn>
 
@@ -171,7 +172,8 @@ const AuthScreen = ({ navigation, route: { params } }) => {
 									navigation.navigate('AuthSignup', {});
 								}}
 								borderColor={Colors.primary}
-								bgColor={'#fff'}>
+								bgColor={'#f3f6f7'}
+								textColor={Colors.primary}>
 								Don't have an account? -- Create account
 							</Btn>
 						</View>
@@ -252,15 +254,15 @@ const styles = StyleSheet.create({
 	container: {
 		backgroundColor: 'transparent',
 		paddingTop: 40,
-		padding: 20,
+		padding: 10,
 		paddingBottom: 0,
 		flex: 1,
 		width: '100%',
-		bottom: 0,
-		position: 'absolute',
+		//bottom: 0,
+		//position: 'absolute',
 		backgroundColor: '#fff',
-		borderTopRightRadius: 50,
-		borderTopLeftRadius: 50,
+	//	borderTopRightRadius: 50,
+	//	borderTopLeftRadius: 50,
 		overflow: 'hidden',
 		//backgroundColor: 'blue',
 		//justifyContent: 'flex-end',

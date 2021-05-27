@@ -78,9 +78,17 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 
 	
 	const authHandler = async (inputValues) => {
-		const { signupEmailAddress, signupPassword } = inputValues;
+		const { signupEmailAddress, signupPassword, signupRegNumber } = inputValues;
 
-		let action = signup(signupEmailAddress, signupPassword);
+		let action = signup(
+			{
+				userEmail: signupEmailAddress,
+				userPassword: signupPassword,
+				userRegNumber: signupRegNumber,
+				userName: 'userName',
+			}
+			// signupEmailAddress, signupPassword
+		);
 
 		setError(null);
 		setIsLoading(true);
@@ -109,7 +117,7 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 					image: null,
 				}}
 				retryFunc={() => setError(null)}
-			/>
+			/> 
 		);
 	}
 
@@ -121,10 +129,11 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 				}}>
 				<View
 					style={{
-						marginTop: 50,
+						marginTop: 30,
 						alignItems: 'center',
 						flexDirection: 'row',
-						padding: 30,
+						padding: 20,
+						paddingVertical: 10,
 					}}>
 					<TouchIcon
 						name={'arrow-back'}
@@ -172,12 +181,11 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 					<View
 						style={{
 							paddingHorizontal: 20,
-							paddingBottom:20,
+							paddingBottom: 100,
 						}}>
 						<Btn
 							fontSize={15}
 							style={{
-								marginVertical: 10,
 								borderRadius: 10,
 							}}
 							innerStyle={{
@@ -187,11 +195,11 @@ const AuthSignup = ({ navigation, route: { params } }) => {
 								navigation.navigate('Authenticate', {});
 							}}
 							borderColor={Colors.primary}
-							bgColor={'#fff'}>
+							bgColor={'#f3f6f7'}
+							textColor={Colors.primary}>
 							Login instead
 						</Btn>
 					</View>
-				
 				</KeyboardAwareScrollView>
 				{/* <Text style={styles.versionText}> pointer v 1.0 .0 </Text> */}
 			</View>
@@ -254,9 +262,9 @@ const styles = StyleSheet.create({
 	},
 	formContainer: {
 		paddingTop: 10,
-		padding: 20,
+		 padding: 10,
 		flex: 1,
-		// backgroundColor: 'blue',
+		//backgroundColor: 'blue',
 
 		//	width: '100%',
 		//height: '100%',
@@ -268,7 +276,7 @@ const styles = StyleSheet.create({
 
 	welcomeContainer: {
 		padding: 20,
-		paddingBottom: 0,
+		paddingVertical: 0,
 		//backgroundColor:'yellow',
 	},
 	backText: {
@@ -279,7 +287,7 @@ const styles = StyleSheet.create({
 	},
 	welcomeText1: {
 		width: '75%',
-		marginBottom: 20,
+		marginBottom: 10,
 		fontSize: 30,
 		fontFamily: 'OpenSansBold',
 		color: Colors.primary,

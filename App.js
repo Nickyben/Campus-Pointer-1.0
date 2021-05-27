@@ -1,12 +1,9 @@
-
-
-
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, YellowBox, SafeAreaView, } from 'react-native';
+import { StyleSheet, Text, View, } from 'react-native';
 import { enableScreens } from 'react-native-screens';
 
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import {ignoreActions, filterActions} from 'redux-ignore';
+import { ignoreActions, filterActions } from 'redux-ignore';
 import { Provider } from 'react-redux';
 import ReduxThunk from 'redux-thunk';
 
@@ -34,57 +31,47 @@ import { settingsActionTypes } from './store/actions/settingsActions';
 import { messageActionTypes } from './store/actions/messageActions';
 import { formActionTypes } from './store/actions/formActions';
 import { reportsActionTypes } from './store/actions/reportsActions';
+import { YellowBox } from 'react-native';
 
 enableScreens(); //useScreens(); is for lower versions of expo and react-native
 
-//used to combine multiple reducers 
+//used to combine multiple reducers
 const rootReducer = combineReducers({
-  authReducer: filterActions(authReducer, authActionTypes),
-  courseAppReducer: filterActions(courseAppReducer,courseAppActionTypes),
-  dataReducer: filterActions(dataReducer,dataActionTypes),
-  homeReducer: filterActions(homeReducer,homeActionTypes),
-  electionPortalReducer: filterActions(electionPortalReducer,electionPortalActionTypes),
-  reportsReducer: filterActions(reportsReducer,reportsActionTypes ),
-  settingsReducer: filterActions(settingsReducer,settingsActionTypes),
-  messageReducer: filterActions(messageReducer,messageActionTypes),
-  formReducer: filterActions(formReducer,formActionTypes),
+	authReducer: filterActions(authReducer, authActionTypes),
+	courseAppReducer: filterActions(courseAppReducer, courseAppActionTypes),
+	dataReducer: filterActions(dataReducer, dataActionTypes),
+	homeReducer: filterActions(homeReducer, homeActionTypes),
+	electionPortalReducer: filterActions(electionPortalReducer, electionPortalActionTypes),
+	reportsReducer: filterActions(reportsReducer, reportsActionTypes),
+	settingsReducer: filterActions(settingsReducer, settingsActionTypes),
+	messageReducer: filterActions(messageReducer, messageActionTypes),
+	formReducer: filterActions(formReducer, formActionTypes),
 });
 
 //creates the store with the rootReducer as arg
 const reduxStore = createStore(rootReducer, applyMiddleware(ReduxThunk));
 
-
-
 const fetchFonts = () => {
-  return Font.loadAsync({
-    'OpenSansRegular': require('./assets/fonts/OpenSans-Regular.ttf'),
-    'OpenSansBold': require('./assets/fonts/OpenSans-Bold.ttf')
-  })
+	return Font.loadAsync({
+		OpenSansRegular: require('./assets/fonts/OpenSans-Regular.ttf'),
+		OpenSansBold: require('./assets/fonts/OpenSans-Bold.ttf'),
+	});
 };
 
 export default function App() {
-  YellowBox.ignoreWarnings(['Setting a timer']); //check out the better solution than this
-  const [fontIsLoaded, setFontIsLoaded] = useState(false);
-  const onAppLayout = () => {
+	YellowBox.ignoreWarnings(['Setting a timer']); //check out the better solution than this
+	const [fontIsLoaded, setFontIsLoaded] = useState(false);
+	const onAppLayout = () => {};
 
-  }
+	if (!fontIsLoaded) {
+		return <AppLoading startAsync={fetchFonts} onFinish={() => setFontIsLoaded(true)} />;
+	}
 
-  if (!fontIsLoaded) {
-    return (
-      <AppLoading
-        startAsync={fetchFonts}
-        onFinish={() => setFontIsLoaded(true)}
-      />
-    );
-  }
-
-  return (
-    <Provider store={reduxStore} >
-      <AppNavigator />
-    </Provider>
-  );
+	return (
+		<Provider store={reduxStore}>
+			<AppNavigator />
+		</Provider>
+	);
 }
 
-const styles = StyleSheet.create({
-
-});
+const styles = StyleSheet.create({});

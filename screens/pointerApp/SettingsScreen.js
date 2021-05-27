@@ -60,7 +60,7 @@ const sections = [
 const SettingsScreen = ({ navigation }) => {
   const [showThemeModes, setShowThemeModes] = useState()
   const user = useSelector(state=> state.authReducer.userAppData);
-  let image = user && user.image;
+  const {image, firstName, lastName } =user && user;
 
   const viewSettingHandler = (title) => {
     navigation.navigate('SettingsDetails', { settingTitle: title });
@@ -100,7 +100,7 @@ const SettingsScreen = ({ navigation }) => {
               }
             </Touch>
           </View>
-          <Text style={styles.profileText}>FirstName LastName</Text>
+          <Text style={styles.profileText}>{firstName} {lastName}</Text>
         </View>
       </View>
 
