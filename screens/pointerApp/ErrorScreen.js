@@ -9,11 +9,11 @@ import Colors from '../../constants/Colors';
 import Btn from '../../components/UI/Btn';
 import { useNavigation } from '@react-navigation/native';
 
-const ErrorScreen = ({ route, errorObj,retryFunc }) => {
+const ErrorScreen = ({ route, errorObj, msgObj, nextFunc, nextFuncTitle, retryFunc }) => {
 	const navigation = useNavigation();
-	const {params} = route ?route: {};
-   const { messageHead, messageBody, image } = params? params :errorObj;
-  //console.warn(params)
+	const { params } = route ? route : {};
+	const { messageHead, messageBody, image } = params ? params : errorObj ? errorObj : msgObj;
+	//console.warn(params)
 	return (
 		<View style={styles.screen}>
 			{image && <Image style={styles.image} source={image} />}
@@ -25,10 +25,9 @@ const ErrorScreen = ({ route, errorObj,retryFunc }) => {
 					marginVertical: 10,
 				}}
 				onPress={() => {
-					retryFunc? retryFunc() : navigation.goBack();
-				}}
-		>
-				Retry
+					retryFunc ? retryFunc() : nextFunc ? nextFunc() : navigation.goBack();
+				}}>
+				{nextFuncTitle ? nextFuncTitle : 'Retry'}
 			</Btn>
 		</View>
 	);
@@ -49,16 +48,16 @@ const styles = StyleSheet.create({
 	errMsgHead: {
 		fontFamily: 'OpenSansBold',
 		fontSize: 16,
-    textAlign: 'center',
-    color: '#222',
-    marginBottom: 5,
+		textAlign: 'center',
+		color: '#222',
+		marginBottom: 5,
 	},
 	errMsgBody: {
 		fontFamily: 'OpenSansBold',
 		fontSize: 15,
-    textAlign: 'center',
-    color: '#555',
-    marginBottom:20,
+		textAlign: 'center',
+		color: '#555',
+		marginBottom: 20,
 	},
 });
 

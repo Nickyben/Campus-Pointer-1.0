@@ -65,70 +65,15 @@ const changePWInputItems = [
 	},
 ];
 
-const changeEmailInputItems = [
-	{
-		id: 'changeEmailAddress_currentEmailAddress',
-		label: 'Current Email Address',
-		editable: false,
-		initialValidity: true,
-		initialValue: 'pointer@pointer.com',
-		placeholder: 'current email address',
-		email: true,
-		icon: { iconName: 'at' },
-		showErrorMsg: false,
-	},
-	{
-		id: 'changeEmailAddress_newEmailAddress',
-		label: 'New Email Address',
-		email: true,
-		errorMsg: 'Please, enter a valid email address.',
-		successMsg: 'Email with a valid format entered.',
-		placeholder: 'new email address',
-		icon: { iconName: 'at' },
-	},
-];
 
-const changePhoneInputItems = [
-	{
-		id: 'changePhoneNumber_currentPhoneNumber',
-		label: 'Current Phone Number',
-		editable: false,
-		initialValidity: true,
-		initialValue: '0000000000',
-		placeholder: 'previous phone number',
-		icon: { iconName: 'call' },
-		showErrorMsg: false,
-	},
-	{
-		id: 'changePhoneNumber_newPhoneNumber',
-		label: 'New Phone Number',
-		phoneNumber: true,
-		required: true,
-		placeholder: 'new phone number',
-		icon: { iconName: 'call' },
-		errorMsg: 'Please enter a 10 digit phone number e.g 8134******',
-		successMsg: 'Phone number with valid format entered.',
-	},
-];
 
 const ChangeDetailsScreen = ({ navig, changeDetail }) => {
 	const dispatch = useDispatch();
 	const navigation = useNavigation();
-	const isChangePassword = changeDetail === 'Change Password';
-	const isChangeEmail = changeDetail === 'Change Email';
-	const isChangePhone = changeDetail === 'Change Phone Number';
-	const isChangeVisibility = changeDetail === 'Visibility';
-	const isSetNotifications = changeDetail === 'Notifications';
+	
 
-	const inputItems = isChangePassword
-		? changePWInputItems
-		: isChangeEmail
-		? changeEmailInputItems
-		: isChangePhone
-		? changePhoneInputItems
-		: [];
+	const {userEmail, phoneNumber} = useSelector((state) => state.authReducer.userAppData);
 	const userIdToken = useSelector((state) => state.authReducer.idToken);
-	const userEmail = useSelector((state) => state.authReducer.userEmail);
 
 	const currentVisibilitySettings = useSelector((s) => s.settingsReducer.currentVisibilitySettings);
 	const currentNotification_On_Off = useSelector((s) => s.settingsReducer.enableNotificationSettings);
@@ -140,6 +85,65 @@ const ChangeDetailsScreen = ({ navig, changeDetail }) => {
 	const [error, setError] = useState();
 	const [isLoading, setIsLoading] = useState(false);
 
+
+	const changeEmailInputItems = [
+		{
+			id: 'changeEmailAddress_currentEmailAddress',
+			label: 'Current Email Address',
+			editable: false,
+			initialValidity: true,
+			initialValue: userEmail,
+			placeholder: 'current email address',
+			email: true,
+			icon: { iconName: 'at' },
+			showErrorMsg: false,
+		},
+		{
+			id: 'changeEmailAddress_newEmailAddress',
+			label: 'New Email Address',
+			email: true,
+			errorMsg: 'Please, enter a valid email address.',
+			successMsg: 'Email with a valid format entered.',
+			placeholder: 'new email address',
+			icon: { iconName: 'at' },
+		},
+	];
+
+	const changePhoneInputItems = [
+		{
+			id: 'changePhoneNumber_currentPhoneNumber',
+			label: 'Current Phone Number',
+			editable: false,
+			initialValidity: true,
+			initialValue: phoneNumber,
+			placeholder: 'previous phone number',
+			icon: { iconName: 'call' },
+			showErrorMsg: false,
+		},
+		{
+			id: 'changePhoneNumber_newPhoneNumber',
+			label: 'New Phone Number',
+			phoneNumber: true,
+			required: true,
+			placeholder: 'new phone number',
+			icon: { iconName: 'call' },
+			errorMsg: 'Please enter a 10 digit phone number e.g 8134******',
+			successMsg: 'Phone number with valid format entered.',
+		},
+	];
+const isChangePassword = changeDetail === 'Change Password';
+const isChangeEmail = changeDetail === 'Change Email';
+const isChangePhone = changeDetail === 'Change Phone Number';
+const isChangeVisibility = changeDetail === 'Visibility';
+const isSetNotifications = changeDetail === 'Notifications';
+
+const inputItems = isChangePassword
+	? changePWInputItems
+	: isChangeEmail
+	? changeEmailInputItems
+	: isChangePhone
+	? changePhoneInputItems
+	: [];
 	const visibilityChoiceHandler = (id, label, options) => {
 		setShowVisibilityOptions((p) => [true, id, label, options]);
 	};

@@ -494,3 +494,59 @@ export const changePassword = (idToken, newUserPassword) => {
 };
 
 export const changeEmail = (idToken, userEmail) => {};
+
+export const resetPassword =async({userEmail})=>{
+		//this fetch request creates an new user and returns info about the new account
+
+		if (userEmail ) {
+			//SEND REQUEST FOR SIGNUP
+			let response;
+			try {
+				response = await fetch(endpoints.resetPassword, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						requestType:"PASSWORD_RESET",
+						email: userEmail,
+					}),
+				});
+			} catch (err) {
+				if (err.message.toLowerCase().includes('network'))
+					throw new Error(
+						'Hmm...Something is wrong with your Network Connection. Please check your connection!'
+					);
+			}
+
+			//HANDLE BAD RESPONSE
+			if (!response.ok) {
+				const responseErrorData = await response.json();
+				const respErrMsg = responseErrorData.error.message;
+				let errMsg;
+
+				switch (respErrMsg) {
+					case 'EMAIL_NOT_FOUND': {
+						errMsg = `There is no registered account with this email, ${userEmail}!`;
+						break;
+					}
+
+					default:
+						errMsg = 'Hmm...Something went wrong';
+				}
+
+				//make sure to handle all errors, example: network error
+
+				//console.log(errMsg);
+				throw new Error(errMsg);
+			}
+
+			const responseData = await response.json();
+			const successEmail = responseData.email;
+
+			return successEmail;
+		} else {
+			throw new Error('PLEASE FILL IN ALL FIELDS!');
+		}
+	
+}

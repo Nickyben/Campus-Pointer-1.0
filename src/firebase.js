@@ -10,6 +10,7 @@ export const endpoints = {
 	getData: (node) => `https://pointer-1-0.firebaseio.com/${node}.json`, //'http://www.facebook.com', //'change the project name in the url
 	postData: (node, idToken) => `https://pointer-1-0.firebaseio.com/${node}.json?auth=${idToken}`, //'http://www.facebook.com', //'
 	deleteData: (node, idToken) => `https://pointer-1-0.firebaseio.com/${node}.json?auth=${idToken}`, //'http://www.facebook.com', //'
+	resetPassword: `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${securedVars.apiKey}`,
 };
 var firebaseConfig = {
 	apiKey: securedVars.apiKey,

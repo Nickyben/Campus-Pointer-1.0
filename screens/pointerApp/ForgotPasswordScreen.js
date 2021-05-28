@@ -21,7 +21,8 @@ import Form from '../../components/UI/Form';
 import Btn from '../../components/UI/Btn';
 import TouchIcon from '../../components/UI/TouchIcon';
 import ErrorScreen from './ErrorScreen';
-//import * as authActions from '../../store/actions/authAction';
+import { resetPassword } from '../../store/actions/authActions';
+import { NavigationEvents } from 'react-navigation';
 
 const forgotPWInputItems = [
 	{
@@ -50,29 +51,38 @@ const codeVerificationItems = [
 
 const ForgotPasswordScreen = ({ navigation }) => {
 	const [isVerifyCode, setIsVerifyCode] = useState(false);
+	const [emailIsSent, setEmailIsSent] = useState(false);
+
 	const [error, setError] = useState();
 	const [isLoading, setIsLoading] = useState(false);
 	const dispatch = useDispatch();
 
-	const authHandler = async () => {
-		let action;
-		if (isVerifyCode) {
-			//action = authActions.signup(formState.inputValues.authEmail, formState.inputValues.authPassword);
-		} else {
-			//	action = authActions.login(formState.inputValues.authEmail, formState.inputValues.authPassword);
-		}
+	const sendPWResetEmail = async ({ emailAddressForPWReset }) => {
 		setError(null);
 		setIsLoading(true);
 		try {
-			//	await dispatch(action);
+			const successEmail = await resetPassword({userEmail:emailAddressForPWReset})
 			//show modal to indicate sent
-			navigation.goBack();
+			successEmail? setEmailIsSent(true): setError('Email could not be sent!');
 		} catch (err) {
 			setError(err.message);
 			setIsLoading(false);
 		}
 	};
 
+	if (emailIsSent) {
+		return (
+			<ErrorScreen
+				msgObj={{
+					messageHead: 'Sent Successfully',
+					messageBody: 'Kindly check your email, reset your password and log in',
+					image: null,
+				}}
+				nextFuncTitle={'Okay'}
+				nextFunc={() => navigation.goBack()}
+			/>
+		);
+	}
 	if (error) {
 		return (
 			<ErrorScreen
@@ -95,7 +105,14 @@ const ForgotPasswordScreen = ({ navigation }) => {
 				style={{
 					...styles.container,
 				}}>
-				<View style={{ marginTop: 30, alignItems: 'center', flexDirection: 'row', padding: 20, paddingVertical:10 }}>
+				<View
+					style={{
+						marginTop: 30,
+						alignItems: 'center',
+						flexDirection: 'row',
+						padding: 20,
+						paddingVertical: 10,
+					}}>
 					<TouchIcon
 						name={'arrow-back'}
 						size={25}
@@ -118,7 +135,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
 					style={{ ...styles.formContainerScroll }}
 					enableOnAndroid={true}
 					// style={styles.formContainer}
-					>
+				>
 					<View style={styles.welcomeContainer}>
 						<Text style={styles.welcomeText1}>
 							{isVerifyCode ? 'Code Verification' : 'Forgot Password?'}
@@ -134,7 +151,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
 							requiresAllInputs
 							submitTitle={'Send Email'}
 							formErrorMsg={'Please provide valid credentials!'}
-							formAction={authHandler}
+							formAction={sendPWResetEmail}
 							//onSubmit={checkFPWValidity}
 							style={{
 								borderColor: '#ccc',
