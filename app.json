@@ -1,14 +1,23 @@
 {
 	"expo": {
 		"name": "Pointer",
+		"description": "An Integrated University Mobile app built to facilitate university, College and departmental activities such as academics, social, associative and extra curricula activities for students and staff",
 		"slug": "pointer",
 		"version": "1.0.0",
 		"orientation": "default",
+		"primaryColor": "#ffffff",
 		"icon": "./assets/nacomesLogo.png",
+		"notification": {
+			"icon": "./assets/nacomesLogo.png",
+			"color": "#ffffff"
+		},
 		"splash": {
 			"image": "./assets/nacomesLogo.png",
 			"resizeMode": "contain",
 			"backgroundColor": "#ffffff"
+		},
+		"loading": {
+			"icon": "./assets/nacomesLogo.png"
 		},
 		"updates": {
 			"fallbackToCacheTimeout": 0

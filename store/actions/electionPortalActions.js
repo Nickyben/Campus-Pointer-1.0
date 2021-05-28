@@ -14,7 +14,7 @@ export const electionPortalActionTypes = [
 	LOAD_ELECTION_DATA,
 	SUBMIT_APPLICATION,
 	REGISTER_APPLICANT,
-	LOAD_ELECTION_RESULT,
+	LOAD_ELECTION_RESULT, 
 ];
 
 export const fetchElectionData = () => {

@@ -401,7 +401,7 @@ const HomeScreen = ({ navigation }) => {
 	};
 
 	// 	setShowOptionsModal({ id, show: true, isUserPost });
-	// };
+	// }; 
 	const dispatch = useDispatch();
 
 	const loadData = useCallback(async () => {
