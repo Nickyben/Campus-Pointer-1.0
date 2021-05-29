@@ -4,18 +4,18 @@ import { LOAD_ELECTION_DATA, VOTE_OFFICE } from '../actions/electionPortalAction
 const initialState = {
 	//get some data from the logged in user
 	//votes must be server-based
-	availableOffices: executiveOffices, //you can temp. create this here.
-	availableVoters: [], //id,regNum, office voted keys in objs
-	validVoters: [],
-	registeredApplicants: tempRegCandidates, //...id, name, image, office, cover-quote, manifesto,in objs
-	validCandidates: [],
-	officeVotes: [], //for all voters ===server based
-	votedVoters: [], //for all voters ===server based
+	//availableVoters: [], //check if user is among them and give response//id,regNum, office voted keys in objs
+	//validVoters: [], check whether user is among them and give response
+	//votedVoters: [], //check if user is among them...then give response //for all voters ===server based
+	//totalVotes: 0,
+	//isElectionDeadline: false, //should be from server or db set time
+	//isApplicantDeadline: true, //should be from server or db set time
 
+	availableOffices: executiveOffices, //you can temp. create this here.//should be server based
+	registeredApplicants: tempRegCandidates, //...id, name, image, office, cover-quote, manifesto,in objs//should be server based
+	validCandidates: [], //should be server based
+	officeVotes: [], //for all voters ===server based
 	userOfficesVoted: [],
-	totalVotes: 0,
-	isElectionDeadline: false, //should be from server or db set time
-	isApplicantDeadline: true, //should be from server or db set time
 };
 
 export default (state = initialState, action) => {
@@ -43,6 +43,8 @@ export default (state = initialState, action) => {
 				officeVotes: officeVotesTemplate,
 			};
 		}
+
+
 		case VOTE_OFFICE: {
 			const updatedOfficeVotes = [...state.officeVotes].map((o) => {
 				if (o.office === action.office) {
@@ -70,6 +72,7 @@ export default (state = initialState, action) => {
 					return o;
 				}
 			});
+
 			return {
 				...state,
 				officeVotes: updatedOfficeVotes,
@@ -82,37 +85,3 @@ export default (state = initialState, action) => {
 	return state;
 };
 
-// const officeVotesTemplate = [];
-// for (let office of state.availableOffices) {
-//   officeVotesTemplate.push(
-//     {
-//       office: office[0],
-//       candidates: [],
-//     }
-//   );
-//   for (let candidate of state.registeredApplicants.filter(c => c.aspiringOffice[0] === office[0])) {
-//     officeVotesTemplate.find(o => o.office === office[0]).candidates.push(
-//       {
-//         candidate: candidate,
-//         voters: [],
-//         voteCount: 0,
-//       }
-//     );
-//   }
-// }
-
-// const updatedOfficeVotes = [];
-// for (let o of [...state.officeVotes]) {
-//   for (let c of o.candidates) {
-//     if(c.candidate === action.candidate){
-
-//     }
-
-//     officeVotesTemplate.find(o => o.office === office[0]).candidates.push(
-//       {
-//         candidate: candidate,
-//         voters: []
-//       }
-//     );
-//   }
-// }

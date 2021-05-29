@@ -221,10 +221,8 @@ const VotingScreen = ({ navig }) => {
   const OFFICE_SECTIONS = [];
 	const electoralOffices = useSelector((state) => state.electionPortalReducer.availableOffices);
 	const contestants = useSelector((state) => state.electionPortalReducer.validCandidates);
-	const votedOffices = useSelector((state) => state.electionPortalReducer.votedOffices);
-	const voter = useSelector((s) => s.electionPortalReducer.votedVoters).find(
-		(v) => v.regNumber === 'MyRegNum' && v.id === 'myUserId'
-	);
+	//const votedOffices = useSelector((state) => state.electionPortalReducer.votedOffices);
+	
 
   for (let i = 1; i <= electoralOffices.length; i++) {
 		OFFICE_SECTIONS.push({
@@ -296,7 +294,7 @@ const VotingScreen = ({ navig }) => {
 		setError(null);
 		setIsRefreshing(true);
 		try {
-			await dispatch(fetchElectionData());
+		//	await dispatch(fetchElectionData());
 		} catch (err) {
 			setError(err.message);
 		}
@@ -353,7 +351,7 @@ const VotingScreen = ({ navig }) => {
 				keyExtractor={(item, index) => item + index}
 				renderItem={renderItem}
 				renderSectionHeader={renderSectionHeader}
-				extraData={{ votedOffices, showingOffice }}
+				extraData={{ showingOffice }} //votedOffices,
 
 				//ListEmptyComponent={listEmptyComponent}
 			/>
