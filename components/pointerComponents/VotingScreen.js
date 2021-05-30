@@ -31,6 +31,7 @@ import { fetchElectionData, voteOffice } from '../../store/actions/electionPorta
 import ErrorScreen from '../../screens/pointerApp/ErrorScreen';
 import LoadingScreen from '../../screens/pointerApp/LoadingScreen';
 import listEmptyComponent from './listEmptyComponent';
+import { useNavigation } from '@react-navigation/native';
 
 const MyItem = ({
 	content,
@@ -216,22 +217,23 @@ const SectionItem = ({ onCollapse, title, showingOffice, candidates }) => {
 };
 
 
-const VotingScreen = ({ navig }) => {
+const VotingScreen = ({ changeScreen, showSummaryModal, setShowSummaryModal }) => {
+	const navig = useNavigation();
 	const dispatch = useDispatch();
-  const OFFICE_SECTIONS = [];
+	const OFFICE_SECTIONS = [];
 	const electoralOffices = useSelector((state) => state.electionPortalReducer.availableOffices);
 	const contestants = useSelector((state) => state.electionPortalReducer.validCandidates);
-	//const votedOffices = useSelector((state) => state.electionPortalReducer.votedOffices);
-	
+	const { userId, idToken} = useSelector((state) => state.authReducer.userAppData);
+	const voteSummary = useSelector((s) => s.electionPortalReducer.userOfficesVoted);
 
-  for (let i = 1; i <= electoralOffices.length; i++) {
+	for (let i = 1; i <= electoralOffices.length; i++) {
 		OFFICE_SECTIONS.push({
 			title: electoralOffices[i - 1][0],
 			data: contestants.filter((c) => {
 				return c.aspiringOffice === electoralOffices[i - 1];
 			}),
 		});
-  }
+	}
 	const [isLoading, setIsLoading] = useState(false);
 	const [isRefreshing, setIsRefreshing] = useState(true);
 	const [error, setError] = useState();
@@ -239,8 +241,8 @@ const VotingScreen = ({ navig }) => {
 	const [showModal, setShowModal] = useState(false);
 	const [voteData, setVoteData] = useState(null);
 
-
-	
+	const denominator = voteSummary.length - 1 <= 0 ? 1 : voteSummary.length - 1;
+	const goodVoteStatus = electoralOffices.length / denominator <= 2;
 
 	const titleHandler = (title) => {
 		setShowingOffice((p) => title);
@@ -294,7 +296,7 @@ const VotingScreen = ({ navig }) => {
 		setError(null);
 		setIsRefreshing(true);
 		try {
-		//	await dispatch(fetchElectionData());
+			await dispatch(fetchElectionData({ userId,idToken }));
 		} catch (err) {
 			setError(err.message);
 		}
@@ -395,6 +397,78 @@ const VotingScreen = ({ navig }) => {
 										bgColor={Colors.primary}
 										onPress={clickedConfirmHandler}>
 										Confirm
+									</Btn>
+								</View>
+							</View>
+						</View>
+					)}
+				</View>
+			</Modal>
+
+			<Modal
+				animationType={'fade'}
+				visible={showSummaryModal}
+				transparent
+				onRequestClose={() => {
+					setShowSummaryModal(() => false);
+				}}>
+				<View style={styles.summaryModal}>
+					{voteSummary && (
+						<View style={styles.summaryBox}>
+							<Text style={styles.summaryBoxHeader}>VOTES SUMMARY</Text>
+							<View style={{ padding: 20 }}>
+								{voteSummary.map((v, i) => {
+									for (let office in v) {
+										return (
+											<View
+												key={i}
+												style={{
+													flexDirection: 'row',
+													justifyContent: 'space-between',
+												}}>
+												<Text
+													style={{
+														...styles.summaryTextTitle,
+														color: '#00a7e7',
+														flex: 1,
+													}}>
+													{office}:{'  '}
+												</Text>
+												<Text style={{ ...styles.summaryText, color: '#555', flex: 1.2 }}>
+													{v[office]}
+												</Text>
+											</View>
+										);
+									}
+								})}
+
+								<View
+									style={{
+										padding: 15,
+										borderRadius: 10,
+										marginTop: 15,
+										backgroundColor: goodVoteStatus ? Colors.success : Colors.error,
+									}}>
+									<Text
+										style={{
+											...styles.summaryText,
+											textAlign: 'center',
+											color: goodVoteStatus ? '#33dd33' : '#dd3333',
+										}}>
+										{!goodVoteStatus ? 'Ouch! ' : 'Doing great!'} You have{' '}
+										{!goodVoteStatus ? 'only ' : ''}voted for {voteSummary.length} office
+										{voteSummary.length !== 1 ? 's' : ''} out of {electoralOffices.length}
+									</Text>
+								</View>
+
+								<View style={{ alignItems: 'center' }}>
+									<Btn
+										style={styles.okayBtn}
+										bgColor={Colors.primary}
+										onPress={() => {
+											setShowSummaryModal((p) => false);
+										}}>
+										Okay
 									</Btn>
 								</View>
 							</View>
@@ -542,6 +616,50 @@ const styles = StyleSheet.create({
 		fontSize: 13,
 		//color: Colors.primary//,
 		color: '#567',
+	},
+
+	okayBtn: {
+		width: '49%',
+		maxWidth: 100,
+		marginTop: 30,
+	},
+	summaryModal: {
+		flex: 1,
+		backgroundColor: '#000b',
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	summaryBox: {
+		backgroundColor: '#fff',
+		width: '80%',
+		minHeight: 150,
+		borderRadius: 10,
+		paddingTop: 0,
+	},
+	summaryBoxHeader: {
+		borderTopLeftRadius: 10,
+		borderTopRightRadius: 10,
+		textAlign: 'center',
+		fontFamily: 'OpenSansBold',
+		fontSize: 17,
+		padding: 15,
+		width: '100%',
+		backgroundColor: Colors.switchPrimary,
+		color: Colors.switchWhite,
+		borderBottomColor: '#e3e6e7',
+		borderBottomWidth: 1,
+	},
+	summaryTextTitle: {
+		fontFamily: 'OpenSansBold',
+		fontSize: 14,
+		marginTop: 5,
+		//textAlign: 'center'
+	},
+	summaryText: {
+		fontFamily: 'OpenSansBold',
+		fontSize: 14,
+		marginTop: 5,
+		textAlign: 'justify',
 	},
 });
 

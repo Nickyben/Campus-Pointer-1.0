@@ -202,7 +202,7 @@ export const login = (userEmail, userPassword) => {
 			const responseData = await response.json();
 			//console.log(responseData)
 
-			const userAppData = await fetchUserAppData({ userId: responseData.localId });
+			const userAppData = await fetchUserAppData({ userId: responseData.localId, idToken: responseData.idToken });
 
 			dispatch(
 				authenticate(
@@ -263,13 +263,13 @@ const saveDataToStorage = async (idToken, userId, tokenExpiry, pushToken, emailA
 	}
 };
 
-const fetchUserAppData = async ({ userId }) => {
+const fetchUserAppData = async ({ userId ,idToken}) => {
 	// return async(dispatch, getState) => {
 	// 	//async code
 	// const userId = getState().authRed.userId;
 	try {
 		//the u1 will be replaced with a specific authenticated user
-		const response = await fetch(endpoints.getData(`userAppData/${userId}`), {
+		const response = await fetch(endpoints.getData(`userAppData/${userId}` , idToken), {
 			method: 'GET', //already the default, hence is unnecessary
 		});
 

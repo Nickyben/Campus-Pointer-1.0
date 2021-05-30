@@ -1,6 +1,12 @@
 //import contestants from '../../data/contestants';
 //import executiveOffices from '../../data/executiveOffices';
 
+import { thunkFetch } from '../../constants/backendFunctions';
+import ElectoralApplicant from '../../models/electoralApplicant';
+import Office from '../../models/office';
+import VoteItem from '../../models/voteItem';
+import { endpoints } from '../../src/firebase';
+
 export const VOTE_OFFICE = 'VOTE_OFFICE';
 export const SUBMIT_VOTES = 'SUBMIT_VOTES';
 export const LOAD_ELECTION_DATA = 'LOAD_ELECTION_DATA';
@@ -14,41 +20,57 @@ export const electionPortalActionTypes = [
 	LOAD_ELECTION_DATA,
 	SUBMIT_APPLICATION,
 	REGISTER_APPLICANT,
-	LOAD_ELECTION_RESULT, 
+	LOAD_ELECTION_RESULT,
 ];
 
-
-export const fetchElectionData = () => {
+export const fetchElectionData = ({ userId, idToken }) => {
 	const urlArr = [
-		{ url: endpoints.getData('staff'), init: {} },
-		{ url: endpoints.getData('students'), init: {} },
-		{ url: endpoints.getData('halls'), init: {} },
+		{ url: endpoints.getData('availableOffices', idToken), init: {} },
+		{ url: endpoints.getData('validCandidates', idToken), init: {} },
+		{ url: endpoints.getData(`userOfficesVoted/${userId}`, idToken), init: {} },
 	];
+
 	const consumerFunc = (arrOfRespJsonS, { idToken, userId, dispatch, state }) => {
-		const staffResponseJson = arrOfRespJsonS[0];
-		const studentsResponseJson = arrOfRespJsonS[1];
-		const hallsResponseJson = arrOfRespJsonS[2];
-		const dummyDeptData = [staff, students, halls];
+		const availableOfficesResponseJson = arrOfRespJsonS[0];
+		const validCandidatesResponseJson = arrOfRespJsonS[1];
+		const userOfficesVotedResponseJson = arrOfRespJsonS[2];
 
 		const allAreOkay = arrOfRespJsonS.every((jsonObj) => jsonObj && !jsonObj.error);
 
 		// for (const respJson of arrOfRespJsonS) {
-		const deptStaff = staffResponseJson && !staffResponseJson.error ? [] : state.dataReducer.availableStaff;
-		const deptStudents =
-			studentsResponseJson && !studentsResponseJson.error ? [] : state.dataReducer.availableStudents;
-		const deptHalls = hallsResponseJson && !hallsResponseJson.error ? [] : state.dataReducer.availableHalls;
+		const availableOffices =
+			availableOfficesResponseJson && !availableOfficesResponseJson.error
+				? []
+				: state.electionPortalReducer.availableOffices;
 
-		if (studentsResponseJson && !studentsResponseJson.error) {
-			for (const key in studentsResponseJson) {
-				const studentItem = studentsResponseJson[key];
-				deptStudents.push(new Student(studentItem));
+		const validCandidates =
+			validCandidatesResponseJson && !validCandidatesResponseJson.error
+				? []
+				: state.electionPortalReducer.validCandidates;
+
+		const userOfficesVoted =
+			userOfficesVotedResponseJson && !userOfficesVotedResponseJson.error
+				? []
+				: state.electionPortalReducer.userOfficesVoted;
+
+		if (availableOfficesResponseJson && !availableOfficesResponseJson.error) {
+			for (const key in availableOfficesResponseJson) {
+				const availableOfficesItem = availableOfficesResponseJson[key];
+				availableOffices.push(new Office(availableOfficesItem));
 			}
 		}
 
-		if (hallsResponseJson && !hallsResponseJson.error) {
-			for (const key in hallsResponseJson) {
-				const hallItem = hallsResponseJson[key];
-				deptHalls.push(new Hall(hallItem));
+		if (validCandidatesResponseJson && !validCandidatesResponseJson.error) {
+			for (const key in validCandidatesResponseJson) {
+				const validCandidatesItem = validCandidatesResponseJson[key];
+				validCandidates.push(new ElectoralApplicant(validCandidatesItem));
+			}
+		}
+
+		if (userOfficesVotedResponseJson && !userOfficesVotedResponseJson.error) {
+			for (const key in userOfficesVotedResponseJson) {
+				const userOfficesVotedItem = userOfficesVotedResponseJson[key];
+				userOfficesVoted.push(new VoteItem(userOfficesVotedItem));
 			}
 		}
 
@@ -56,11 +78,12 @@ export const fetchElectionData = () => {
 
 		dispatch({
 			type: LOAD_ELECTION_DATA,
-			availableStaff: deptStaff,
-			availableStudents: deptStudents,
-			availableHalls: deptHalls,
+			availableOffices: availableOffices,
+			validCandidates: validCandidates,
+			userOfficesVoted: userOfficesVoted,
 		});
 	};
+
 	return thunkFetch(urlArr, consumerFunc);
 };
 

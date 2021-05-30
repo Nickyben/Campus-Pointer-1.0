@@ -9,7 +9,10 @@ export const thunkFetch = (arrOfFetchUrlAndInitObjs, responseDataConsumer) => {
 		try {
 			const arrOfResponseJsonS = await Promise.all(
 				arrOfFetchUrlAndInitObjs.map(async ({ url, init }, i) => {
-					const response = await fetch(url, {
+					const editedUrl = url.includes('auth=undefined')
+						? url.replace('auth=undefined', `auth=${idToken}`)
+						: url;
+					const response = await fetch(editedUrl, {
 						method: 'GET',
 						...init,
 					});
@@ -91,12 +94,11 @@ export const thunkFetch = (arrOfFetchUrlAndInitObjs, responseDataConsumer) => {
 			}
 
 			if (errMsg) {
-				//throw new Error(errMsg);
+				throw new Error(errMsg);
 			} else {
 				//throw new Error('Hmm...something went wrong!'); //err.message
+				throw new Error(err.message);
 			}
 		}
 	};
 };
-
-

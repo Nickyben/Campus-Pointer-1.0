@@ -11,10 +11,11 @@ const initialState = {
 	//isElectionDeadline: false, //should be from server or db set time
 	//isApplicantDeadline: true, //should be from server or db set time
 
-	availableOffices: executiveOffices, //you can temp. create this here.//should be server based
 	registeredApplicants: tempRegCandidates, //...id, name, image, office, cover-quote, manifesto,in objs//should be server based
-	validCandidates: [], //should be server based
 	officeVotes: [], //for all voters ===server based
+
+	availableOffices: executiveOffices, //you can temp. create this here.//should be server based
+	validCandidates: [], //should be server based
 	userOfficesVoted: [],
 };
 
