@@ -36,50 +36,54 @@ export default (state = initialState, action) => {
 					}),
 				};
 			});
+					console.warn('from reducer---', action.userOfficesVoted);
+
 			return {
 				...state,
 				validCandidates: state.registeredApplicants.filter(
 					(ap) => !ap.studentData.office && !ap.studentData.post
 				),
-				officeVotes: officeVotesTemplate,
+				//officeVotes: officeVotesTemplate,
+				userOfficesVoted: action.userOfficesVoted,
 			};
 		}
 
 
 		case VOTE_OFFICE: {
-			const updatedOfficeVotes = [...state.officeVotes].map((o) => {
-				if (o.office === action.office) {
-					return {
-						office: o.office,
-						candidates: o.candidates.map((c) => {
-							if (c && c.candidate === action.candidate) {
-								//console.log( )
+			// const updatedOfficeVotes = [...state.officeVotes].map((o) => {
+			// 	if (o.office === action.office) {
+			// 		return {
+			// 			office: o.office,
+			// 			candidates: o.candidates.map((c) => {
+			// 				if (c && c.candidate === action.candidate) {
+			// 					//console.log( )
 
-								return {
-									candidate: c.candidate,
-									voters: !c.voters.some((v) => v.regNumber === action.voter.regNumber)
-										? c.voters.concat(action.voter)
-										: c.voters,
-									voteCount: !c.voters.some((v) => v.regNumber === action.voter.regNumber)
-										? c.voteCount + 1
-										: c.voteCount,
-								};
-							} else {
-								return c;
-							}
-						}),
-					};
-				} else {
-					return o;
-				}
-			});
+			// 					return {
+			// 						candidate: c.candidate,
+			// 						voters: !c.voters.some((v) => v.regNumber === action.voter.regNumber)
+			// 							? c.voters.concat(action.voter)
+			// 							: c.voters,
+			// 						voteCount: !c.voters.some((v) => v.regNumber === action.voter.regNumber)
+			// 							? c.voteCount + 1
+			// 							: c.voteCount,
+			// 					};
+			// 				} else {
+			// 					return c;
+			// 				}
+			// 			}),
+			// 		};
+			// 	} else {
+			// 		return o;
+			// 	}
+			// });
 
 			return {
 				...state,
-				officeVotes: updatedOfficeVotes,
-				userOfficesVoted: state.userOfficesVoted.concat({
-					[action.office]: action.candidate.studentData.fullName,
-				}),
+				//officeVotes: updatedOfficeVotes,
+				userOfficesVoted: state.userOfficesVoted.concat(
+					action.userCastedVote,
+				
+				),
 			};
 		}
 	}

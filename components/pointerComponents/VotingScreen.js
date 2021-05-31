@@ -11,7 +11,8 @@ import {
 	Platform,
 	TouchableOpacity,
 	TouchableNativeFeedback,
-	Image,RefreshControl,
+	Image,
+	RefreshControl,
 	useWindowDimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -32,6 +33,7 @@ import ErrorScreen from '../../screens/pointerApp/ErrorScreen';
 import LoadingScreen from '../../screens/pointerApp/LoadingScreen';
 import listEmptyComponent from './listEmptyComponent';
 import { useNavigation } from '@react-navigation/native';
+import { rand, randomId } from '../../constants/MyFunctions';
 
 const MyItem = ({
 	content,
@@ -49,7 +51,10 @@ const MyItem = ({
 	const _dispatch = useDispatch();
 
 	const officeIsVoted = useSelector((s) => s.electionPortalReducer.userOfficesVoted).find(
-		(o) => o.hasOwnProperty(office) && !!o[office]
+		(v) => {
+			v.voteOffice === office;
+		}
+		//(o) => o.hasOwnProperty(office) && !!o[office]
 	);
 
 	const candidateVoted = officeIsVoted && officeIsVoted[office];
@@ -143,7 +148,10 @@ const SectionItem = ({ onCollapse, title, showingOffice, candidates }) => {
 	};
 
 	const officeIsVoted = useSelector((s) => s.electionPortalReducer.userOfficesVoted).find(
-		(o) => o.hasOwnProperty(title) && !!o[title]
+		(v) => {
+			v.voteOffice === title;
+		}
+		//(o) => o.hasOwnProperty(title) && !!o[title]
 	);
 
 	useEffect(() => {
@@ -216,15 +224,15 @@ const SectionItem = ({ onCollapse, title, showingOffice, candidates }) => {
 	);
 };
 
-
 const VotingScreen = ({ changeScreen, showSummaryModal, setShowSummaryModal }) => {
 	const navig = useNavigation();
 	const dispatch = useDispatch();
 	const OFFICE_SECTIONS = [];
 	const electoralOffices = useSelector((state) => state.electionPortalReducer.availableOffices);
 	const contestants = useSelector((state) => state.electionPortalReducer.validCandidates);
-	const { userId, idToken} = useSelector((state) => state.authReducer.userAppData);
+	const { userId, idToken, userAppData: {userEmail} } = useSelector((state) => state.authReducer);
 	const voteSummary = useSelector((s) => s.electionPortalReducer.userOfficesVoted);
+console.warn('inside---',voteSummary);
 
 	for (let i = 1; i <= electoralOffices.length; i++) {
 		OFFICE_SECTIONS.push({
@@ -255,15 +263,28 @@ const VotingScreen = ({ changeScreen, showSummaryModal, setShowSummaryModal }) =
 	};
 
 	const clickedConfirmHandler = () => {
-		const { office, candidateData } = voteData;
+		const { office, candidateData, applicantId } = voteData;
 		//console.log({ office, candidate })
 		dispatch(
-			voteOffice(office, candidateData, {
-				id: 'myUserId',
-				regNumber: 'myRegNum',
-				fullName: 'Nicholas Ikechukwu',
-				//officesVoted:
-			})
+			voteOffice(
+				{
+					id: randomId({ length: 50 }),
+					voteOffice: office,
+					voterUserId: userId,
+					voterEmail: userEmail,
+					voteDate: new Date(),
+					electionType: "students' departmental association election",
+					electionTitle: 'NACOMES ELECTION',
+					voteChoiceCandidateId: applicantId,
+				}
+				// 	office, candidateData, {
+
+				// 	id: 'myUserId',
+				// 	regNumber: 'myRegNum',
+				// 	fullName: 'Nicholas Ikechukwu',
+				// 	//officesVoted:
+				// }
+			)
 		);
 		setShowModal((p) => false);
 	};
@@ -296,7 +317,7 @@ const VotingScreen = ({ changeScreen, showSummaryModal, setShowSummaryModal }) =
 		setError(null);
 		setIsRefreshing(true);
 		try {
-			await dispatch(fetchElectionData({ userId,idToken }));
+			await dispatch(fetchElectionData({ userId, idToken }));
 		} catch (err) {
 			setError(err.message);
 		}
@@ -432,10 +453,10 @@ const VotingScreen = ({ changeScreen, showSummaryModal, setShowSummaryModal }) =
 														color: '#00a7e7',
 														flex: 1,
 													}}>
-													{office}:{'  '}
+													{v.voteOffice}:{'  '}
 												</Text>
 												<Text style={{ ...styles.summaryText, color: '#555', flex: 1.2 }}>
-													{v[office]}
+													{v.voteId}
 												</Text>
 											</View>
 										);

@@ -1,5 +1,6 @@
 import ElectoralApplicant from "../models/electoralApplicant";
 import students from '../data/students';
+import { randomId } from "../constants/MyFunctions";
 
 
 export const executiveOffices = [
@@ -33,7 +34,7 @@ for (let i = 1; i <= 36; i++) {
   const studentData = studs[+(Math.random()*(studs.length - 2)).toFixed(0)]
   tempRegCandidates.push(
     new ElectoralApplicant(
-      studentData && (+(Math.random() * 10000).toFixed(0)).toString() + studentData.regNumber + studentData.firstName + (+(Math.random() * 10000).toFixed(0)).toString(),
+      studentData && randomId({length:10, attach: studentData.fullName+studentData.department+ studentData.faculty}),
       studentData,
       executiveOffices[+(Math.random() * (executiveOffices.length - 2)).toFixed(0)],
       'Excellence is perceived by excellent goal setters.',

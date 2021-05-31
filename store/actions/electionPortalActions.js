@@ -27,7 +27,7 @@ export const fetchElectionData = ({ userId, idToken }) => {
 	const urlArr = [
 		{ url: endpoints.getData('availableOffices', idToken), init: {} },
 		{ url: endpoints.getData('validCandidates', idToken), init: {} },
-		{ url: endpoints.getData(`userOfficesVoted/${userId}`, idToken), init: {} },
+		{ url: endpoints.getData(`electionVotes/${userId}`, idToken), init: {} },
 	];
 
 	const consumerFunc = (arrOfRespJsonS, { idToken, userId, dispatch, state }) => {
@@ -70,11 +70,12 @@ export const fetchElectionData = ({ userId, idToken }) => {
 		if (userOfficesVotedResponseJson && !userOfficesVotedResponseJson.error) {
 			for (const key in userOfficesVotedResponseJson) {
 				const userOfficesVotedItem = userOfficesVotedResponseJson[key];
-				userOfficesVoted.push(new VoteItem(userOfficesVotedItem));
+				userOfficesVoted.push(new VoteItem({...userOfficesVotedItem, voteDate: new Date(userOfficesVotedItem.voteDate)}));
 			}
 		}
-
 		// }
+		console.warn('from backend---', userOfficesVoted);
+
 
 		dispatch({
 			type: LOAD_ELECTION_DATA,
@@ -89,14 +90,73 @@ export const fetchElectionData = ({ userId, idToken }) => {
 
 export const registerContestant = () => {};
 
-export const voteOffice = (office, candidate, voter) => {
-	//console.log({office, level: candidate.studentData.level, voter:voter.fullName})
-	return {
-		type: VOTE_OFFICE,
-		office,
-		candidate,
-		voter,
+export const voteOffice = (voteObj) => {
+	const {
+		id,
+		voteOffice,
+		voterUserId,
+		voterUserEmail,
+		voteDate,
+		electionType,
+		electionTitle,
+		voteChoiceCandidateId,
+	} = voteObj;
+	const urlArr = [
+		{
+			url: endpoints.postData(`electionProcessCandidates/${voteChoiceCandidateId}/voters`),
+			init: {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					...voteObj,
+					voteDate: voteDate.toISOString(),
+				}),
+			},
+		},
+		{
+			url: endpoints.postData(`electionVotes/${voterUserId}`),
+			init: {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					...voteObj,
+					voteDate: voteDate.toISOString(),
+				}),
+			},
+		},
+	];
+
+	const consumerFunc = (arrOfRespJsonS, { idToken, userId, dispatch, state }) => {
+		const userCastedVoteResponseJson = arrOfRespJsonS[1];
+
+		const allAreOkay = arrOfRespJsonS.every((jsonObj) => jsonObj && !jsonObj.error);
+
+		if (!userCastedVoteResponseJson) throw new Error('Something went wrong with response');
+
+		dispatch({
+			type: VOTE_OFFICE,
+			userCastedVote: {
+				//votedId: userCastedVoteResponseJson.name,
+				id,
+				voteOffice,
+				voterUserId,
+				voterUserEmail,
+				voteDate,
+				electionType,
+				electionTitle,
+				voteChoiceCandidateId,
+			},
+			// office,
+			// candidate,
+			// voter,
+		});
 	};
+
+	return thunkFetch(urlArr, consumerFunc);
 };
 
 export const submitVotes = () => {};

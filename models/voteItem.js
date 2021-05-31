@@ -1,7 +1,12 @@
 export default class VoteItem {
-	constructor({ id, office, choiceCandidate }) {
+	constructor({ id, voteOffice, voterUserId, voterUserEmail, voteDate, electionType, electionTitle, voteChoiceCandidateId }) {
 		this.id = id;
-		this.office = office;
-		this.choiceCandidate = choiceCandidate;
+		this.voteOffice = voteOffice;
+		this.voteChoiceCandidateId = voteChoiceCandidateId;
+		this.voterUserId = voterUserId; 
+		this.voterUserEmail = voterUserEmail; 
+		this.voteDate = voteDate;
+		this.electionType = electionType;
+		this.electionTitle= electionTitle;
 	}
 }

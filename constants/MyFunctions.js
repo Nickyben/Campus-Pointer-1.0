@@ -18,6 +18,19 @@ export const rand = (arr) => {
 	return arr[validIndex];
 };
 
+export const randomId =({length, attach})=>{
+	const strArr = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_']
+	let randomStr = '';
+	for(let i=0;i<length; i++){
+			const capitalize = rand([true,false]);
+			const xter = rand(strArr);
+			randomStr += capitalize ? xter.toUpperCase(): xter;
+
+	}
+
+	return randomStr+attach;
+}
+
 export const shuffle = (arr) => {
 	let newArr = [];
 
