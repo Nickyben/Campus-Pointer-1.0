@@ -285,10 +285,11 @@ const fetchUserAppData = async ({ userId ,idToken}) => {
 		for (const key in responseData) {
 			const itemObj = responseData[key];
 			userAppData = {
-				signupId: itemObj.signupId,
-				userName: itemObj.userName,
-				userEmail: itemObj.userEmail,
-				userRegNumber: itemObj.userRegNumber,
+				//signupId: itemObj.signupId,
+				// userName: itemObj.userName,
+				// userEmail: itemObj.userEmail,
+				// userRegNumber: itemObj.userRegNumber,
+				...responseData,
 				signupDate: new Date(itemObj.signupDate),
 			};
 		}
@@ -308,7 +309,7 @@ const uploadUserAppData = async ({ userName, userEmail, userRegNumber, idToken, 
 	let response;
 	try {
 		response = await fetch(endpoints.postData(`userAppData/${userId}`, idToken), {
-			method: 'POST',
+			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
 			},
@@ -329,10 +330,11 @@ const uploadUserAppData = async ({ userName, userEmail, userRegNumber, idToken, 
 	const responseData = await response.json(); //waits form the response before continuing the exe
 	if (!responseData) throw new Error('Something went wrong with response');
 	const userAppData = {
-		signupId: responseData.name,
-		userName,
-		userEmail,
-		userRegNumber,
+		//signupId: responseData.name,
+		// userName,
+		// userEmail,
+		// userRegNumber,
+		...responseData,
 		signupDate: date,
 	};
 	return userAppData;

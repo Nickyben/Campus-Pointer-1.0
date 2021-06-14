@@ -37,6 +37,7 @@ export const thunkFetch = (arrOfFetchUrlAndInitObjs, responseDataConsumer) => {
 			);
 
 			responseDataConsumer(arrOfResponseJsonS, { idToken, userId, dispatch, state });
+			
 		} catch (err) {
 			//console.warn(err);
 			let errMsg;

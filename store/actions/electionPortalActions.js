@@ -70,12 +70,13 @@ export const fetchElectionData = ({ userId, idToken }) => {
 		if (userOfficesVotedResponseJson && !userOfficesVotedResponseJson.error) {
 			for (const key in userOfficesVotedResponseJson) {
 				const userOfficesVotedItem = userOfficesVotedResponseJson[key];
-				userOfficesVoted.push(new VoteItem({...userOfficesVotedItem, voteDate: new Date(userOfficesVotedItem.voteDate)}));
+				userOfficesVoted.push(
+					new VoteItem({ ...userOfficesVotedItem, voteDate: new Date(userOfficesVotedItem.voteDate) })
+				);
 			}
 		}
 		// }
-		console.warn('from backend---', userOfficesVoted);
-
+		//console.warn('from backend---', userOfficesVoted);
 
 		dispatch({
 			type: LOAD_ELECTION_DATA,
@@ -103,20 +104,21 @@ export const voteOffice = (voteObj) => {
 	} = voteObj;
 	const urlArr = [
 		{
-			url: endpoints.postData(`electionProcessCandidates/${voteChoiceCandidateId}/voters`),
+			url: endpoints.postData(`electionProcessCandidates/${voteChoiceCandidateId}/votes`),
 			init: {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({
+				body: JSON.stringify(
+					{
 					...voteObj,
 					voteDate: voteDate.toISOString(),
 				}),
 			},
 		},
 		{
-			url: endpoints.postData(`electionVotes/${voterUserId}`),
+			url: endpoints.postData(`electionVoters/${voterUserId}`),
 			init: {
 				method: 'POST',
 				headers: {

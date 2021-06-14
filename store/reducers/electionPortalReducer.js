@@ -22,21 +22,21 @@ const initialState = {
 export default (state = initialState, action) => {
 	switch (action.type) {
 		case LOAD_ELECTION_DATA: {
-			const officeVotesTemplate = [...state.availableOffices].map((office) => {
-				return {
-					office: office[0],
-					candidates: [...state.registeredApplicants].map((candidate) => {
-						if (candidate.aspiringOffice[0] === office[0]) {
-							return {
-								candidate: candidate,
-								voters: [],
-								voteCount: 0,
-							};
-						}
-					}),
-				};
-			});
-					console.warn('from reducer---', action.userOfficesVoted);
+			// const officeVotesTemplate = [...state.availableOffices].map((office) => {
+			// 	return {
+			// 		office: office[0],
+			// 		candidates: [...state.registeredApplicants].map((candidate) => {
+			// 			if (candidate.aspiringOffice[0] === office[0]) {
+			// 				return {
+			// 					candidate: candidate,
+			// 					voters: [],
+			// 					voteCount: 0,
+			// 				};
+			// 			}
+			// 		}),
+			// 	};
+			// });
+			//console.warn('from reducer---', action.userOfficesVoted);
 
 			return {
 				...state,
@@ -47,7 +47,6 @@ export default (state = initialState, action) => {
 				userOfficesVoted: action.userOfficesVoted,
 			};
 		}
-
 
 		case VOTE_OFFICE: {
 			// const updatedOfficeVotes = [...state.officeVotes].map((o) => {
@@ -80,10 +79,7 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				//officeVotes: updatedOfficeVotes,
-				userOfficesVoted: state.userOfficesVoted.concat(
-					action.userCastedVote,
-				
-				),
+				userOfficesVoted: state.userOfficesVoted.concat(action.userCastedVote),
 			};
 		}
 	}

@@ -50,11 +50,13 @@ const MyItem = ({
 }) => {
 	const _dispatch = useDispatch();
 
-	const officeIsVoted = useSelector((s) => s.electionPortalReducer.userOfficesVoted).find(
-		(v) => {
-			v.voteOffice === office;
-		}
-		//(o) => o.hasOwnProperty(office) && !!o[office]
+	const officeIsVoted = useSelector((s) =>
+		s.electionPortalReducer.userOfficesVoted.find(
+			(v) => {
+				v.voteOffice === office;
+			}
+			//(o) => o.hasOwnProperty(office) && !!o[office]
+		)
 	);
 
 	const candidateVoted = officeIsVoted && officeIsVoted[office];
@@ -153,6 +155,7 @@ const SectionItem = ({ onCollapse, title, showingOffice, candidates }) => {
 		}
 		//(o) => o.hasOwnProperty(title) && !!o[title]
 	);
+	console.warn(officeIsVoted);
 
 	useEffect(() => {
 		setShowCandidates((p) => showingOffice === title);
@@ -230,9 +233,13 @@ const VotingScreen = ({ changeScreen, showSummaryModal, setShowSummaryModal }) =
 	const OFFICE_SECTIONS = [];
 	const electoralOffices = useSelector((state) => state.electionPortalReducer.availableOffices);
 	const contestants = useSelector((state) => state.electionPortalReducer.validCandidates);
-	const { userId, idToken, userAppData: {userEmail} } = useSelector((state) => state.authReducer);
+	const {
+		userId,
+		idToken,
+		userAppData: { userEmail },
+	} = useSelector((state) => state.authReducer);
 	const voteSummary = useSelector((s) => s.electionPortalReducer.userOfficesVoted);
-console.warn('inside---',voteSummary);
+	//console.warn('inside---',voteSummary);
 
 	for (let i = 1; i <= electoralOffices.length; i++) {
 		OFFICE_SECTIONS.push({
@@ -265,6 +272,7 @@ console.warn('inside---',voteSummary);
 	const clickedConfirmHandler = () => {
 		const { office, candidateData, applicantId } = voteData;
 		//console.log({ office, candidate })
+		setIsLoading(true);
 		dispatch(
 			voteOffice(
 				{
@@ -286,6 +294,7 @@ console.warn('inside---',voteSummary);
 				// }
 			)
 		);
+		setIsLoading(false)
 		setShowModal((p) => false);
 	};
 
@@ -324,14 +333,14 @@ console.warn('inside---',voteSummary);
 		setIsRefreshing(false);
 	}, [dispatch]); //setIsLoading is handled already by react,
 
-	// useEffect(() => {
-	// 	//FETCH NEWER ITEMS
+	useEffect(() => {
+		//FETCH NEWER ITEMS
 
-	// 	const unsubscribe = navigation.addListener('focus', loadData);
-	// 	return () => {
-	// 		unsubscribe();
-	// 	};
-	// }, [loadData]);
+		const unsubscribe = navig.addListener('focus', loadData);
+		return () => {
+			unsubscribe();
+		};
+	}, [loadData]);
 
 	useEffect(
 		//will run only when the component loads and not again unless dependencies change

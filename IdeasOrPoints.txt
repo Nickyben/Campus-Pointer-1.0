@@ -25,5 +25,5 @@ make use of listeners prop of Tab.screen eg: listeners={{
 		"react-native-chart-kit": "^6.6.1",
 
 
-...
+
     Thanks. Looks like the issue is with the react-native/Libraries/NewAppScreen. After removing it, the application is working fine 
