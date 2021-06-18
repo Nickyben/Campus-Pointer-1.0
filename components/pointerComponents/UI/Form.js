@@ -259,7 +259,7 @@ const Form = ({
 	}, [formState]);
 
 	return (
-		<View style={[styles.scroll]}>
+		<View style={{ ...styles.scroll }}>
 			{/* <Card style={styles.form}> */}
 			{title && <Text style={styles.formTitle}>{title}</Text>}
 			<View style={{ padding: 20 }}>
@@ -281,7 +281,7 @@ const Form = ({
 										? ''
 										: formState.inputValues[input.id]
 								}
-								formHasError={formState.formHasError && formState.showFormStatus} //&& formHasSomeEntry}
+								formHasError={formState.formHasError && formState.showFormStatus }//&& formHasSomeEntry}
 								submitted={formState.formIsSubmitted && (!doNotClearInputs || input.password)}
 							/>
 						);
@@ -298,7 +298,7 @@ const Form = ({
 				)}
 
 				{!formState.formHasError && formActionDone && !formState.formHasFocus && (
-					<Text style={[styles.formError, { color: '#55ff55', backgroundColor: '#ddffdd' }]}>
+					<Text style={{ ...styles.formError, color: '#55ff55', backgroundColor: '#ddffdd' }}>
 						{formSuccessMsg ? formSuccessMsg : 'Your form has been submitted successfully.'}
 					</Text>
 				)}

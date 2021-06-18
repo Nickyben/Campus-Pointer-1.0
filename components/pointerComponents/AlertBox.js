@@ -25,12 +25,7 @@ const AlertBox = ({ show, text, onFinishShow }) => {
 			{showBox && (
 				<View style={styles.screen}>
 					<Card style={styles.alertBox}>
-						<Text
-							style={{
-								...styles.loadingText,
-							}}>
-							{text}
-						</Text>
+						<Text style={[styles.loadingText]}>{text}</Text>
 					</Card>
 				</View>
 			)}

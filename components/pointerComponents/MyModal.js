@@ -24,7 +24,7 @@ const MyModal = ({
 				{/* <ScrollView> */}
 				<>
 					{!(topAlertBox || bottomAlertBox) && (
-						<View style={{ ...styles.contentBoxContainer }}>
+						<View style={[styles.contentBoxContainer]}>
 							<View style={styles.contentBox}>
 								{!submitBtn && headerText && <Text style={styles.contentBoxHeader}>{headerText}</Text>}
 								{submitBtn && (
@@ -61,7 +61,6 @@ const MyModal = ({
 										borderBottomRightRadius: topAlertBox ? 15 : 0,
 										backgroundColor: '#fff', //Colors.primary + '77',
 										paddingHorizontal: 0,
-										
 									}}>
 									<ScrollView style={{}}>{children}</ScrollView>
 								</Card>

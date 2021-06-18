@@ -14,11 +14,11 @@ import AuthLoadingScreen from '../screens/pointerApp/AuthLoadingScreen';
 import { logout } from '../store/actions/authActions';
 
 const AppNavigator = (props) => {
-		const [error, setError] = useState();
-		const [isLoading, setIsLoading] = useState(false);
-		const dispatch = useDispatch();
+	const [error, setError] = useState();
+	const [isLoading, setIsLoading] = useState(false);
+	const dispatch = useDispatch();
 
-	const isAuthorized = useSelector((state) => !!state.authReducer.idToken);
+	const isAuthorized = true; //useSelector((state) => !!state.authReducer.idToken);
 	const userId = useSelector((state) => state.authReducer.userId);
 	const triedAutoLogin = useSelector((state) => !!state.authReducer.triedAutoLogin);
 
@@ -43,29 +43,29 @@ const AppNavigator = (props) => {
 	// 	}
 	// }, [error]); //check : i added an empty array dep
 
-		if (isLoading) {
-			return <AuthLoadingScreen />;
-		}
+	if (isLoading) {
+		return <AuthLoadingScreen />;
+	}
 
-		if (error) {
-			return (
-				<ErrorScreen
-					errorObj={{
-						messageHead: error.toLowerCase().includes('network')
-							? 'Network Connection Failed'
-							: 'Error Occurred',
-						messageBody: error,
-						image: null,
-					}}
-					retryFunc={() => setError(null)}
-				/>
-			);
-		}
+	if (error) {
+		return (
+			<ErrorScreen
+				errorObj={{
+					messageHead: error.toLowerCase().includes('network')
+						? 'Network Connection Failed'
+						: 'Error Occurred',
+					messageBody: error,
+					image: null,
+				}}
+				retryFunc={() => setError(null)}
+			/>
+		);
+	}
 
 	return (
 		<NavigationContainer>
 			{
-				isAuthorized && <PointerDrawerNavigator onLogout={authHandler}/> //successfully logged in
+				isAuthorized && <PointerDrawerNavigator onLogout={authHandler} /> //successfully logged in
 			}
 			{
 				!isAuthorized && triedAutoLogin && <AuthStackNavigator />
@@ -79,7 +79,6 @@ const AppNavigator = (props) => {
 		</NavigationContainer>
 	);
 };
-
 
 const styles = StyleSheet.create({
 	spinner: {

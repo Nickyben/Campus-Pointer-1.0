@@ -34,19 +34,17 @@ const _Item = ({
 	const isComments = reactionType === 'comments';
 	const isLikes = reactionType === 'likes';
 
-	
 	const reactPerson = isLikes ? liker : author;
 	const { image, fullName, level, office, post } = isLikes ? liker : author;
-	
-	const viewReactPersonHandler = ( personId, title) => {
+
+	const viewReactPersonHandler = (personId, title) => {
 		navig.navigate('DeptDetails', { itemId: personId, title: title });
 	};
-	
-	
+
 	return (
 		<Touch
 			useIos
-			onTouch={viewReactPersonHandler.bind(this,  reactPerson.id, reactPerson.constructor.name)}
+			onTouch={viewReactPersonHandler.bind(this, reactPerson.id, reactPerson.constructor.name)}
 			style={{
 				backgroundColor: '#fff',
 			}}>
@@ -147,8 +145,6 @@ const HomeReactionsScreen = ({
 	const renderItem = (
 		{ item } //auto gets data in obj form , I deStructured it in params
 	) => <_Item content={item} onSelect={() => {}} navig={navigation} reactionType={reactionType} />;
-
-	
 
 	if (error) {
 		return (

@@ -73,15 +73,10 @@ const MyItem = ({
 	};
 	return (
 		<View style={styles.listContainer}>
-			<TouchCard onTouch={onPressItemHandler} style={{ ...styles.itemCard }}>
+			<TouchCard onTouch={onPressItemHandler} style={styles.itemCard}>
 				<View style={styles.itemContainer}>
 					<View style={styles.imageContainer}>
-						<Image
-							style={{
-								...styles.listImage,
-							}}
-							source={image}
-						/>
+						<Image style={styles.listImage} source={image} />
 					</View>
 
 					<View style={styles.infoContainer}>
@@ -165,15 +160,14 @@ const SectionItem = ({ onCollapse, title, showingOffice, candidates }) => {
 	return (
 		<View style={{ backgroundColor: Colors.switchPrimary }}>
 			<View
-				style={{
-					...styles.sectionHeader,
-					borderBottomColor: !showCandidates ? '#e3e6e7' : Colors.switchPrimary,
-					borderBottomWidth: !showCandidates ? 0.8 : 0,
-				}}>
-				<View
-					style={{
-						...styles.sectionHeaderWrap,
-					}}>
+				style={[
+					styles.sectionHeader,
+					{
+						borderBottomColor: !showCandidates ? '#e3e6e7' : Colors.switchPrimary,
+						borderBottomWidth: !showCandidates ? 0.8 : 0,
+					},
+				]}>
+				<View style={styles.sectionHeaderWrap}>
 					<View style={{ marginLeft: 10, alignItems: 'flex-start' }}>
 						<TouchIcon
 							//onTouch={() => { setIsVoted(p => !p); setIsClicked(p => true) }}
@@ -294,7 +288,7 @@ const VotingScreen = ({ changeScreen, showSummaryModal, setShowSummaryModal }) =
 				// }
 			)
 		);
-		setIsLoading(false)
+		setIsLoading(false);
 		setShowModal((p) => false);
 	};
 
@@ -457,14 +451,16 @@ const VotingScreen = ({ changeScreen, showSummaryModal, setShowSummaryModal }) =
 													justifyContent: 'space-between',
 												}}>
 												<Text
-													style={{
-														...styles.summaryTextTitle,
-														color: '#00a7e7',
-														flex: 1,
-													}}>
+													style={[
+														styles.summaryTextTitle,
+														{
+															color: '#00a7e7',
+															flex: 1,
+														},
+													]}>
 													{v.voteOffice}:{'  '}
 												</Text>
-												<Text style={{ ...styles.summaryText, color: '#555', flex: 1.2 }}>
+												<Text style={[styles.summaryText, { color: '#555', flex: 1.2 }]}>
 													{v.voteId}
 												</Text>
 											</View>
@@ -480,11 +476,13 @@ const VotingScreen = ({ changeScreen, showSummaryModal, setShowSummaryModal }) =
 										backgroundColor: goodVoteStatus ? Colors.success : Colors.error,
 									}}>
 									<Text
-										style={{
-											...styles.summaryText,
-											textAlign: 'center',
-											color: goodVoteStatus ? '#33dd33' : '#dd3333',
-										}}>
+										style={[
+											styles.summaryText,
+											{
+												textAlign: 'center',
+												color: goodVoteStatus ? '#33dd33' : '#dd3333',
+											},
+										]}>
 										{!goodVoteStatus ? 'Ouch! ' : 'Doing great!'} You have{' '}
 										{!goodVoteStatus ? 'only ' : ''}voted for {voteSummary.length} office
 										{voteSummary.length !== 1 ? 's' : ''} out of {electoralOffices.length}

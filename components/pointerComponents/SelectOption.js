@@ -16,7 +16,7 @@ const SelectOption = ({ onSelect, icon, data, color, style }) => {
 		// </TouchCard>
 
 		<TouchCard
-			style={{ ...styles.itemCard, ...style }}
+			style={[styles.itemCard, style]}
 			onTouch={() => {
 				onSelect(data);
 			}}>
@@ -24,9 +24,9 @@ const SelectOption = ({ onSelect, icon, data, color, style }) => {
 				<View style={styles.actionIconContainer}>
 					<Ionicons name={Platform.OS === 'android' ? `md-${icon}` : `ios-${icon}`} size={80} color={color} />
 				</View>
-				<View style={{ ...styles.actionLabelContainer }}>
+				<View style={[styles.actionLabelContainer]}>
 					{/* color: 'Colors.primary' */}
-					<Text style={{ ...styles.actionLabel, color: '#000' }}> {data.title}</Text>
+					<Text style={[styles.actionLabel, { color: '#000' }]}> {data.title}</Text>
 				</View>
 			</View>
 		</TouchCard>

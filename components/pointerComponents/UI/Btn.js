@@ -1,17 +1,18 @@
 import React from 'react';
 import {
-	StyleSheet,
-	View,
-	Button,
-	Text,
-	TouchableOpacity,
-	TouchableNativeFeedback,
-	Dimensions,
-	Platform,
+  StyleSheet,
+  View,
+  Button,
+  Text,
+  TouchableOpacity,
+  TouchableNativeFeedback,
+  Dimensions,
+  Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import Colors from '../../constants/Colors';
+
 
 const Btn = ({
 	type,
@@ -41,41 +42,34 @@ const Btn = ({
 			btnColor = !disabled ? Colors.accent2 : Colors.accent2 + '77';
 			break;
 	}
+
 	return (
 		<View
-			style={[
-				{
-					borderRadius: style ? (style.borderRadius ? style.borderRadius : 25) : 25,
-
-					backgroundColor: bgColor ? (!disabled ? bgColor : bgColor + '77') : btnColor,
-					borderColor: bgColor === 'white' ? Colors.primary : borderColor ? borderColor : 'transparent',
-					borderWidth:
-						borderColor || bgColor === 'white' || bgColor == '#fff' || bgColor === '#ffffff' ? 1 : 0,
-					width: 'auto',
-				},
-				style,
-			]}>
+			style={{
+				...styles.touchable,
+				backgroundColor: bgColor ? (!disabled ? bgColor : bgColor + '77') : btnColor,
+				borderColor: bgColor === 'white' ? Colors.primary : borderColor ? borderColor : 'transparent',
+				borderWidth: borderColor || bgColor === 'white' || bgColor == '#fff' || bgColor === '#ffffff' ? 1 : 0,
+				width: 'auto',
+				...style,
+			}}>
 			<BtnComponent onPress={onPress} activeOpacity={0.7} disabled={disabled}>
 				<View
-					style={[
-						styles.button,
-						innerStyle,
-						{
-							borderRadius: style ? (style.borderRadius ? style.borderRadius : 25) : 25,
-						},
-					]}>
+					style={{
+						...styles.button,
+						...innerStyle,
+						borderRadius: style && style.borderRadius ? style.borderRadius : styles.button.borderRadius,
+					}}>
 					<Text
-						style={[
-							styles.btnText,
-							{
-								fontSize: fontSize ? fontSize : 13,
-								color: textColor
-									? textColor
-									: bgColor === 'white' || bgColor === '#fff' || bgColor === '#ffffff'
-									? Colors.primary
-									: 'white',
-							},
-						]}>
+						style={{
+							...styles.btnText,
+							fontSize: fontSize ? fontSize : 13,
+							color: textColor
+								? textColor
+								: bgColor === 'white' || bgColor === '#fff' || bgColor === '#ffffff'
+								? Colors.primary
+								: styles.btnText.color,
+						}}>
 						{children}
 					</Text>
 					{icon && (
@@ -100,31 +94,33 @@ const Btn = ({
 };
 
 const styles = StyleSheet.create({
-	touchable: {
-		borderRadius: 25,
+  touchable: {
+    borderRadius: 25,
 		overflow: 'hidden',
-		// justifyContent: 'center',
+    // justifyContent: 'center',
 		// alignItems: 'center',
 		//margin: 'auto'
-	},
+		
+  },
 
-	button: {
+  button: {
 		// maxWidth: 150,
-		// width: '100%',//i changed this 09-12-2020
-		minWidth: 80,
-		paddingVertical: 5,
-		paddingHorizontal: 20,
-		borderRadius: 25,
-		justifyContent: 'space-evenly',
-		alignItems: 'center',
+   // width: '100%',//i changed this 09-12-2020
+    minWidth: 80,
+    paddingVertical: 5,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
 		flexDirection: 'row',
-	},
+  },
 
-	btnText: {
-		color: 'white',
-		fontFamily: 'OpenSansBold',
-		textAlign: 'center',
-	},
+  btnText: {
+    color: 'white',
+    fontFamily: 'OpenSansBold',
+    textAlign: 'center'
+  }
+
 });
 
 export default Btn;

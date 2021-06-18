@@ -30,21 +30,18 @@ import ApplicantScreen from '../../components/pointerComponents/ApplicantScreen'
 
 const ElectionsPortalScreen = ({ navig }) => {
 	const dispatch = useDispatch();
-	
-	
 
 	const [portalScreen, setPortalScreen] = useState('overview');
 	const [showSummaryModal, setShowSummaryModal] = useState(false);
 
 	const summaryHandler = (controlFunction) => {
-		
 		setShowSummaryModal(controlFunction);
 		//console.log(voteSummary)
 	};
 
 	const loadElectionData = useCallback(async () => {
 		// setError(null);
-		// setIsRefreshing(true); 
+		// setIsRefreshing(true);
 		// try {
 		// //	await dispatch(fetchElectionData({ userId }));
 		// } catch (err) {
@@ -173,7 +170,7 @@ const ElectionsPortalScreen = ({ navig }) => {
 									bgColor={Colors.accent}
 									onPress={portalScreenHandler.bind(this, 'contesting')}
 									style={styles.btn}>
-									Contest{' '}
+									Contest
 								</Btn>
 							</View>
 						</View>
@@ -182,7 +179,6 @@ const ElectionsPortalScreen = ({ navig }) => {
 			);
 		}
 		case 'voting': {
-		
 			return (
 				<>
 					<VotingScreen
@@ -255,7 +251,6 @@ const styles = StyleSheet.create({
 		color: '#345',
 		textAlign: 'justify',
 	},
-
 });
 
 export default ElectionsPortalScreen;

@@ -45,7 +45,7 @@ const DropdownPicker = ({
 			//setOpenPicker(false);
 		} else {
 			const isAlreadyChecked = pickerChoice === id;
-			const updatedChoice = !!isAlreadyChecked ? { id: '', label: '' } : { id, label };
+			const updatedChoice = !!isAlreadyChecked ? {id:'', label: ''} : { id, label };
 			setPickerChoice(updatedChoice.id);
 			onChooseOption && onChooseOption(updatedChoice.label);
 			setOpenPicker(false);
@@ -71,16 +71,14 @@ const DropdownPicker = ({
 	}, [multipleChoice, value, items]);
 
 	return (
-		<View style={[style]} focusable>
+		<View style={{ ...style }} focusable>
 			<Text style={styles.label}>{pickerLabel}</Text>
 			<Touch
 				onTouch={openPickerHandler}
-				style={[
-					styles.openPickerContainer,
-					{
-						borderBottomColor: hasFocus ? Colors.primary : styles.openPickerContainer.borderColor,
-					},
-				]}>
+				style={{
+					...styles.openPickerContainer,
+					borderBottomColor: hasFocus ? Colors.primary : styles.openPickerContainer.borderColor,
+				}}>
 				{!hideIcon && (
 					<View style={{ marginLeft: rectInput ? 0 : 10 }}>
 						<ItemIcon
@@ -94,7 +92,7 @@ const DropdownPicker = ({
 					</View>
 				)}
 
-				<Text style={[styles.openPickerText, { color: value ? '#333' : styles.openPickerText.color }]}>
+				<Text style={{ ...styles.openPickerText, color: value ? '#333' : styles.openPickerText.color }}>
 					{value ? value : placeholder}
 				</Text>
 				<ItemIcon
